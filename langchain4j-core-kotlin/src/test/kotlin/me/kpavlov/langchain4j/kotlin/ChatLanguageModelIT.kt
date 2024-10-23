@@ -16,18 +16,9 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
 
-
 internal class ChatLanguageModelIT {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-
-//    private val model: ChatLanguageModel = LocalAiChatModel.builder()
-//        .baseUrl(localAi.baseUrl)
-//        .modelName("ggml-gpt4all-j")
-//        .maxTokens(3)
-//        .logRequests(true)
-//        .logResponses(true)
-//        .build()
 
     private val model: ChatLanguageModel = OpenAiChatModel
         .builder()
