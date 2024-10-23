@@ -1,5 +1,5 @@
 # langchain4j-kotlin
-[![CI](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml/badge.svg)](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml)
 
 Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j).
 
