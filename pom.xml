@@ -62,7 +62,7 @@
             <dependency>
                 <groupId>com.willowtreeapps.assertk</groupId>
                 <artifactId>assertk-coroutines-jvm</artifactId>
-                <version>0.28.0</version>
+                <version>0.28.1</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
