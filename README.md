@@ -1,5 +1,9 @@
 # langchain4j-kotlin
-Kotlin enhancements for LangChain4j
+[![CI](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml/badge.svg)](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml)
+
+Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j).
+
+See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
 
 ## Acknowledgements
 
