@@ -14,6 +14,14 @@ Create `.env` file in root directory and add your API keys:
 OPENAI_API_KEY=sk-xxxxx
 ```
 
+Building project locally:
+```shell
+mvn clean verify
+```
+or
+```shell
+make build
+```
 
 ## Acknowledgements
 
