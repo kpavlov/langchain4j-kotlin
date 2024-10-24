@@ -29,15 +29,9 @@ internal class ChatLanguageModelIT {
         .build()
 
     @Test
-    fun `Run test`() = runTest {
+    fun `ChatLanguageModel should generateAsync`() = runTest {
 
-        val source = FileSystemSource(Paths.get("./src/test/resources/data/notes/blumblefang.txt"))
-        val document = DocumentLoader.load(source, TextDocumentParser())
-
-        with(document) {
-            logger.info("Document Metadata: {}", metadata())
-            logger.info("Document Text: {}", text())
-        }
+        val document = loadDocument("notes/blumblefang.txt", logger)
 
         val result = model.generateAsync(
             listOf(

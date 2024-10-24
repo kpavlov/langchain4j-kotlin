@@ -6,6 +6,15 @@ Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j
 
 See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
 
+## How to run
+
+Create `.env` file in root directory and add your API keys:
+
+```dotenv
+OPENAI_API_KEY=sk-xxxxx
+```
+
+
 ## Acknowledgements
 
 Training data from Project Gutenberg:
