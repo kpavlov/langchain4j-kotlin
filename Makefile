@@ -1,2 +1,2 @@
 build:
-	mvn clean verify
+	mvn clean verify site
