@@ -8,8 +8,10 @@ import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
-import dev.langchain4j.model.chat.AiReply
+import dev.langchain4j.model.chat.StreamingChatLanguageModelReply
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.StreamingChatLanguageModelReply.Completion
+import dev.langchain4j.model.chat.StreamingChatLanguageModelReply.Token
 import dev.langchain4j.model.chat.generateFlow
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import dev.langchain4j.model.output.Response
@@ -62,12 +64,12 @@ class StreamingChatLanguageModelIT {
         flow.collect {
             logger.info("Received event: $it")
             when (it) {
-                is AiReply.Token -> {
+                is Token -> {
                     logger.info("Token: '${it.token}'")
                     collectedTokens.add(it.token)
                 }
 
-                is AiReply.Completion -> responseRef.set(it.response)
+                is Completion -> responseRef.set(it.response)
                 else -> fail("Unsupported event: $it")
             }
         }
