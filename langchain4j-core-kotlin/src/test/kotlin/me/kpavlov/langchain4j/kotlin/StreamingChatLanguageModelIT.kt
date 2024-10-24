@@ -8,7 +8,6 @@ import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
-import dev.langchain4j.model.chat.StreamingChatLanguageModelReply
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
 import dev.langchain4j.model.chat.StreamingChatLanguageModelReply.Completion
 import dev.langchain4j.model.chat.StreamingChatLanguageModelReply.Token
@@ -16,14 +15,11 @@ import dev.langchain4j.model.chat.generateFlow
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import dev.langchain4j.model.output.Response
 import kotlinx.coroutines.test.runTest
-import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 @Disabled("Run it manually")
 class StreamingChatLanguageModelIT {
@@ -57,27 +53,20 @@ class StreamingChatLanguageModelIT {
 
         val responseRef = AtomicReference<Response<AiMessage>?>()
 
-        val flow = model.generateFlow(messages)
-
         val collectedTokens = mutableListOf<String>()
 
-        flow.collect {
-            logger.info("Received event: $it")
-            when (it) {
-                is Token -> {
-                    logger.info("Token: '${it.token}'")
-                    collectedTokens.add(it.token)
+        model.generateFlow(messages)
+            .collect {
+                logger.info("Received event: $it")
+                when (it) {
+                    is Token -> {
+                        logger.info("Token: '${it.token}'")
+                        collectedTokens.add(it.token)
+                    }
+
+                    is Completion -> responseRef.set(it.response)
+                    else -> fail("Unsupported event: $it")
                 }
-
-                is Completion -> responseRef.set(it.response)
-                else -> fail("Unsupported event: $it")
-            }
-        }
-
-        await
-            .timeout(15.seconds.toJavaDuration())
-            .until {
-                responseRef.get() != null
             }
 
         val response = responseRef.get()!!
