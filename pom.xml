@@ -23,7 +23,7 @@
         <kotlinx.version>1.9.0</kotlinx.version>
         <langchain4j.version>0.35.0</langchain4j.version>
         <junit.version>5.11.3</junit.version>
-        <awaitility.version>4.2.1</awaitility.version>
+        <awaitility.version>4.2.2</awaitility.version>
         <dotenv-kotlin.version>6.4.2</dotenv-kotlin.version>
     </properties>
 
