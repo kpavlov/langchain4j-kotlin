@@ -8,16 +8,19 @@ import dev.langchain4j.model.output.Response
 import kotlinx.coroutines.coroutineScope
 
 /**
- * Asynchronously processes a chat request using the language model within a coroutine scope.
- * This extension function provides a structured concurrency wrapper around the synchronous [ChatLanguageModel.chat] method.
+ * Asynchronously processes a chat request using the language model within
+ * a coroutine scope. This extension function provides a structured
+ * concurrency wrapper around the synchronous [ChatLanguageModel.chat] method.
  *
  * Example usage:
  * ```kotlin
  * val response = model.chatAsync(ChatRequest(messages))
  * ```
  *
- * @param request The chat request containing messages and optional parameters for the model.
- * @return [ChatResponse] containing the model's response and any additional metadata.
+ * @param request The chat request containing messages and optional parameters
+ *    for the model.
+ * @return [ChatResponse] containing the model's response and any additional
+ *    metadata.
  * @throws Exception if the chat request fails or is interrupted.
  * @see ChatLanguageModel.chat
  * @see ChatRequest
@@ -29,8 +32,9 @@ suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse {
 }
 
 /**
- * Asynchronously processes a chat request using a [ChatRequest.Builder] for convenient request configuration.
- * This extension function combines the builder pattern with coroutine-based asynchronous execution.
+ * Asynchronously processes a chat request using a [ChatRequest.Builder] for
+ * convenient request configuration. This extension function combines the
+ * builder pattern with coroutine-based asynchronous execution.
  *
  * Example usage:
  * ```kotlin
@@ -40,9 +44,12 @@ suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse {
  *     .maxTokens(100))
  * ```
  *
- * @param requestBuilder The builder instance configured with desired chat request parameters.
- * @return [ChatResponse] containing the model's response and any additional metadata.
- * @throws Exception if the chat request fails, is interrupted, or the builder produces an invalid configuration.
+ * @param requestBuilder The builder instance configured with desired chat
+ *    request parameters.
+ * @return [ChatResponse] containing the model's response and any additional
+ *    metadata.
+ * @throws Exception if the chat request fails, is interrupted, or the builder
+ *    produces an invalid configuration.
  * @see ChatRequest
  * @see ChatResponse
  * @see ChatRequest.Builder
@@ -53,8 +60,9 @@ suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): Ch
 }
 
 /**
- * Processes a chat request using a [ChatRequest.Builder] for convenient request configuration.
- * This extension function provides a builder pattern alternative to creating [ChatRequest] directly.
+ * Processes a chat request using a [ChatRequest.Builder] for convenient request
+ * configuration. This extension function provides a builder pattern alternative
+ * to creating [ChatRequest] directly.
  *
  * Example usage:
  * ```kotlin
@@ -64,9 +72,12 @@ suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): Ch
  *     .maxTokens(100))
  * ```
  *
- * @param requestBuilder The builder instance configured with desired chat request parameters.
- * @return [ChatResponse] containing the model's response and any additional metadata.
- * @throws Exception if the chat request fails or the builder produces an invalid configuration.
+ * @param requestBuilder The builder instance configured with desired chat
+ *    request parameters.
+ * @return [ChatResponse] containing the model's response and any additional
+ *    metadata.
+ * @throws Exception if the chat request fails or the builder produces an
+ *    invalid configuration.
  * @see ChatRequest
  * @see ChatResponse
  * @see ChatRequest.Builder
@@ -76,8 +87,10 @@ fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse {
 }
 
 /**
- * Asynchronously generates a response for a list of chat messages using the language model within a coroutine scope.
- * This extension function provides a structured concurrency wrapper around the synchronous [ChatLanguageModel.generate] method.
+ * Asynchronously generates a response for a list of chat messages using
+ * the language model within a coroutine scope. This extension function
+ * provides a structured concurrency wrapper around the synchronous
+ * [ChatLanguageModel.generate] method.
  *
  * Example usage:
  * ```kotlin
@@ -87,7 +100,8 @@ fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse {
  * ))
  * ```
  *
- * @param messages The list of chat messages representing the conversation history and current prompt.
+ * @param messages The list of chat messages representing the conversation
+ *    history and current prompt.
  * @return [Response] containing the AI's message and any additional metadata.
  * @throws Exception if the generation fails or is interrupted.
  * @see ChatLanguageModel.generate
