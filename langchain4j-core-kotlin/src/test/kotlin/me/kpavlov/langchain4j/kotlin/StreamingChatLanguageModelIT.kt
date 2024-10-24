@@ -2,25 +2,23 @@ package me.kpavlov.langchain4j.kotlin
 
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import dev.langchain4j.data.document.DocumentLoader
-import dev.langchain4j.data.document.parser.TextDocumentParser
-import dev.langchain4j.data.document.source.FileSystemSource
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
-import dev.langchain4j.model.StreamingResponseHandler
+import dev.langchain4j.model.chat.AiReply
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.generateFlow
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import dev.langchain4j.model.output.Response
 import kotlinx.coroutines.test.runTest
 import org.awaitility.kotlin.await
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.fail
 import org.slf4j.LoggerFactory
-import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
@@ -32,22 +30,15 @@ class StreamingChatLanguageModelIT {
 
     private val model: StreamingChatLanguageModel = OpenAiStreamingChatModel
         .builder()
-        .apiKey(TestEnvironment.dotenv.get("OPENAI_API_KEY"))
+        .apiKey(TestEnvironment.env("OPENAI_API_KEY"))
         .modelName("gpt-4o-mini")
         .temperature(0.0)
         .maxTokens(100)
         .build()
 
     @Test
-    fun `Run test`() = runTest {
-
-        val source = FileSystemSource(Paths.get("./src/test/resources/data/notes/blumblefang.txt"))
-        val document = DocumentLoader.load(source, TextDocumentParser())
-
-        with(document) {
-            logger.info("Document Metadata: {}", metadata())
-            logger.info("Document Text: {}", text())
-        }
+    fun `StreamingChatLanguageModel should generateFlow`() = runTest {
+        val document = loadDocument("notes/blumblefang.txt", logger)
 
         val messages = listOf<ChatMessage>(
             SystemMessage.from(
@@ -64,21 +55,22 @@ class StreamingChatLanguageModelIT {
 
         val responseRef = AtomicReference<Response<AiMessage>?>()
 
-        model.generate(messages, object : StreamingResponseHandler<AiMessage> {
-            override fun onNext(token: String) {
-                logger.info("Token: {}", token);
-            }
+        val flow = model.generateFlow(messages)
 
-            override fun onComplete(response: Response<AiMessage>?) {
-                logger.info("Response: {}", response);
-                responseRef.set(response)
-            }
+        val collectedTokens = mutableListOf<String>()
 
-            override fun onError(error: Throwable) {
-                logger.error("Error: {}", error.message, error);
-                fail(error)
+        flow.collect {
+            logger.info("Received event: $it")
+            when (it) {
+                is AiReply.Token -> {
+                    logger.info("Token: '${it.token}'")
+                    collectedTokens.add(it.token)
+                }
+
+                is AiReply.Completion -> responseRef.set(it.response)
+                else -> fail("Unsupported event: $it")
             }
-        })
+        }
 
         await
             .timeout(15.seconds.toJavaDuration())
@@ -90,6 +82,8 @@ class StreamingChatLanguageModelIT {
         assertThat(response.metadata()).isNotNull()
         val content = response.content()
         assertThat(content).isNotNull()
+        assertThat(collectedTokens.joinToString(""))
+            .isEqualTo(content.text())
         assertThat(content.text()).contains("Blumblefang loves to help")
     }
 }
