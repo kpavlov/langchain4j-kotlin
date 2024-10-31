@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>langchain4j-core-kotlin</module>
+        <module>reports</module>
     </modules>
 
     <properties>
@@ -150,6 +151,11 @@
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>1.23.7</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlinx</groupId>
+                    <artifactId>kover-maven-plugin</artifactId>
+                    <version>0.9.0-RC</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -186,6 +192,25 @@
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- https://kotlin.github.io/kotlinx-kover/maven-plugin/#goals -->
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kover-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>instr</id>
+                        <goals>
+                            <goal>instrumentation</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>kover-log</id>
+                        <goals>
+                            <goal>log</goal>
                         </goals>
                     </execution>
                 </executions>
