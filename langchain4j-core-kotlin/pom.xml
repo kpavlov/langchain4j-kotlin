@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>langchain4j-core-kotlin</artifactId>
+    <name>LangChain4j-Kotlin :: Core</name>
 
     <dependencies>
         <dependency>

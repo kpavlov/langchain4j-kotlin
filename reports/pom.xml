@@ -11,12 +11,13 @@
 
     <artifactId>reports</artifactId>
     <packaging>pom</packaging>
+    <name>LangChain4j-Kotlin :: Reports</name>
 
     <dependencies>
         <dependency>
             <groupId>me.kpavlov.langchain4j.kotlin</groupId>
             <artifactId>langchain4j-core-kotlin</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
