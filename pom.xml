@@ -255,6 +255,13 @@
         </plugins>
     </build>
 
+    <scm>
+        <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
+        <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
+        <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <repositories>
         <repository>
             <id>snapshot-repo</id>
