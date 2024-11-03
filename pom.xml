@@ -8,6 +8,8 @@
     <artifactId>langchain4j-kotlin-aggregator</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>LangChain4j-Kotlin :: Aggregator</name>
+
     <modules>
         <module>langchain4j-core-kotlin</module>
         <module>reports</module>
