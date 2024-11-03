@@ -6,7 +6,7 @@
     <parent>
         <groupId>me.kpavlov.langchain4j.kotlin</groupId>
         <artifactId>langchain4j-kotlin-aggregator</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>reports</artifactId>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>me.kpavlov.langchain4j.kotlin</groupId>
             <artifactId>langchain4j-core-kotlin</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
