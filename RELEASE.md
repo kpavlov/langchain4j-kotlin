@@ -14,8 +14,7 @@
     ```shell
     mvn release:prepare \
       -Dresume=false \
-      -DpushChanges=false \
-      -DprojectVersionPolicyId=SemVerVersionPolicy
+      -DpushChanges=false
     ```
 
 3. Perform the release
