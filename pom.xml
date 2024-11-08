@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
@@ -281,15 +282,16 @@
         </license>
     </licenses>
 
-    <repositories>
-        <repository>
-            <id>snapshot-repo</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <developers>
+        <developer>
+            <name>Konstantin Pavlov</name>
+            <url>https://kpavlov.me</url>
+            <roles>
+                <role>author</role>
+                <role>owner</role>
+            </roles>
+        </developer>
+    </developers>
 
     <profiles>
         <profile>

@@ -26,6 +26,14 @@
     ```
    https://stackoverflow.com/a/57591830/3315474
 
+
+
+In case of GPG error `gpg: signing failed: Screen or window too small`, [try this](https://stackoverflow.com/a/67498543/3315474):
+```shell
+gpg -K --keyid-format SHORT
+```
+
+
 4. Push
 
     ```shell
