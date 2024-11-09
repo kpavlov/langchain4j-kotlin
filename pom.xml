@@ -24,11 +24,12 @@
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <java.compiler.release>${java.version}</java.compiler.release>
         <!-- Dependencies -->
-        <kotlinx.version>1.9.0</kotlinx.version>
-        <langchain4j.version>0.35.0</langchain4j.version>
-        <junit.version>5.11.3</junit.version>
         <awaitility.version>4.2.2</awaitility.version>
         <dotenv-kotlin.version>6.4.2</dotenv-kotlin.version>
+        <junit.version>5.11.3</junit.version>
+        <kotlinx.version>1.9.0</kotlinx.version>
+        <langchain4j.version>0.35.0</langchain4j.version>
+        <slf4j.version>2.0.16</slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -46,6 +47,13 @@
                 <version>${kotlinx.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-bom</artifactId>
+                <version>${slf4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-coroutines-test</artifactId>
                 <version>${kotlinx.version}</version>
@@ -61,7 +69,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
-                <version>2.0.16</version>
+                <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
