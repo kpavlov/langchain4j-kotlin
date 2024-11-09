@@ -335,7 +335,7 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
-                            <waitUntil>published</waitUntil>
+                            <waitUntil>verified</waitUntil>
                         </configuration>
                     </plugin>
                     <plugin>
