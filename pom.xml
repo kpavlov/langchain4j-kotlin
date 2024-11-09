@@ -4,7 +4,7 @@
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
     <artifactId>langchain4j-kotlin-aggregator</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>LangChain4j-Kotlin :: Aggregator</name>
     <description>Kotlin enhancements for LangChain4j</description>
@@ -287,7 +287,7 @@
         <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
         <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
         <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
-        <tag>v0.1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>

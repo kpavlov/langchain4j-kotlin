@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.kpavlov.langchain4j.kotlin</groupId>
         <artifactId>langchain4j-kotlin-aggregator</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>langchain4j-core-kotlin</artifactId>
