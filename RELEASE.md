@@ -28,10 +28,10 @@
 
 
 
-In case of GPG error `gpg: signing failed: Screen or window too small`, [try this](https://stackoverflow.com/a/67498543/3315474):
-```shell
-gpg -K --keyid-format SHORT
-```
+  In case of GPG error `gpg: signing failed: Screen or window too small`, [try this](https://stackoverflow.com/a/67498543/3315474):
+  ```shell
+  gpg -K --keyid-format SHORT
+  ```
 
 
 4. Push
