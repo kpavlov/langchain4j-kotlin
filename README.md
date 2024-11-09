@@ -11,10 +11,8 @@ See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897
 
 ## Features
 
-- ✨ Coroutine support for chat operations
-- 🌊 Kotlin Flow integration for streaming responses
-- 🏗️ Builder pattern support for request configuration
-- 🔄 Structured handling of streaming responses
+- ✨ [Kotlin Coroutine](https://kotlinlang.org/docs/coroutines-guide.html) support for [ChatLanguageModels](https://docs.langchain4j.dev/tutorials/chat-and-language-models)
+- 🌊 [Kotlin Asynchronous Flow](https://kotlinlang.org/docs/flow.html) support for [StreamingChatLanguageModels](https://docs.langchain4j.dev/tutorials/ai-services#streaming)
 
 ## Installation
 
