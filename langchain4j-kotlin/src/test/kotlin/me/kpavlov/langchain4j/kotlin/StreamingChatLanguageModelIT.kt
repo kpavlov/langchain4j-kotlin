@@ -47,7 +47,6 @@ class StreamingChatLanguageModelIT {
                     SystemMessage.from(
                         """
                         You are helpful advisor answering questions only related to the given text
-
                         """.trimIndent(),
                     ),
                     UserMessage.from(
@@ -61,27 +60,23 @@ class StreamingChatLanguageModelIT {
 
             val collectedTokens = mutableListOf<String>()
 
-            model
-                .generateFlow(messages)
-                .collect {
-                    logger.info("Received event: $it")
-                    when (it) {
-                        is Token -> {
-                            logger.info("Token: '${it.token}'")
-                            collectedTokens.add(it.token)
-                        }
-
-                        is Completion -> responseRef.set(it.response)
-                        else -> fail("Unsupported event: $it")
+            model.generateFlow(messages).collect {
+                when (it) {
+                    is Token -> {
+                        println("Token: '${it.token}'")
+                        collectedTokens.add(it.token)
                     }
+
+                    is Completion -> responseRef.set(it.response)
+                    else -> fail("Unsupported event: $it")
                 }
+            }
 
             val response = responseRef.get()!!
             assertThat(response.metadata()).isNotNull()
             val content = response.content()
             assertThat(content).isNotNull()
-            assertThat(collectedTokens.joinToString(""))
-                .isEqualTo(content.text())
+            assertThat(collectedTokens.joinToString("")).isEqualTo(content.text())
             assertThat(content.text()).contains("Blumblefang loves to help")
         }
 }
