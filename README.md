@@ -130,7 +130,8 @@ runBlocking {
   println(result.content().text())
 }
 ```
-Try [this Kotlin Notebook](langchain4j-kotlin/notebooks/lc4kNotebook.ipynb)  yourself.
+Try [this Kotlin Notebook](langchain4j-kotlin/notebooks/lc4kNotebook.ipynb)  yourself:
+![](docs/kotlin-notebook-1.png)
 
 ## Development Setup
 
