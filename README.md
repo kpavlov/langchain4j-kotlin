@@ -100,33 +100,41 @@ The [Kotlin Notebook](https://kotlinlang.org/docs/kotlin-notebook-overview.html)
 * Visualize results directly in the notebook
 * Share reproducible examples with others
 
-You can easy get started with LangChain4j-Kotlin  notebooks:
+You can easyly get started with LangChain4j-Kotlin notebooks:
 
-```jupyter
-//@file:DependsOn("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:0.1.1")
+```kotlin notebook
+%useLatestDescriptors
+%use coroutines
 
-import dev.langchain4j.model.chat.generateAsync
+@file:DependsOn("dev.langchain4j:langchain4j:0.36.0")
+@file:DependsOn("dev.langchain4j:langchain4j-open-ai:0.36.0")
+
+// add maven dependency
+@file:DependsOn("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:0.1.1")
+// ... or add project's target/classes to classpath
+//@file:DependsOn("../target/classes")
+
+import dev.langchain4j.data.message.*
 import dev.langchain4j.model.openai.OpenAiChatModel
-import dev.langchain4j.data.message.SystemMessage
-import dev.langchain4j.data.message.UserMessage
-import kotlinx.coroutines.runBlocking
-
-val model = OpenAiChatModel
-  .builder()
+import me.kpavlov.langchain4j.kotlin.model.chat.generateAsync
+  
+val model = OpenAiChatModel.builder()
   .apiKey("demo")
   .modelName("gpt-4o-mini")
   .temperature(0.0)
   .maxTokens(1024)
   .build()
 
+// Invoke using CoroutineScope
+val scope = CoroutineScope(Dispatchers.IO)
+
 runBlocking {
   val result = model.generateAsync(
     listOf(
       SystemMessage.from("You are helpful assistant"),
-      UserMessage.from("Make a joke about Kotlin, Langchani4j and LLM"),
+      UserMessage.from("Make a haiku about Kotlin, Langchani4j and LLM"),
     )
   )
-  
   println(result.content().text())
 }
 ```
