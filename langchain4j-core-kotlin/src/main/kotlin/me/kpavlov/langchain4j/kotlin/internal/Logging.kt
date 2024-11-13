@@ -1,4 +1,4 @@
-package dev.langchain4j.internal
+package me.kpavlov.langchain4j.kotlin.internal
 
 import org.slf4j.MarkerFactory
 
