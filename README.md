@@ -91,6 +91,47 @@ model.generateFlow(messages)
     }
 ```
 
+### Kotlin Notebook
+
+The [Kotlin Notebook](https://kotlinlang.org/docs/kotlin-notebook-overview.html) environment allows you to:
+
+* Experiment with LLM features in real-time
+* Test different configurations and scenarios
+* Visualize results directly in the notebook
+* Share reproducible examples with others
+
+You can easy get started with LangChain4j-Kotlin  notebooks:
+
+```jupyter
+//@file:DependsOn("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:0.1.1")
+
+import dev.langchain4j.model.chat.generateAsync
+import dev.langchain4j.model.openai.OpenAiChatModel
+import dev.langchain4j.data.message.SystemMessage
+import dev.langchain4j.data.message.UserMessage
+import kotlinx.coroutines.runBlocking
+
+val model = OpenAiChatModel
+  .builder()
+  .apiKey("demo")
+  .modelName("gpt-4o-mini")
+  .temperature(0.0)
+  .maxTokens(1024)
+  .build()
+
+runBlocking {
+  val result = model.generateAsync(
+    listOf(
+      SystemMessage.from("You are helpful assistant"),
+      UserMessage.from("Make a joke about Kotlin, Langchani4j and LLM"),
+    )
+  )
+  
+  println(result.content().text())
+}
+```
+Try [this Kotlin Notebook](langchain4j-kotlin/notebooks/lc4kNotebook.ipynb)  yourself.
+
 ## Development Setup
 
 ### Prerequisites
