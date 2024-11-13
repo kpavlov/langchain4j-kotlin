@@ -50,7 +50,6 @@
         <java.compiler.release>${java.version}</java.compiler.release>
         <!-- Dependencies -->
         <awaitility.version>4.2.2</awaitility.version>
-        <dotenv-kotlin.version>6.4.2</dotenv-kotlin.version>
         <finchly.version>0.1.1</finchly.version>
         <junit.version>5.11.3</junit.version>
         <kotlinx.version>1.9.0</kotlinx.version>
@@ -117,7 +116,6 @@
                 <version>${finchly.version}</version>
                 <scope>test</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -132,12 +130,6 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility-kotlin</artifactId>
             <version>${awaitility.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-kotlin</artifactId>
-            <version>${dotenv-kotlin.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
