@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="com.nbadal.ktlint"/>
+    <plugin id="detekt"/>
+    <plugin id="org.jetbrains.plugins.spotbugs"/>
+    <plugin id="org.sonarlint.idea"/>
+    <plugin id="org.jetbrains.plugins.kotlin.jupyter"/>
+  </component>
+</project>

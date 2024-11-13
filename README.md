@@ -25,7 +25,7 @@ Add the following dependencies to your `pom.xml`:
     <!-- LangChain4j Kotlin Extensions -->
     <dependency>
         <groupId>me.kpavlov.langchain4j.kotlin</groupId>
-        <artifactId>langchain4j-core-kotlin</artifactId>
+        <artifactId>langchain4j-kotlin</artifactId>
         <version>[LATEST_VERSION]</version>
     </dependency>
     
@@ -47,7 +47,7 @@ Add the following to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("me.kpavlov.langchain4j.kotlin:langchain4j-core-kotlin:$LATEST_VERSION")
+    implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:$LATEST_VERSION")
     implementation("dev.langchain4j:langchain4j-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
 }
@@ -113,10 +113,14 @@ Using Make:
 make build
 ```
 
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+Run before submitting your changes
+```shell
+make lint
+```
 
 ## Acknowledgements
 

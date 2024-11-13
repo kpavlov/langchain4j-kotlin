@@ -1,7 +1,8 @@
-package dev.langchain4j.model.chat
+package me.kpavlov.langchain4j.kotlin.model.chat
 
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
+import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.output.Response
@@ -55,9 +56,8 @@ suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse {
  * @see ChatRequest.Builder
  * @see chatAsync
  */
-suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): ChatResponse {
-    return chatAsync(requestBuilder.build())
-}
+suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): ChatResponse =
+    chatAsync(requestBuilder.build())
 
 /**
  * Processes a chat request using a [ChatRequest.Builder] for convenient request
@@ -82,9 +82,8 @@ suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): Ch
  * @see ChatResponse
  * @see ChatRequest.Builder
  */
-fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse {
-    return this.chat(requestBuilder.build())
-}
+fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
+    this.chat(requestBuilder.build())
 
 /**
  * Asynchronously generates a response for a list of chat messages using
@@ -113,5 +112,3 @@ suspend fun ChatLanguageModel.generateAsync(messages: List<ChatMessage>): Respon
     val model = this
     return coroutineScope { model.generate(messages) }
 }
-
-

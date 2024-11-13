@@ -1,19 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
-    <artifactId>langchain4j-kotlin-aggregator</artifactId>
+    <artifactId>root</artifactId>
     <version>0.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>LangChain4j-Kotlin :: Aggregator</name>
     <description>Kotlin enhancements for LangChain4j</description>
     <url>https://github.com/kpavlov/langchain4j-kotlin</url>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/mit</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Konstantin Pavlov</name>
+            <url>https://kpavlov.me</url>
+            <roles>
+                <role>author</role>
+                <role>owner</role>
+            </roles>
+        </developer>
+    </developers>
+
     <modules>
-        <module>langchain4j-core-kotlin</module>
+        <module>langchain4j-kotlin</module>
         <module>reports</module>
     </modules>
+
+    <scm>
+        <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
+        <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
+        <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +50,7 @@
         <java.compiler.release>${java.version}</java.compiler.release>
         <!-- Dependencies -->
         <awaitility.version>4.2.2</awaitility.version>
-        <dotenv-kotlin.version>6.4.2</dotenv-kotlin.version>
+        <finchly.version>0.1.1</finchly.version>
         <junit.version>5.11.3</junit.version>
         <kotlinx.version>1.9.0</kotlinx.version>
         <langchain4j.version>0.35.0</langchain4j.version>
@@ -66,6 +92,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
@@ -75,6 +108,12 @@
                 <groupId>com.willowtreeapps.assertk</groupId>
                 <artifactId>assertk-coroutines-jvm</artifactId>
                 <version>0.28.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>me.kpavlov.finchly</groupId>
+                <artifactId>finchly</artifactId>
+                <version>${finchly.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -93,24 +132,6 @@
             <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-kotlin</artifactId>
-            <version>${dotenv-kotlin.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-test</artifactId>
@@ -134,10 +155,12 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.2</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.5.2</version>
                 </plugin>
@@ -182,6 +205,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.11.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.6.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -212,6 +240,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -284,31 +313,6 @@
         </plugins>
     </build>
 
-    <scm>
-        <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
-        <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
-        <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/license/mit</url>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Konstantin Pavlov</name>
-            <url>https://kpavlov.me</url>
-            <roles>
-                <role>author</role>
-                <role>owner</role>
-            </roles>
-        </developer>
-    </developers>
-
     <profiles>
         <profile>
             <id>release</id>
@@ -351,6 +355,25 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>lint</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openrewrite.maven</groupId>
+                        <artifactId>rewrite-maven-plugin</artifactId>
+                        <version>5.43.0</version>
+                        <configuration>
+                            <exportDatatables>true</exportDatatables>
+                            <activeRecipes>
+                                <recipe>org.openrewrite.maven.BestPractices</recipe>
+                            </activeRecipes>
+                            <exportDatatables>true</exportDatatables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

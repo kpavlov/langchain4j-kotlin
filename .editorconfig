@@ -19,7 +19,7 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
-[pom.xml]
+[*.xml]
 indent_size = 4
 
 [*.kt]
@@ -27,3 +27,5 @@ indent_size = 4
 max_line_length = 100
 ij_kotlin_name_count_to_use_star_import = 999
 ij_kotlin_name_count_to_use_star_import_for_members = 999
+# noinspection EditorConfigKeyCorrectness
+ktlint_function_naming_ignore_when_annotated_with = "Test"
