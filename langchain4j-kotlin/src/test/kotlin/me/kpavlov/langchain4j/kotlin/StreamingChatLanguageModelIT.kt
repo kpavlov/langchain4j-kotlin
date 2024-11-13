@@ -16,19 +16,22 @@ import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.Token
 import me.kpavlov.langchain4j.kotlin.model.chat.generateFlow
 import org.junit.jupiter.api.Assertions.fail
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicReference
 
-@Disabled("Run it manually")
+@EnabledIfEnvironmentVariable(
+    named = "OPENAI_API_KEY",
+    matches = ".+",
+)
 class StreamingChatLanguageModelIT {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val model: StreamingChatLanguageModel =
         OpenAiStreamingChatModel
             .builder()
-            .apiKey(TestEnvironment.env("OPENAI_API_KEY"))
+            .apiKey(TestEnvironment.openaiApiKey)
             .modelName("gpt-4o-mini")
             .temperature(0.0)
             .maxTokens(100)

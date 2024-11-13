@@ -25,6 +25,7 @@
         <!-- Dependencies -->
         <awaitility.version>4.2.2</awaitility.version>
         <dotenv-kotlin.version>6.4.2</dotenv-kotlin.version>
+        <finchly.version>0.1.1</finchly.version>
         <junit.version>5.11.3</junit.version>
         <kotlinx.version>1.9.0</kotlinx.version>
         <langchain4j.version>0.35.0</langchain4j.version>
@@ -66,6 +67,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
@@ -77,6 +85,13 @@
                 <version>0.28.1</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>me.kpavlov.finchly</groupId>
+                <artifactId>finchly</artifactId>
+                <version>${finchly.version}</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -99,18 +114,6 @@
             <version>${dotenv-kotlin.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-test</artifactId>

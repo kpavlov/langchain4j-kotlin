@@ -25,7 +25,7 @@ internal class ChatLanguageModelIT {
     private val model: ChatLanguageModel =
         OpenAiChatModel
             .builder()
-            .apiKey("demo")
+            .apiKey(TestEnvironment.openaiApiKey)
             .modelName("gpt-4o-mini")
             .temperature(0.0)
             .maxTokens(1024)
