@@ -7,7 +7,10 @@ import dev.langchain4j.data.document.source.FileSystemSource
 import org.slf4j.Logger
 import java.nio.file.Paths
 
-suspend fun loadDocument(documentName: String,logger: Logger) : Document {
+suspend fun loadDocument(
+    documentName: String,
+    logger: Logger,
+): Document {
     val source = FileSystemSource(Paths.get("./src/test/resources/data/$documentName"))
     val document = DocumentLoader.load(source, TextDocumentParser())
 

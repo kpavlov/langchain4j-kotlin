@@ -113,10 +113,14 @@ Using Make:
 make build
 ```
 
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+Run before submitting your changes
+```shell
+make lint
+```
 
 ## Acknowledgements
 

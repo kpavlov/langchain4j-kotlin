@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
@@ -10,10 +11,35 @@
     <description>Kotlin enhancements for LangChain4j</description>
     <url>https://github.com/kpavlov/langchain4j-kotlin</url>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/mit</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Konstantin Pavlov</name>
+            <url>https://kpavlov.me</url>
+            <roles>
+                <role>author</role>
+                <role>owner</role>
+            </roles>
+        </developer>
+    </developers>
+
     <modules>
         <module>langchain4j-kotlin</module>
         <module>reports</module>
     </modules>
+
+    <scm>
+        <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
+        <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
+        <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -137,10 +163,12 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.2</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.5.2</version>
                 </plugin>
@@ -185,6 +213,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.11.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.6.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -215,6 +248,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -287,31 +321,6 @@
         </plugins>
     </build>
 
-    <scm>
-        <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
-        <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
-        <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/license/mit</url>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Konstantin Pavlov</name>
-            <url>https://kpavlov.me</url>
-            <roles>
-                <role>author</role>
-                <role>owner</role>
-            </roles>
-        </developer>
-    </developers>
-
     <profiles>
         <profile>
             <id>release</id>
@@ -354,6 +363,25 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>lint</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openrewrite.maven</groupId>
+                        <artifactId>rewrite-maven-plugin</artifactId>
+                        <version>5.43.0</version>
+                        <configuration>
+                            <exportDatatables>true</exportDatatables>
+                            <activeRecipes>
+                                <recipe>org.openrewrite.maven.BestPractices</recipe>
+                            </activeRecipes>
+                            <exportDatatables>true</exportDatatables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
