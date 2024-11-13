@@ -31,12 +31,9 @@ Add the following dependencies to your `pom.xml`:
     
     <!-- Required Dependencies -->
     <dependency>
-        <groupId>dev.langchain4j</groupId>
-        <artifactId>langchain4j-core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.jetbrains.kotlinx</groupId>
-        <artifactId>kotlinx-coroutines-core-jvm</artifactId>
+         <groupId>dev.langchain4j</groupId>
+         <artifactId>langchain4j-open-ai</artifactId>
+        <version>0.36.0</version>
     </dependency>
 </dependencies>
 ```
@@ -48,8 +45,7 @@ Add the following to your `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:$LATEST_VERSION")
-    implementation("dev.langchain4j:langchain4j-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
+    implementation("dev.langchain4j:langchain4j-open-ai:0.36.0")
 }
 ```
 
@@ -57,38 +53,65 @@ dependencies {
 
 ### Basic Chat Request
 
+Extension can convert [`ChatLanguageModel`](https://docs.langchain4j.dev/tutorials/chat-and-language-models) response into [Kotlin Suspending Function](https://kotlinlang.org/docs/coroutines-basics.html):
+
 ```kotlin
 val model: ChatLanguageModel = OpenAiChatModel.builder()
     .apiKey("your-api-key")
     // more configuration parameters here ...
     .build()
 
+// sync call
+val response =
+    model.chat(
+        ChatRequest
+            .builder()
+            .messages(
+                listOf(
+                    SystemMessage.from("You are a helpful assistant"),
+                    UserMessage.from("Hello!"),
+                ),
+            ).build(),
+    )
+println(response.aiMessage().text())
+
 // Using coroutines
-val response = model.chatAsync(ChatRequest.builder()
-    .messages(listOf(
-        SystemMessage.from("You are a helpful assistant"),
-        UserMessage.from("Hello!")
-    ))
-)
+CoroutineScope(Dispatchers.IO).launch {
+    val response =
+        model.chatAsync(
+            ChatRequest
+                .builder()
+                .messages(
+                    listOf(
+                        SystemMessage.from("You are a helpful assistant"),
+                        UserMessage.from("Hello!"),
+                    ),
+                ),
+        )
+    println(response.aiMessage().text())
+}      
 ```
 
-### Streaming Chat
+### Streaming Chat Language Model support
 
+Extension can convert [StreamingChatLanguageModel](https://docs.langchain4j.dev/tutorials/response-streaming) response into [Kotlin Asynchronous Flow](https://kotlinlang.org/docs/flow.html):
 ```kotlin
 val model: StreamingChatLanguageModel = OpenAiStreamingChatModel.builder()
     .apiKey("your-api-key")
     // more configuration parameters here ...
     .build()
 
-model.generateFlow(messages)
-    .collect { reply ->
-        when (reply) {
-            is StreamingChatLanguageModelReply.Token -> 
-                println("Received token: ${reply.token}")
-            is StreamingChatLanguageModelReply.Completion -> 
-                println("Final response: ${reply.response.content().text()}")
-        }
+model.generateFlow(messages).collect { reply ->
+    when (reply) {
+        is Completion ->
+            println(
+                "Final response: ${reply.response.content().text()}",
+            )
+
+        is Token -> println("Received token: ${reply.token}")
+        else -> throw IllegalArgumentException("Unsupported event: $reply")
     }
+}
 ```
 
 ### Kotlin Notebook
