@@ -29,7 +29,12 @@ Add the following dependencies to your `pom.xml`:
         <version>[LATEST_VERSION]</version>
     </dependency>
     
-    <!-- Required Dependencies -->
+    <!-- Extra Dependencies -->
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <version>0.36.0</version>
+    </dependency>
     <dependency>
          <groupId>dev.langchain4j</groupId>
          <artifactId>langchain4j-open-ai</artifactId>
