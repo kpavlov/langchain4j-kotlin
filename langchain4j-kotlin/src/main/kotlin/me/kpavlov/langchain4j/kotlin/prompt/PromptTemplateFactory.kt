@@ -3,6 +3,7 @@ package me.kpavlov.langchain4j.kotlin.prompt
 import dev.langchain4j.spi.prompt.PromptTemplateFactory
 import me.kpavlov.langchain4j.kotlin.Configuration
 import me.kpavlov.langchain4j.kotlin.internal.SENSITIVE
+import org.slf4j.Logger
 
 /**
  * Factory class for creating instances of [RenderablePromptTemplate].
@@ -17,7 +18,7 @@ import me.kpavlov.langchain4j.kotlin.internal.SENSITIVE
  * @property renderer Renderer used to render the templates with provided variables.
  */
 public open class PromptTemplateFactory : PromptTemplateFactory {
-    protected val logger = org.slf4j.LoggerFactory.getLogger(javaClass)
+    protected val logger: Logger = org.slf4j.LoggerFactory.getLogger(javaClass)
 
     private val source: PromptTemplateSource = Configuration.promptTemplateSource
     private val renderer: TemplateRenderer = Configuration.promptTemplateRenderer
