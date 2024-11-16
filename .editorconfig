@@ -29,3 +29,4 @@ ij_kotlin_name_count_to_use_star_import = 999
 ij_kotlin_name_count_to_use_star_import_for_members = 999
 # noinspection EditorConfigKeyCorrectness
 ktlint_function_naming_ignore_when_annotated_with = "Test"
+ij_kotlin_packages_to_use_import_on_demand = unset
