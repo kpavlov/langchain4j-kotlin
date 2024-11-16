@@ -1,7 +1,7 @@
 package me.kpavlov.langchain4j.kotlin.prompt
 
-public object SimpleTemplateRenderer : TemplateRenderer {
-    override fun render(
+public class SimpleTemplateRenderer : TemplateRenderer {
+    public override fun render(
         template: String,
         variables: Map<String, Any?>,
     ): String {

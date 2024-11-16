@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class SimpleTemplateRendererTest {
+    private val subject = SimpleTemplateRenderer()
+
     @Test
     fun `render returns original string when no placeholders are present`() {
         val template = "No placeholders here"
         val variables: Map<String, Any?> = mapOf("key" to "value")
 
-        val result = SimpleTemplateRenderer.render(template, variables)
+        val result = subject.render(template, variables)
 
         assertEquals(template, result)
     }
@@ -20,7 +22,7 @@ class SimpleTemplateRendererTest {
         val template = "Hello, {{name}}"
         val variables: Map<String, Any?> = mapOf("name" to "John")
 
-        val result = SimpleTemplateRenderer.render(template, variables)
+        val result = subject.render(template, variables)
 
         assertEquals("Hello, John", result)
     }
@@ -30,7 +32,7 @@ class SimpleTemplateRendererTest {
         val template = "Hello, {{name}}, you are {{age}} years old."
         val variables: Map<String, Any?> = mapOf("name" to "John", "age" to 47)
 
-        val result = SimpleTemplateRenderer.render(template, variables)
+        val result = subject.render(template, variables)
 
         assertEquals("Hello, John, you are 47 years old.", result)
     }
@@ -42,7 +44,7 @@ class SimpleTemplateRendererTest {
 
         val exception =
             assertThrows<IllegalArgumentException> {
-                SimpleTemplateRenderer.render(
+                subject.render(
                     template,
                     variables,
                 )
