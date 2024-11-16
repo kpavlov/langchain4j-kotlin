@@ -4,6 +4,18 @@ import dev.langchain4j.spi.prompt.PromptTemplateFactory
 import me.kpavlov.langchain4j.kotlin.Configuration
 import me.kpavlov.langchain4j.kotlin.internal.SENSITIVE
 
+/**
+ * Factory class for creating instances of [RenderablePromptTemplate].
+ *
+ * This class is responsible for obtaining prompt templates from a [PromptTemplateSource]
+ * and rendering them using a [TemplateRenderer]. If the specified template cannot be found,
+ * it will fallback to using the input template content.
+ *
+ * @constructor Creates an instance of [PromptTemplateFactory] using the provided source and renderer.
+ * @property logger Logger instance for logging information and debugging messages.
+ * @property source Source to obtain prompt templates by their name.
+ * @property renderer Renderer used to render the templates with provided variables.
+ */
 public open class PromptTemplateFactory : PromptTemplateFactory {
     protected val logger = org.slf4j.LoggerFactory.getLogger(javaClass)
 

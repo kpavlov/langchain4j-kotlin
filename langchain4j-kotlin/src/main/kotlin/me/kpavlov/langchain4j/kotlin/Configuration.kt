@@ -4,6 +4,13 @@ import me.kpavlov.langchain4j.kotlin.prompt.PromptTemplateSource
 import me.kpavlov.langchain4j.kotlin.prompt.TemplateRenderer
 import java.util.Properties
 
+/**
+ * Configuration is an object responsible for loading and providing access to application properties.
+ *
+ * This object provides utilities to access various configuration settings and components such as prompt templates and
+ * their renderers. The configurations are loaded from a properties file, and components are instantiated dynamically
+ * based on the class names specified in the properties.
+ */
 object Configuration {
     val properties: Properties = loadProperties()
 
