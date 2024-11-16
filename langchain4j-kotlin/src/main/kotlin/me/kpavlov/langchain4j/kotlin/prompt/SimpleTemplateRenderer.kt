@@ -1,8 +1,10 @@
 package me.kpavlov.langchain4j.kotlin.prompt
 
+import me.kpavlov.langchain4j.kotlin.TemplateContent
+
 public class SimpleTemplateRenderer : TemplateRenderer {
     public override fun render(
-        template: String,
+        template: TemplateContent,
         variables: Map<String, Any?>,
     ): String {
         val undefinedKeys =
