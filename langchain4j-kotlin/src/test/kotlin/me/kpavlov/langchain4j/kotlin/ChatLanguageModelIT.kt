@@ -16,9 +16,14 @@ import me.kpavlov.langchain4j.kotlin.model.chat.generateAsync
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIfEnvironmentVariable(
+    named = "OPENAI_API_KEY",
+    matches = ".+",
+)
 internal class ChatLanguageModelIT {
     private val logger = LoggerFactory.getLogger(javaClass)
 

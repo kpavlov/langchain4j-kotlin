@@ -8,7 +8,6 @@ import dev.langchain4j.model.output.Response
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import me.kpavlov.langchain4j.kotlin.internal.PII
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(StreamingChatLanguageModel::class.java)
@@ -78,7 +77,7 @@ fun StreamingChatLanguageModel.generateFlow(
             object : StreamingResponseHandler<AiMessage> {
                 override fun onNext(token: String) {
                     logger.trace(
-                        me.kpavlov.langchain4j.kotlin.internal.PII,
+                        me.kpavlov.langchain4j.kotlin.internal.SENSITIVE,
                         "Received token: {}",
                         token,
                     )
@@ -87,7 +86,7 @@ fun StreamingChatLanguageModel.generateFlow(
 
                 override fun onComplete(response: Response<AiMessage>) {
                     logger.trace(
-                        me.kpavlov.langchain4j.kotlin.internal.PII,
+                        me.kpavlov.langchain4j.kotlin.internal.SENSITIVE,
                         "Received response: {}",
                         response,
                     )

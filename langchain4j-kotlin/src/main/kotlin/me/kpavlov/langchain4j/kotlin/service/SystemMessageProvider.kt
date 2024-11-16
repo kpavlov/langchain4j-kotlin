@@ -1,6 +1,7 @@
 package me.kpavlov.langchain4j.kotlin.service
 
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
+import me.kpavlov.langchain4j.kotlin.PromptContent
 
 /**
  * Interface for providing LLM system messages based on a given chat memory identifier.
@@ -12,5 +13,5 @@ public interface SystemMessageProvider {
      * @param chatMemoryID Identifier for the chat memory used to generate the system message.
      * @return A system prompt string associated with the provided chat memory identifier, maybe `null`
      */
-    public fun getSystemMessage(chatMemoryID: ChatMemoryId): String?
+    public fun getSystemMessage(chatMemoryID: ChatMemoryId): PromptContent?
 }
