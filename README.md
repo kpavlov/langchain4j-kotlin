@@ -10,10 +10,7 @@ Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j
 
 See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
 
-<p style="background-color: powderblue; padding: 10px; border-radius: 10px">
-ℹ️ I am verifying my ideas for improving LangChain4j here. 
-If an idea is accepted, the code might be adopted into the original [LangChain4j](https://github.com/langchain4j) project. If not - you may enjoy it here.
-</p>
+> ℹ️ I am verifying my ideas for improving LangChain4j here. If an idea is accepted, the code might be adopted into the original [LangChain4j](https://github.com/langchain4j) project. If not - you may enjoy it here.
 
 ## Features
 
