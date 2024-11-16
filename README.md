@@ -9,10 +9,19 @@ Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j
 
 See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
 
+<p style="background-color: powderblue; padding: 10px; border-radius: 10px">
+ℹ️ I am verifying my ideas for improving LangChain4j here. 
+If an idea is accepted, the code might be adopted into the original [LangChain4j](https://github.com/langchain4j) project. If not - you may enjoy it here.
+</p>
+
 ## Features
 
 - ✨ [Kotlin Coroutine](https://kotlinlang.org/docs/coroutines-guide.html) support for [ChatLanguageModels](https://docs.langchain4j.dev/tutorials/chat-and-language-models)
 - 🌊 [Kotlin Asynchronous Flow](https://kotlinlang.org/docs/flow.html) support for [StreamingChatLanguageModels](https://docs.langchain4j.dev/tutorials/ai-services#streaming)
+- 💄[External Prompt Templates](docs/PromptTemplates.md) support. Basic implementation loads both system and user prompt
+  templates from the classpath,
+  but [PromptTemplateSource](langchain4j-kotlin/src/main/kotlin/me/kpavlov/langchain4j/kotlin/prompt/PromptTemplateSource.kt)
+  provides extension mechanism.
 
 ## Installation
 
