@@ -21,13 +21,13 @@ This configuration specifies the source and renderer for the prompt templates.
 Include the necessary classes. Your prompt templates will be sourced from the classpath and rendered using a simple
 template renderer.
 
-File: default-system-prompt.mustache
+File: `prompts/default-system-prompt.mustache`
 
 ```mustache
 You are helpful assistant using chatMemoryID={{chatMemoryID}}
 ```
 
-File: default-user-prompt.mustache
+File: `prompts/default-user-prompt.mustache`
 
 ```mustache
 Hello, {{userName}}! {{message}}
@@ -38,26 +38,37 @@ Hello, {{userName}}! {{message}}
 Define an interface that uses these templates and configure the AiServices builder:
 
 ```kotlin
-private interface Assistant {
-  @UserMessage("default-user-prompt.mustache")
-  fun askQuestion(@UserName userName: String, @V("message") question: String): String
+// Define assistant interface
+interface Assistant {
+  @UserMessage(
+    // "Hello, {{userName}}! {{message}}"
+    "prompts/default-user-prompt.mustache", //template name/resource
+  )
+  fun askQuestion(
+    @UserName userName: String,
+    @V("message") question: String,
+  ): String
 }
+
+// Define Chain of Thoughts
+val assistant: Assistant =
+  AiServices
+    .builder(Assistant::class.java)
+    .systemMessageProvider(
+      TemplateSystemMessageProvider(
+        // "You are helpful assistant using chatMemoryID={{chatMemoryID}}"
+        "prompts/default-system-prompt.mustache", // template name/recource
+      ),
+    ).chatLanguageModel(model)
+    .build()
+
+// Run it!
+val response =
+  assistant.askQuestion(
+    userName = "My friend",
+    question = "How are you?",
+  )
 ```
-
-Create and run your assistant:
-
-```kotlin
-val assistant = AiServices.builder(Assistant::class.java)
-  .systemMessageProvider(TemplateSystemMessageProvider("default-system-prompt.mustache"))
-  .chatLanguageModel(model)
-  .build()
-
-val response = assistant.askQuestion(
-  userName = "My friend",
-  question = "How are you?"
-)
-```
-
 System and user prompts will be:
 
 - **System prompt:** "You are helpful assistant using chatMemoryID=default"
