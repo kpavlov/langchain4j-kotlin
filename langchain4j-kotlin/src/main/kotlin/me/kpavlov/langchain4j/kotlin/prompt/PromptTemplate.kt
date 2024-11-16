@@ -1,5 +1,11 @@
 package me.kpavlov.langchain4j.kotlin.prompt
 
-interface PromptTemplate : dev.langchain4j.spi.prompt.PromptTemplateFactory.Template {
+public interface PromptTemplate {
     fun content(): String
+}
+
+public data class SimplePromptTemplate(
+    private val content: String,
+) : PromptTemplate {
+    override fun content(): String = content
 }
