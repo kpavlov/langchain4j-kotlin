@@ -1,12 +1,12 @@
 # Customizing Prompt Templates
 
 This guide demonstrates how to configure and use prompt templates with
-the [LangChain4J's AiServices](https://docs.langchain4j.dev/tutorials/ai-services). This setup involves
-configuring prompt templates, defining and extending prompt template sources and template rendering.
+the [LangChain4J's AiServices](https://docs.langchain4j.dev/tutorials/ai-services). This setup involves configuring
+prompt templates, defining and extending prompt template sources and template rendering.
 
 ## Creating and Using Prompt Template
 
-Let's start with built-in mechanizm of loading prompt template from classpath. Your prompt templates should be located
+Let's start with built-in mechanism of loading prompt template from classpath. Your prompt templates should be located
 in the classpath, e.g.
 
 File: `prompts/default-system-prompt.mustache`
@@ -65,7 +65,7 @@ System and user prompts will be:
 ## How does it work
 
 In the default implementation, `TemplateSystemMessageProvider` handles the system prompt template and `AiServices` uses
-the templates to generate responses.
+the templates to generate prompts.
 
 `PromptTemplateFactory` provides `PromptTemplateFactory.Template` for `AiServices`. It is registered automatically via
 Java ServiceLoaders mechanism. This class is responsible for obtaining prompt templates from a `PromptTemplateSource`.
