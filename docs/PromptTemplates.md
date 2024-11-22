@@ -57,6 +57,7 @@ val response =
     question = "How are you?",
   )
 ```
+
 System and user prompts will be:
 
 - **System prompt:** "You are helpful assistant using chatMemoryID=default"

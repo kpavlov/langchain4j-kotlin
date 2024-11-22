@@ -107,6 +107,7 @@ CoroutineScope(Dispatchers.IO).launch {
 ### Streaming Chat Language Model support
 
 Extension can convert [StreamingChatLanguageModel](https://docs.langchain4j.dev/tutorials/response-streaming) response into [Kotlin Asynchronous Flow](https://kotlinlang.org/docs/flow.html):
+
 ```kotlin
 val model: StreamingChatLanguageModel = OpenAiStreamingChatModel.builder()
     .apiKey("your-api-key")
@@ -173,6 +174,7 @@ runBlocking {
   println(result.content().text())
 }
 ```
+
 Try [this Kotlin Notebook](langchain4j-kotlin/notebooks/lc4kNotebook.ipynb)  yourself:
 ![](docs/kotlin-notebook-1.png)
 
@@ -189,11 +191,13 @@ OPENAI_API_KEY=sk-xxxxx
 ### Building the Project
 
 Using Maven:
+
 ```shell
 mvn clean verify
 ```
 
 Using Make:
+
 ```shell
 make build
 ```
@@ -203,6 +207,7 @@ make build
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 Run before submitting your changes
+
 ```shell
 make lint
 ```
