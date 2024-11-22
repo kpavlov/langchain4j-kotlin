@@ -144,8 +144,8 @@ You can easyly get started with LangChain4j-Kotlin notebooks:
 %useLatestDescriptors
 %use coroutines
 
-@file:DependsOn("dev.langchain4j:langchain4j:0.36.0")
-@file:DependsOn("dev.langchain4j:langchain4j-open-ai:0.36.0")
+@file:DependsOn("dev.langchain4j:langchain4j:0.36.2")
+@file:DependsOn("dev.langchain4j:langchain4j-open-ai:0.36.2")
 
 // add maven dependency
 @file:DependsOn("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:0.1.1")
