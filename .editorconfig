@@ -23,6 +23,7 @@ trim_trailing_whitespace = false
 indent_size = 4
 
 [*.kt]
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
 indent_size = 4
 max_line_length = 100
 ij_kotlin_name_count_to_use_star_import = 999
