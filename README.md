@@ -20,6 +20,8 @@ See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897
   templates from the classpath,
   but [PromptTemplateSource](langchain4j-kotlin/src/main/kotlin/me/kpavlov/langchain4j/kotlin/prompt/PromptTemplateSource.kt)
   provides extension mechanism.
+- 💾[Async Document Extensions](docs/AsyncIO.md)] support parallel document processing with Kotlin coroutines for
+  efficient I/O operations in LangChain4j
 
 ## Installation
 
