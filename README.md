@@ -5,7 +5,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/644f664ad05a4a009b299bc24c8be4b8)](https://app.codacy.com/gh/kpavlov/langchain4j-kotlin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/644f664ad05a4a009b299bc24c8be4b8)](https://app.codacy.com/gh/kpavlov/langchain4j-kotlin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/176ba2c4e657d3e7981a/maintainability)](https://codeclimate.com/github/kpavlov/langchain4j-kotlin/maintainability)
-
+[![Api Docs](https://img.shields.io/badge/api-docs-blue)](https://kpavlov.github.io/langchain4j-kotlin/api/)
 Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j), providing coroutine support and Flow-based streaming capabilities for chat language models.
 
 See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
