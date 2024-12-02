@@ -23,6 +23,8 @@ See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897
 - 💾[Async Document Processing Extensions](docs/AsyncIO.md) support parallel document processing with Kotlin coroutines
   for efficient I/O operations in LangChain4j
 
+See [api docs](https://kpavlov.github.io/langchain4j-kotlin/api/) for more details.
+
 ## Installation
 
 ### Maven

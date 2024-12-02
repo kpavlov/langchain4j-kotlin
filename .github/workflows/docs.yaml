@@ -33,7 +33,7 @@ jobs:
         run: |-
           mvn dokka:dokka -pl !reports && \
           mkdir -p target/docs/ && \
-          cp -R langchain4j-kotlin/target/dokka target/docs
+          cp -R langchain4j-kotlin/target/dokka target/docs/api
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
