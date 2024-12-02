@@ -3,6 +3,7 @@ package me.kpavlov.langchain4j.kotlin.data.document
 import assertk.assertThat
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
+import assertk.assertions.isSameInstanceAs
 import dev.langchain4j.data.document.Document
 import dev.langchain4j.data.document.Document.ABSOLUTE_DIRECTORY_PATH
 import dev.langchain4j.data.document.Document.FILE_NAME
@@ -18,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 
 @ExtendWith(MockitoExtension::class)
-internal class DocumentParserExtensionsTest {
+internal class DocumentParserExtensionsKtTest {
     @Mock
     private lateinit var documentParser: DocumentParser
 
@@ -53,6 +54,25 @@ internal class DocumentParserExtensionsTest {
                     FILE_NAME to "bar.txt",
                     "title" to "Bar",
                 )
+        }
+    }
+
+    @Test
+    fun `parseAsync should return parser document when no source metadata is present`() {
+        val documentContent = "parsed document content"
+        runTest {
+            val inputStream = documentContent.byteInputStream()
+            val documentMetadata = Metadata.from(mapOf<String, Any?>("title" to "Bar"))
+            val fileMetadata = Metadata.from(mapOf<String, Any?>())
+            val document = Document.from(documentContent, documentMetadata)
+
+            whenever(documentSource.inputStream()).thenReturn(inputStream)
+            whenever(documentParser.parse(inputStream)).thenReturn(document)
+            whenever(documentSource.metadata()).thenReturn(fileMetadata)
+
+            val result = documentParser.parseAsync(documentSource, Dispatchers.IO)
+
+            assertThat(result).isSameInstanceAs(document)
         }
     }
 }
