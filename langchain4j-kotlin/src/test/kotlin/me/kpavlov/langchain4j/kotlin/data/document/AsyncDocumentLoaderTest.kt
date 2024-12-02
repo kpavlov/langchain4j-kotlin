@@ -2,6 +2,8 @@ package me.kpavlov.langchain4j.kotlin.data.document
 
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.containsExactly
+import assertk.assertions.hasSize
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
 import dev.langchain4j.data.document.DocumentSource
@@ -14,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 
 internal class AsyncDocumentLoaderTest {
@@ -48,10 +51,11 @@ internal class AsyncDocumentLoaderTest {
     @Test
     fun `Should load all documents asynchronously`() =
         runTest {
-            val path = Paths.get("./src/test/resources/data")
+            println("AsyncDocumentLoaderTest.Should load all documents asynchronously")
+            val rootPath = Paths.get("./src/test/resources/data")
             val paths =
                 Files
-                    .walk(path)
+                    .walk(rootPath)
                     .filter { Files.isRegularFile(it) }
                     .toList()
 
@@ -65,7 +69,7 @@ internal class AsyncDocumentLoaderTest {
                                 loadAsync(
                                     source = FileSystemSource(path),
                                     parser = parser,
-                                    dispatcher = ioScope,
+                                    context = ioScope,
                                 )
                             } catch (e: Exception) {
                                 logger.error("Failed to load document: $path", e)
@@ -79,5 +83,26 @@ internal class AsyncDocumentLoaderTest {
                 assertThat(it.text()).isNotEmpty()
                 assertThat(it.metadata()).isNotNull()
             }
+        }
+
+    @Test
+    fun `Should loadDocumentsAsync`() =
+        runTest {
+            val documents =
+                loadDocumentsAsync(
+                    recursive = true,
+                    documentParser = parser,
+                    directoryPaths = listOf(Path.of("./src/test/resources/data")),
+                )
+            assertThat(documents)
+                .hasSize(3)
+
+            val documentNames = documents.map { it.metadata().getString("file_name") }
+            assertThat(documentNames)
+                .containsExactly(
+                    "captain-blood.txt",
+                    "quantum-computing.txt",
+                    "blumblefang.txt",
+                )
         }
 }
