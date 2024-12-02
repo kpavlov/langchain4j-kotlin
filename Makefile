@@ -1,6 +1,11 @@
 build:
 	  mvn clean verify site
 
+apidocs:
+	  mvn clean dokka:dokka -pl !reports && \
+    mkdir -p target/docs && \
+		cp -R langchain4j-kotlin/target/dokka target/docs/api
+
 lint:prepare
 	  ktlint && \
     mvn spotless:check
@@ -17,3 +22,4 @@ prepare:
 	  brew install ktlint --quiet
 
 all: format lint build
+
