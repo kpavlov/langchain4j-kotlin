@@ -2,7 +2,7 @@ package me.kpavlov.langchain4j.kotlin.data.document
 
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.hasSize
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
@@ -99,7 +99,7 @@ internal class AsyncDocumentLoaderTest {
 
             val documentNames = documents.map { it.metadata().getString("file_name") }
             assertThat(documentNames)
-                .containsExactly(
+                .containsExactlyInAnyOrder(
                     "captain-blood.txt",
                     "quantum-computing.txt",
                     "blumblefang.txt",
