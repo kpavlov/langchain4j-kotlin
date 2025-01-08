@@ -204,7 +204,7 @@
                 <plugin>
                     <groupId>org.jetbrains.kotlinx</groupId>
                     <artifactId>kover-maven-plugin</artifactId>
-                    <version>0.9.0</version>
+                    <version>0.9.1</version>
                     <extensions>true</extensions>
                 </plugin>
                 <plugin>
