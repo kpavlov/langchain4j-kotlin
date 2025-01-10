@@ -11,7 +11,9 @@ Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j
 
 See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
 
-> ℹ️ I am verifying my ideas for improving LangChain4j here. If an idea is accepted, the code might be adopted into the original [LangChain4j](https://github.com/langchain4j) project. If not - you may enjoy it here.
+> ℹ️ This project is a playground for [LangChain4j's Kotlin API](https://docs.langchain4j.dev/tutorials/kotlin). If
+> accepted, some code might be adopted into the original [LangChain4j](https://github.com/langchain4j) project and removed
+> from here. Mean while, enjoy it here.
 
 ## Features
 
