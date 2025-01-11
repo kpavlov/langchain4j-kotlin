@@ -1,105 +1,78 @@
-# Customizing Prompt Templates
+# Prompt Templates Guide
 
-This guide demonstrates how to configure and use prompt templates with
-the [LangChain4J's AiServices](https://docs.langchain4j.dev/tutorials/ai-services). This setup involves configuring
-prompt templates, defining and extending prompt template sources and template rendering.
+Learn how to use prompt templates with LangChain4J's AiServices. This guide covers setup, configuration, and
+customization.
 
-## Creating and Using Prompt Template
+## Create Your First Template
 
-Let's start with built-in mechanism of loading prompt template from classpath. Your prompt templates should be located
-in the classpath, e.g.
+Place your prompt templates in the classpath:
 
-File: `prompts/default-system-prompt.mustache`
-
+System prompt template (path: `prompts/default-system-prompt.mustache`):
 ```mustache
 You are helpful assistant using chatMemoryID={{chatMemoryID}}
 ```
 
-File: `prompts/default-user-prompt.mustache`
-
+User prompt template (path: `prompts/default-user-prompt.mustache`):
 ```mustache
 Hello, {{userName}}! {{message}}
 ```
 
-## Example with AiServices
+## Quick Start
 
-Define an interface that uses these templates and configure the AiServices builder:
+Here's how to use templates in your code:
 
 ```kotlin
-// Define assistant interface
+// Define your assistant
 interface Assistant {
-  @UserMessage(
-    // "Hello, {{userName}}! {{message}}"
-    "prompts/default-user-prompt.mustache", //template name/resource
-  )
+  @UserMessage("prompts/default-user-prompt.mustache")
   fun askQuestion(
-    @UserName userName: String,
+    @UserName userName: String, // Compile with javac `parameters=true` 
     @V("message") question: String,
   ): String
 }
 
-// Define Chain of Thoughts
+// Set up the assistant
 val assistant: Assistant =
   AiServices
     .builder(Assistant::class.java)
     .systemMessageProvider(
-      TemplateSystemMessageProvider(
-        // "You are helpful assistant using chatMemoryID={{chatMemoryID}}"
-        "prompts/default-system-prompt.mustache", // template name/recource
-      ),
+      TemplateSystemMessageProvider("prompts/default-system-prompt.mustache")
     ).chatLanguageModel(model)
     .build()
 
-// Run it!
-val response =
-  assistant.askQuestion(
-    userName = "My friend",
-    question = "How are you?",
-  )
+// Use it
+val response = assistant.askQuestion(
+  userName = "My friend",
+  question = "How are you?"
+)
 ```
 
-System and user prompts will be:
+This creates:
 
-- **System prompt:** "You are helpful assistant using chatMemoryID=default"
-- **User Prompt:** "Hello, My friend! How are you?"
+- System prompt: "You are helpful assistant using chatMemoryID=default"
+- User prompt: "Hello, My friend! How are you?"
 
-## How does it work
+## Under the Hood
 
-In the default implementation, `TemplateSystemMessageProvider` handles the system prompt template and `AiServices` uses
-the templates to generate prompts.
+Key components:
 
-`PromptTemplateFactory` provides `PromptTemplateFactory.Template` for `AiServices`. It is registered automatically via
-Java ServiceLoaders mechanism. This class is responsible for obtaining prompt templates from a `PromptTemplateSource`.
-If the specified template cannot be found, it will fallback to using default LC4J's the input template content.
+- `PromptTemplateFactory`: Gets templates and handles defaults
+- `ClasspathPromptTemplateSource`: Loads templates from your classpath
+- `SimpleTemplateRenderer`: Replaces `{{key}}` placeholders with values
+- `RenderablePromptTemplate`: Connects everything together
 
-`ClasspathPromptTemplateSource` is implementing `PromptTemplateSource` interface and provides a mechanism to load prompt
-templates from the classpath using the template name as the resource identifier. It attempts to locate the template file
-in the classpath and reads its contents as the template data. It is registered via property file and might be
-overridden.
+## Customize Your Setup
 
-Implementers of the `TemplateRenderer` interface will typically replace placeholders in the template with corresponding
-values from the variables map.
+Configure templates in `langchain4j-kotlin.properties`:
 
-`SimpleTemplateRenderer` finds and replaces placeholders in the template in the Mustache-like format `{{key}}`, where
-`key`
-corresponds to an entry in the variables map. If any placeholders in the template are not defined in the variables map,
-an `IllegalArgumentException` will be thrown.
+| Setting                    | Purpose                   | Default                         |
+|----------------------------|---------------------------|---------------------------------|
+| `prompt.template.source`   | Where templates load from | `ClasspathPromptTemplateSource` |
+| `prompt.template.renderer` | How templates render      | `SimpleTemplateRenderer`        |
 
-`RenderablePromptTemplate` implements both `PromptTemplate` and LangChain4j's `PromptTemplateFactory.Template`
-interfaces. It uses a `TemplateRenderer` to render the template content using provided variables.
+### Add Custom Template Sources
 
-## Customization
-
-You may customize templates via configuration file `langchain4j-kotlin.properties`, located in the classpath.
-
-| Key                        | Description       | Default Value                                                        |
-|----------------------------|-------------------|----------------------------------------------------------------------|
-| `prompt.template.source`   | Template source   | `me.kpavlov.langchain4j.kotlin.prompt.ClasspathPromptTemplateSource` |
-| `prompt.template.renderer` | Template renderer | `me.kpavlov.langchain4j.kotlin.prompt.SimpleTemplateRenderer`        |
-
-### Extending PromptTemplateSource
-
-To create a custom template source, implement the PromptTemplateSource interface:
+Create your own source by implementing `PromptTemplateSource`:
 
 ```kotlin
 interface PromptTemplateSource {
@@ -107,13 +80,9 @@ interface PromptTemplateSource {
 }
 ```
 
-Example implementation for Redis and Jedis:
+Example using Redis:
 
 ```kotlin
-package com.example
-
-// Redis/Jedis-backed template source
-
 class RedisPromptTemplateSource(private val jedis: Jedis) : PromptTemplateSource {
   override fun getTemplate(name: TemplateName): PromptTemplate? {
     return jedis.get(name)?.let {
@@ -123,15 +92,14 @@ class RedisPromptTemplateSource(private val jedis: Jedis) : PromptTemplateSource
 }
 ```
 
-Register your implementation in the `langchain4j-kotlin.properties` configuration file:
-
+Enable it in your properties:
 ```properties
 prompt.template.source=com.example.RedisPromptTemplateSource
 ```
 
-### Extending TemplateRenderer
+### Create Custom Renderers
 
-To create a custom template renderer, implement the TemplateRenderer interface:
+Build your own renderer:
 
 ```kotlin
 interface TemplateRenderer {
@@ -142,27 +110,23 @@ interface TemplateRenderer {
 }
 ```
 
-Example implementation:
-
+Example:
 ```kotlin
-package com.example
-
-// Freemarker-based renderer
 class MyTemplateRenderer : TemplateRenderer {
-
   override fun render(template: TemplateContent, variables: Map<String, Any?>): String {
     TODO("Add implementation here")
   }
 }
 ```
 
-Register your implementation in the `langchain4j-kotlin.properties` configuration file:
-
+Enable it:
 ```properties
 prompt.template.renderer=com.example.MyTemplateRenderer
 ```
 
-## Examples
+## Learn More
 
-You may find the unit test with the
-example [here](../langchain4j-kotlin/src/test/kotlin/me/kpavlov/langchain4j/kotlin/service/ServiceWithPromptTemplatesTest.kt)
+Find complete examples:
+
+- [Unit test example](../langchain4j-kotlin/src/test/kotlin/me/kpavlov/langchain4j/kotlin/service/ServiceWithPromptTemplatesTest.kt)
+- [Using from Java](../samples/src/main/java/me/kpavlov/langchain4j/kotlin/samples/ServiceWithTemplateSourceJavaExample.java)

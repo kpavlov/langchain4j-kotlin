@@ -14,12 +14,20 @@ import me.kpavlov.langchain4j.kotlin.prompt.TemplateRenderer
  * @property promptTemplateSource Source from which the prompt templates are fetched.
  * @property promptTemplateRenderer Renderer used to render the content with specific variables.
  */
-public open class TemplateSystemMessageProvider(
+open class TemplateSystemMessageProvider(
     private val templateName: TemplateName,
     private val promptTemplateSource: PromptTemplateSource = Configuration.promptTemplateSource,
     private val promptTemplateRenderer: TemplateRenderer = Configuration.promptTemplateRenderer,
 ) : SystemMessageProvider {
-    public open fun templateName(): TemplateName = templateName
+    open fun templateName(): TemplateName = templateName
+
+    constructor(
+        templateName: TemplateName,
+    ) : this(
+        templateName = templateName,
+        promptTemplateSource = Configuration.promptTemplateSource,
+        promptTemplateRenderer = Configuration.promptTemplateRenderer,
+    )
 
     /**
      * Generates a system message using a template and the provided chat memory identifier.

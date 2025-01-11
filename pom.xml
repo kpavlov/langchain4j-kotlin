@@ -47,9 +47,10 @@
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
         <kotlin.version>2.1.0</kotlin.version>
+        <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
-        <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
+        <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <!-- Dependencies -->
@@ -275,6 +276,14 @@
                         </args>
                         <javaParameters>true</javaParameters>
                         <multiPlatform>true</multiPlatform>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
             </plugins>
