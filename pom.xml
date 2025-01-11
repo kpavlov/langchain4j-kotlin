@@ -30,6 +30,7 @@
 
     <modules>
         <module>langchain4j-kotlin</module>
+        <module>samples</module>
         <module>reports</module>
     </modules>
 
@@ -41,13 +42,14 @@
     </scm>
 
     <properties>
-        <argLine />
+        <argLine/>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
         <kotlin.version>2.1.0</kotlin.version>
-        <kotlin.api.version>1.9</kotlin.api.version>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
+        <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <!-- Dependencies -->
@@ -237,17 +239,17 @@
                         <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                         <ratchetFrom>origin/main</ratchetFrom>
                         <java>
-                            <palantirJavaFormat />
+                            <palantirJavaFormat/>
                         </java>
                         <kotlin>
-                            <ktlint />
+                            <ktlint/>
                         </kotlin>
                         <markdown>
                             <includes>
                                 <!-- You have to set the target manually -->
                                 <include>**/*.md</include>
                             </includes>
-                            <flexmark />
+                            <flexmark/>
                         </markdown>
                         <pom>
                             <includes>
@@ -261,26 +263,27 @@
                         </pom>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <args>
+                            <arg>-Xjsr305=strict</arg>
+                            <!--<arg>-Werror</arg>-->
+                        </args>
+                        <javaParameters>true</javaParameters>
+                        <multiPlatform>true</multiPlatform>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <!--suppress KotlinMavenPluginPhase -->
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <args>
-                        <arg>-Xjsr305=strict</arg>
-                        <!--<arg>-Werror</arg>-->
-                    </args>
-                    <javaParameters>true</javaParameters>
-                    <multiPlatform>true</multiPlatform>
-                    <languageVersion>${kotlin.api.version}</languageVersion>
-                    <apiVersion>${kotlin.api.version}</apiVersion>
-                </configuration>
             </plugin>
 
             <plugin>

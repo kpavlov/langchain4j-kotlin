@@ -47,12 +47,12 @@ Add the following dependencies to your `pom.xml`:
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>0.36.2</version>
+      <version>1.0.0-alpha1</version>
     </dependency>
     <dependency>
          <groupId>dev.langchain4j</groupId>
          <artifactId>langchain4j-open-ai</artifactId>
-      <version>0.36.2</version>
+      <version>1.0.0-alpha1</version>
     </dependency>
 </dependencies>
 ```
@@ -64,7 +64,7 @@ Add the following to your `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:$LATEST_VERSION")
-  implementation("dev.langchain4j:langchain4j-open-ai:0.36.2")
+  implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-alpha1")
 }
 ```
 
@@ -82,34 +82,31 @@ val model: ChatLanguageModel = OpenAiChatModel.builder()
 
 // sync call
 val response =
-    model.chat(
-        ChatRequest
-            .builder()
-            .messages(
-                listOf(
-                    SystemMessage.from("You are a helpful assistant"),
-                    UserMessage.from("Hello!"),
-                ),
-            ).build(),
-    )
+  model.chat(chatRequest {
+    messages += systemMessage("You are a helpful assistant")
+    messages += userMessage("Hello!")
+  })
 println(response.aiMessage().text())
 
 // Using coroutines
 CoroutineScope(Dispatchers.IO).launch {
     val response =
-        model.chatAsync(
-            ChatRequest
-                .builder()
-                .messages(
-                    listOf(
-                        SystemMessage.from("You are a helpful assistant"),
-                        UserMessage.from("Hello!"),
-                    ),
-                ),
-        )
+      model.chatAsync {
+        messages += systemMessage("You are a helpful assistant")
+        messages += userMessage("Say Hello")
+        parameters(OpenAiChatRequestParameters.builder()) {
+          temperature(0.1)
+          seed(42) // OpenAI specific parameter
+        }
+      }
     println(response.aiMessage().text())
 }      
 ```
+
+Sample code:
+
+- [ChatModelExample.kt](samples/src/main/kotlin/me/kpavlov/langchain4j/kotlin/samples/ChatModelExample.kt)
+- [OpenAiChatModelExample.kt](samples/src/main/kotlin/me/kpavlov/langchain4j/kotlin/samples/OpenAiChatModelExample.kt)
 
 ### Streaming Chat Language Model support
 
@@ -157,9 +154,12 @@ You can easyly get started with LangChain4j-Kotlin notebooks:
 // ... or add project's target/classes to classpath
 //@file:DependsOn("../target/classes")
 
-import dev.langchain4j.data.message.*
+import dev.langchain4j.data.message.SystemMessage.systemMessage
+import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.openai.OpenAiChatModel
+
 import me.kpavlov.langchain4j.kotlin.model.chat.generateAsync
+
   
 val model = OpenAiChatModel.builder()
   .apiKey("demo")
@@ -174,8 +174,8 @@ val scope = CoroutineScope(Dispatchers.IO)
 runBlocking {
   val result = model.generateAsync(
     listOf(
-      SystemMessage.from("You are helpful assistant"),
-      UserMessage.from("Make a haiku about Kotlin, Langchani4j and LLM"),
+      systemMessage("You are helpful assistant"),
+      userMessage("Make a haiku about Kotlin, Langchani4j and LLM"),
     )
   )
   println(result.content().text())
