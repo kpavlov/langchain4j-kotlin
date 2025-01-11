@@ -92,17 +92,21 @@ println(response.aiMessage().text())
 CoroutineScope(Dispatchers.IO).launch {
     val response =
       model.chatAsync {
-        messages += systemMessage
-        messages += userMessage
-        parameters {
-          temperature(temperature)
+        messages += systemMessage("You are a helpful assistant")
+        messages += userMessage("Say Hello")
+        parameters(OpenAiChatRequestParameters.builder()) {
+          temperature(0.1)
+          seed(42) // OpenAI specific parameter
         }
       }
     println(response.aiMessage().text())
 }      
 ```
 
-Sample: [ChatModel.kt](samples/src/main/kotlin/me/kpavlov/langchain4j/kotlin/samples/ChatModel.kt)
+Sample code:
+
+- [ChatModelExample.kt](samples/src/main/kotlin/me/kpavlov/langchain4j/kotlin/samples/ChatModelExample.kt)
+- [OpenAiChatModelExample.kt](samples/src/main/kotlin/me/kpavlov/langchain4j/kotlin/samples/OpenAiChatModelExample.kt)
 
 ### Streaming Chat Language Model support
 
