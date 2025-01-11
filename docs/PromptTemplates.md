@@ -7,15 +7,13 @@ customization.
 
 Place your prompt templates in the classpath:
 
-System prompt template:
+System prompt template (path: `prompts/default-system-prompt.mustache`):
 ```mustache
-prompts/default-system-prompt.mustache:
 You are helpful assistant using chatMemoryID={{chatMemoryID}}
 ```
 
-User prompt template:
+User prompt template (path: `prompts/default-user-prompt.mustache`):
 ```mustache
-prompts/default-user-prompt.mustache:
 Hello, {{userName}}! {{message}}
 ```
 
