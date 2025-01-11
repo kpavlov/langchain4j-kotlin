@@ -67,6 +67,17 @@ suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): Ch
  * of well-structured chat requests using a `ChatRequestBuilder` and
  * executes the request using the associated `ChatLanguageModel`.
  *
+ * Example usage:
+ * ```kotlin
+ * model.chatAsync {
+ *     messages += systemMessage("You are a helpful assistant")
+ *     messages += userMessage("Say Hello")
+ *     parameters {
+ *         temperature(0.1)
+ *     }
+ * }
+ * ```
+ *
  * @param block A lambda with receiver on `ChatRequestBuilder` used to
  *    configure the messages and parameters for the chat request.
  * @return A `ChatResponse` containing the response from the model and any
