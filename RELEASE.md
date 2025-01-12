@@ -16,14 +16,14 @@
    ```shell
    mvn release:prepare \
      -Dresume=false \
-     -DpushChanges=false
+     -DpushChanges=false \
+     -pl '!samples,!reports'
    ```
 3. Perform the release
 
    ```shell
-   GPG_TTY=$(tty) && \
-   export GPG_TTY && \
-   mvn release:perform -DlocalCheckout=true
+   export GPG_TTY=$(tty) && \
+   mvn release:perform -DlocalCheckout=true -pl '!samples,!reports'
    ```
 
    https://stackoverflow.com/a/57591830/3315474
@@ -32,7 +32,9 @@ In case of GPG error
 `gpg: signing failed: Screen or window too small`, [try this](https://stackoverflow.com/a/67498543/3315474):
 
 ```shell
+gpgconf --kill gpg-agent
 gpg -K --keyid-format SHORT
+echo "test" | gpg --clearsign
 ```
 
 4. Push
