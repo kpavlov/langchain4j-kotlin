@@ -20,8 +20,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <!-- Dependencies -->
         <finchly.version>0.1.1</finchly.version>
-        <langchain4j.version>1.0.0-alpha1</langchain4j.version>
         <kotlinx.version>1.9.0</kotlinx.version>
+        <langchain4j-kotlin.version>0.1.6</langchain4j-kotlin.version>
+        <langchain4j.version>1.0.0-alpha1</langchain4j.version>
         <slf4j.version>2.0.16</slf4j.version>
     </properties>
 
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>me.kpavlov.langchain4j.kotlin</groupId>
             <artifactId>langchain4j-kotlin</artifactId>
-            <version>0.1.6-SNAPSHOT</version>
+            <version>${langchain4j-kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
