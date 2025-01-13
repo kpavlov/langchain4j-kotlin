@@ -30,7 +30,6 @@
 
     <modules>
         <module>langchain4j-kotlin</module>
-        <module>samples</module>
         <module>reports</module>
     </modules>
 
