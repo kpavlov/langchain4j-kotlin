@@ -16,14 +16,13 @@
    ```shell
    mvn release:prepare \
      -Dresume=false \
-     -DpushChanges=false \
-     -pl '!samples,!reports'
+     -DpushChanges=false
    ```
 3. Perform the release
 
    ```shell
    export GPG_TTY=$(tty) && \
-   mvn release:perform -DlocalCheckout=true -pl '!samples,!reports'
+   mvn release:perform -DlocalCheckout=true
    ```
 
    https://stackoverflow.com/a/57591830/3315474
