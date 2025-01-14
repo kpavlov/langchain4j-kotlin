@@ -1,4 +1,4 @@
-package me.kpavlov.langchain4j.kotlin
+package me.kpavlov.langchain4j.kotlin.model.chat
 
 import assertk.assertThat
 import assertk.assertions.contains
@@ -10,9 +10,10 @@ import dev.langchain4j.model.chat.StreamingChatLanguageModel
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import kotlinx.coroutines.test.runTest
+import me.kpavlov.langchain4j.kotlin.TestEnvironment
+import me.kpavlov.langchain4j.kotlin.loadDocument
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.CompleteResponse
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.PartialResponse
-import me.kpavlov.langchain4j.kotlin.model.chat.chatFlow
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
