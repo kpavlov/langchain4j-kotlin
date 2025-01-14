@@ -1,11 +1,8 @@
 package me.kpavlov.langchain4j.kotlin.model.chat
 
-import dev.langchain4j.data.message.AiMessage
-import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
-import dev.langchain4j.model.output.Response
 import kotlinx.coroutines.coroutineScope
 import me.kpavlov.langchain4j.kotlin.model.chat.request.ChatRequestBuilder
 import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
@@ -29,10 +26,8 @@ import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
  * @see ChatRequest
  * @see ChatResponse
  */
-suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse {
-    val model = this
-    return coroutineScope { model.chat(request) }
-}
+suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse =
+    coroutineScope { this@chatAsync.chat(request) }
 
 /**
  * Asynchronously processes a chat request using a [ChatRequest.Builder] for
@@ -112,41 +107,3 @@ suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): C
  */
 fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
     this.chat(requestBuilder.build())
-
-/**
- * Asynchronously generates a response for a list of chat messages using
- * the language model within a coroutine scope. This extension function
- * provides a structured concurrency wrapper around the synchronous
- * [ChatLanguageModel.generate] method.
- *
- * Example usage:
- * ```kotlin
- * val response = model.generateAsync(listOf(
- *     SystemMessage("You are a helpful assistant"),
- *     UserMessage("Hello!")
- * ))
- * ```
- *
- * @param messages The list of chat messages representing the conversation
- *    history and current prompt.
- * @return [Response] containing the AI's message and any additional metadata.
- * @throws Exception if the generation fails or is interrupted.
- * @see ChatLanguageModel.generate
- * @see ChatMessage
- * @see Response
- * @see AiMessage
- */
-suspend fun ChatLanguageModel.generateAsync(messages: List<ChatMessage>): Response<AiMessage> {
-    val model = this
-    return coroutineScope { model.generate(messages) }
-}
-
-/**
- * Asynchronously generates a response from the chat language model based on the provided messages.
- *
- * @param messages A variable number of chat messages that serve as the input for the language model's generation.
- *                 This typically includes the conversation history and the current prompt.
- * @return A [Response] containing the generated [AiMessage] from the language model.
- */
-suspend fun ChatLanguageModel.generateAsync(vararg messages: ChatMessage): Response<AiMessage> =
-    this.generateAsync(messages.toList())

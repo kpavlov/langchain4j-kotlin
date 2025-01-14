@@ -11,7 +11,6 @@ import dev.langchain4j.model.chat.request.ResponseFormat
 import dev.langchain4j.model.openai.OpenAiChatModel
 import kotlinx.coroutines.test.runTest
 import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
-import me.kpavlov.langchain4j.kotlin.model.chat.generateAsync
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -41,29 +40,6 @@ internal class ChatLanguageModelIT {
     fun beforeAll() =
         runTest {
             document = loadDocument("notes/blumblefang.txt", logger)
-        }
-
-    @Test
-    fun `ChatLanguageModel should generateAsync`() =
-        runTest {
-            val response =
-                model.generateAsync(
-                    SystemMessage.from(
-                        """
-                        You are helpful advisor answering questions only related to the given text
-                        """.trimIndent(),
-                    ),
-                    UserMessage.from(
-                        """
-                        What does Blumblefang love? Text: ```${document.text()}```
-                        """.trimIndent(),
-                    ),
-                )
-
-            logger.info("Response: {}", response)
-            assertThat(response).isNotNull()
-            val content = response.content()
-            assertThat(content.text()).contains("Blumblefang loves to help")
         }
 
     @Test
