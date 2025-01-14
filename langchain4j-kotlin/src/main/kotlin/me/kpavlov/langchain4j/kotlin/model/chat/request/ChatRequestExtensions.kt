@@ -116,7 +116,6 @@ open class ChatRequestBuilder(
             builder
                 .apply {
                     b.modelName?.let { modelName(it) }
-                    b.modelName?.let { modelName(it) }
                     b.temperature?.let { temperature(it) }
                     b.topP?.let { topP(it) }
                     b.topK?.let { topK(it) }
