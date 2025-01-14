@@ -19,7 +19,7 @@ format:prepare
 				-Drewrite.exportDatatables=true
 
 prepare:
-	  brew install ktlint --quiet
+	  @if ! command -v ktlint &> /dev/null; then brew install ktlint --quiet; fi
 
 all: format lint build
 

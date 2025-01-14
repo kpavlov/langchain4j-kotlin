@@ -1,17 +1,17 @@
-package me.kpavlov.langchain4j.kotlin
+package me.kpavlov.langchain4j.kotlin.model.chat
 
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isNotNull
 import dev.langchain4j.data.document.Document
-import dev.langchain4j.data.message.SystemMessage
-import dev.langchain4j.data.message.UserMessage
+import dev.langchain4j.data.message.SystemMessage.systemMessage
+import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.request.ResponseFormat
 import dev.langchain4j.model.openai.OpenAiChatModel
 import kotlinx.coroutines.test.runTest
-import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
-import me.kpavlov.langchain4j.kotlin.model.chat.generateAsync
+import me.kpavlov.langchain4j.kotlin.TestEnvironment
+import me.kpavlov.langchain4j.kotlin.loadDocument
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -44,29 +44,6 @@ internal class ChatLanguageModelIT {
         }
 
     @Test
-    fun `ChatLanguageModel should generateAsync`() =
-        runTest {
-            val response =
-                model.generateAsync(
-                    SystemMessage.from(
-                        """
-                        You are helpful advisor answering questions only related to the given text
-                        """.trimIndent(),
-                    ),
-                    UserMessage.from(
-                        """
-                        What does Blumblefang love? Text: ```${document.text()}```
-                        """.trimIndent(),
-                    ),
-                )
-
-            logger.info("Response: {}", response)
-            assertThat(response).isNotNull()
-            val content = response.content()
-            assertThat(content.text()).contains("Blumblefang loves to help")
-        }
-
-    @Test
     fun `ChatLanguageModel should chatAsync`() =
         runTest {
             val document = loadDocument("notes/blumblefang.txt", logger)
@@ -74,19 +51,19 @@ internal class ChatLanguageModelIT {
             val response =
                 model.chatAsync {
                     messages +=
-                        SystemMessage.from(
+                        systemMessage(
                             """
                             You are helpful advisor answering questions only related to the given text
                             """.trimIndent(),
                         )
                     messages +=
-                        UserMessage.from(
+                        userMessage(
                             """
                             What does Blumblefang love? Text: ```${document.text()}```
                             """.trimIndent(),
                         )
                     parameters {
-                        responseFormat(ResponseFormat.TEXT)
+                        responseFormat = ResponseFormat.TEXT
                     }
                 }
 

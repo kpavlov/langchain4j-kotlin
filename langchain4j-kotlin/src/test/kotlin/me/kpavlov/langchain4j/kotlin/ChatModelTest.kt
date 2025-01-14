@@ -31,7 +31,7 @@ internal class ChatModelTest {
 
     @Test
     fun `Should call chatAsync`() {
-        val temperature = 0.8
+        val temp = 0.8
         runTest {
             whenever(model.chat(chatRequestCaptor.capture())).thenReturn(chatResponse)
             val systemMessage = SystemMessage.from("You are a helpful assistant")
@@ -41,14 +41,14 @@ internal class ChatModelTest {
                     messages += systemMessage
                     messages += userMessage
                     parameters {
-                        temperature(temperature)
+                        temperature = temp
                     }
                 }
             assertThat(response).isSameInstanceAs(chatResponse)
             val request = chatRequestCaptor.value
             assertThat(request.messages()).containsExactly(systemMessage, userMessage)
             with(request.parameters()) {
-                assertThat(temperature()).isEqualTo(temperature)
+                assertThat(temperature()).isEqualTo(temp)
             }
         }
     }
