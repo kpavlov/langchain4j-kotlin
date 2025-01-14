@@ -1,9 +1,12 @@
 package me.kpavlov.langchain4j.kotlin.model.chat.request
 
+import dev.langchain4j.agent.tool.ToolSpecification
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.request.ChatRequestParameters
 import dev.langchain4j.model.chat.request.DefaultChatRequestParameters
+import dev.langchain4j.model.chat.request.ResponseFormat
+import dev.langchain4j.model.chat.request.ToolChoice
 
 /**
  * Builds and returns a `ChatRequest` using the provided configuration block.
@@ -19,6 +22,42 @@ fun chatRequest(block: ChatRequestBuilder.() -> Unit): ChatRequest {
     builder.apply { block() }
     return builder.build()
 }
+
+/**
+ * A utility class for building and configuring chat request parameters. This builder allows fine-grained
+ * control over various fields such as model configuration, response shaping, and tool integration.
+ *
+ * @param B The type of the builder for the default chat request parameters.
+ * @property builder The builder used to configure the chat request parameters.
+ * @property modelName Specifies the name of the model to be used for the chat request.
+ * @property temperature Controls the randomness in the response generation. Higher values produce more random outputs.
+ * @property topP Configures nucleus sampling, limiting the selection to a subset of tokens
+ * with a cumulative probability of `topP`.
+ * @property topK Limits the selection to the top `K` tokens during response generation.
+ * @property frequencyPenalty Applies a penalty to discourage repetition of tokens based on frequency.
+ * @property presencePenalty Applies a penalty to encourage diversity by penalizing token presence
+ * in the conversation context.
+ * @property maxOutputTokens Specifies the maximum number of tokens for the generated response.
+ * @property stopSequences A list of sequences that will terminate the response generation if encountered.
+ * @property toolSpecifications A list of tool specifications for integrating external tools into the chat request.
+ * @property toolChoice Defines the specific tool to be used if multiple tools are available in the request.
+ * @property responseFormat Specifies the format of the response, such as plain text or structured data.
+ */
+@Suppress("LongParameterList")
+open class ChatRequestParametersBuilder<B : DefaultChatRequestParameters.Builder<*>>(
+    val builder: B,
+    var modelName: String? = null,
+    var temperature: Double? = null,
+    var topP: Double? = null,
+    var topK: Int? = null,
+    var frequencyPenalty: Double? = null,
+    var presencePenalty: Double? = null,
+    var maxOutputTokens: Int? = null,
+    var stopSequences: List<String>? = null,
+    var toolSpecifications: List<ToolSpecification>? = null,
+    var toolChoice: ToolChoice? = null,
+    var responseFormat: ResponseFormat? = null,
+)
 
 /**
  * Builder class for constructing a `ChatRequest` instance. Allows configuring
@@ -63,15 +102,31 @@ open class ChatRequestBuilder(
      * Configures and sets the parameters for the chat request.
      *
      * @param builder The builder instance used to create the chat request parameters.
-     * Defaults to an instance of `DefaultChatRequestParameters.Builder`.
-     * @param block A lambda with the builder as receiver to configure the chat request parameters.
+     * Defaults to an instance of [DefaultChatRequestParameters.Builder].
+     * @param configurer A lambda with the builder as receiver to configure the chat request parameters.
      */
     @JvmOverloads
     fun <B : DefaultChatRequestParameters.Builder<*>> parameters(
         @Suppress("UNCHECKED_CAST")
         builder: B = DefaultChatRequestParameters.builder() as B,
-        block: B.() -> Unit,
+        configurer: ChatRequestParametersBuilder<B>.() -> Unit,
     ) {
-        this.parameters = builder.apply(block).build()
+        val b = ChatRequestParametersBuilder(builder = builder).also(configurer)
+        parameters =
+            builder
+                .apply {
+                    b.modelName?.let { modelName(it) }
+                    b.modelName?.let { modelName(it) }
+                    b.temperature?.let { temperature(it) }
+                    b.topP?.let { topP(it) }
+                    b.topK?.let { topK(it) }
+                    b.frequencyPenalty?.let { frequencyPenalty(it) }
+                    b.presencePenalty?.let { presencePenalty(it) }
+                    b.maxOutputTokens?.let { maxOutputTokens(it) }
+                    b.stopSequences?.let { stopSequences(it) }
+                    b.toolSpecifications?.let { toolSpecifications(it) }
+                    b.toolChoice?.let { toolChoice(it) }
+                    b.responseFormat?.let { responseFormat(it) }
+                }.build()
     }
 }

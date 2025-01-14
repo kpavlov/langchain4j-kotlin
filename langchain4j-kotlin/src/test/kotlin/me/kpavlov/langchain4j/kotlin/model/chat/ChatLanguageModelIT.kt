@@ -63,7 +63,7 @@ internal class ChatLanguageModelIT {
                             """.trimIndent(),
                         )
                     parameters {
-                        responseFormat(ResponseFormat.TEXT)
+                        responseFormat = ResponseFormat.TEXT
                     }
                 }
 

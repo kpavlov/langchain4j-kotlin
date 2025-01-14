@@ -25,7 +25,7 @@ internal class ChatRequestExtensionsTest {
                 messages += systemMessage
                 messages += userMessage
                 parameters {
-                    this.temperature(0.1)
+                    temperature = 0.1
                 }
                 parameters = params
             }
@@ -47,7 +47,7 @@ internal class ChatRequestExtensionsTest {
                 messages += systemMessage
                 messages += userMessage
                 parameters {
-                    this.temperature(0.1)
+                    temperature = 0.1
                 }
             }
         val parameters = result.parameters()
@@ -64,11 +64,12 @@ internal class ChatRequestExtensionsTest {
                 messages += systemMessage
                 messages += userMessage
                 parameters(OpenAiChatRequestParameters.builder()) {
-                    this.temperature(0.1)
+                    temperature = 0.1
+                    builder.seed(42)
                 }
             }
-        val parameters = result.parameters()
-        assertThat(parameters).isInstanceOf(OpenAiChatRequestParameters::class)
+        val parameters = result.parameters() as OpenAiChatRequestParameters
         assertThat(parameters.temperature()).isCloseTo(0.1, 0.000001)
+        assertThat(parameters.seed()).isEqualTo(42)
     }
 }

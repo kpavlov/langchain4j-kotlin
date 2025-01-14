@@ -68,7 +68,7 @@ suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): Ch
  *     messages += systemMessage("You are a helpful assistant")
  *     messages += userMessage("Say Hello")
  *     parameters {
- *         temperature(0.1)
+ *         temperature = 0.1
  *     }
  * }
  * ```
@@ -89,10 +89,13 @@ suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): C
  *
  * Example usage:
  * ```kotlin
- * val response = model.chat(ChatRequest.builder()
- *     .messages(listOf(UserMessage("Hello")))
- *     .temperature(0.7)
- *     .maxTokens(100))
+ * val response = model.chat(chatRequest{
+ *     messages += userMessage("Hello")
+ *     parameters {
+ *         temperature = 0.7
+ *         maxOutputTokens = 100
+ *     }
+ * })
  * ```
  *
  * @param requestBuilder The builder instance configured with desired chat
@@ -104,6 +107,7 @@ suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): C
  * @see ChatRequest
  * @see ChatResponse
  * @see ChatRequest.Builder
+ * @see ChatRequestBuilder
  */
 fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
     this.chat(requestBuilder.build())
