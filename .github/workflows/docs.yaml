@@ -32,7 +32,7 @@ jobs:
 
       - name: Generate Dokka Site
         run: |-
-          mvn dokka:dokka -pl !reports,!samples && \
+          mvn dokka:dokka -pl !reports && \
           mkdir -p target/docs/ && \
           cp -R langchain4j-kotlin/target/dokka target/docs/api
 
