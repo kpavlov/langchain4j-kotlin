@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
-    <version>0.1-SNAPSHOT</version>
 
     <artifactId>samples</artifactId>
+    <version>0.1-SNAPSHOT</version>
     <name>LangChain4j-Kotlin :: Samples</name>
     <description>This module contains code samples how to use Langchain4j-Kotlin library.</description>
 
@@ -21,7 +21,7 @@
         <!-- Dependencies -->
         <finchly.version>0.1.1</finchly.version>
         <kotlinx.version>1.9.0</kotlinx.version>
-        <langchain4j-kotlin.version>0.1.6</langchain4j-kotlin.version>
+        <langchain4j-kotlin.version>0.1.7</langchain4j-kotlin.version>
         <langchain4j.version>1.0.0-alpha1</langchain4j.version>
         <slf4j.version>2.0.16</slf4j.version>
     </properties>

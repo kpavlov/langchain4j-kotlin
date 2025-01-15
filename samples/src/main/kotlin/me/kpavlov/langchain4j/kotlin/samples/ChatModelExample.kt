@@ -18,7 +18,8 @@ fun main() =
                 messages += systemMessage("You are a helpful assistant")
                 messages += userMessage("Say Hello")
                 parameters {
-                    temperature(0.1)
+                    temperature = 0.1
+                    modelName = "gpt-4o-mini"
                 }
             }
         println("AI Answer: \"${response.aiMessage().text()}\"")

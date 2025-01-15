@@ -27,8 +27,8 @@ fun main() =
                 messages += systemMessage("You are a helpful assistant")
                 messages += userMessage("Say Hello")
                 parameters(OpenAiChatRequestParameters.builder()) {
-                    temperature(0.1)
-                    seed(42) // OpenAI specific parameter
+                    temperature = 0.1
+                    builder.seed(42) // OpenAI specific parameter
                 }
             }
         println("AI Answer: \"${response.aiMessage().text()}\"")
