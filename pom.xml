@@ -207,8 +207,7 @@
                     <artifactId>dokka-maven-plugin</artifactId>
                     <version>2.0.0</version>
                     <configuration>
-                        <languageVersion>1.9</languageVersion>
-                        <detail>false</detail>
+                        <languageVersion>${kotlin.compiler.languageVersion}</languageVersion>
                     </configuration>
                 </plugin>
                 <plugin>
