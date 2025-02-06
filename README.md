@@ -1,6 +1,6 @@
 # LangChain4j-Kotlin
 
-[![Maven Central](https://img.shields.io/maven-central/v/me.kpavlov.aimocks/ai-mocks-openai)](https://repo1.maven.org/maven2/me/kpavlov/aimocks/ai-mocks-openai/)
+[![Maven Central](https://img.shields.io/maven-central/v/me.kpavlov.langchain4j.kotlin/langchain4j-kotlin)](https://repo1.maven.org/maven2/me/kpavlov/langchain4j/kotlin/langchain4j-kotlin/)
 [![Kotlin CI with Maven](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/kpavlov/langchain4j-kotlin/actions/workflows/maven.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/644f664ad05a4a009b299bc24c8be4b8)](https://app.codacy.com/gh/kpavlov/langchain4j-kotlin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/644f664ad05a4a009b299bc24c8be4b8)](https://app.codacy.com/gh/kpavlov/langchain4j-kotlin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
@@ -47,12 +47,12 @@ Add the following dependencies to your `pom.xml`:
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>1.0.0-alpha1</version>
+      <version>1.0.0-beta1</version>
     </dependency>
     <dependency>
          <groupId>dev.langchain4j</groupId>
          <artifactId>langchain4j-open-ai</artifactId>
-      <version>1.0.0-alpha1</version>
+      <version>1.0.0-beta1</version>
     </dependency>
 </dependencies>
 ```
@@ -64,7 +64,7 @@ Add the following to your `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:$LATEST_VERSION")
-  implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-alpha1")
+  implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-beta1")
 }
 ```
 
@@ -118,7 +118,7 @@ val model: StreamingChatLanguageModel = OpenAiStreamingChatModel.builder()
     // more configuration parameters here ...
     .build()
 
-model.generateFlow(messages).collect { reply ->
+model.chatFlow(messages).collect { reply ->
     when (reply) {
         is Completion ->
             println(
@@ -172,7 +172,7 @@ val model = OpenAiChatModel.builder()
 val scope = CoroutineScope(Dispatchers.IO)
 
 runBlocking {
-  val result = model.generateAsync(
+  val result = model.chatAsync(
     listOf(
       systemMessage("You are helpful assistant"),
       userMessage("Make a haiku about Kotlin, Langchani4j and LLM"),
