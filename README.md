@@ -118,7 +118,7 @@ val model: StreamingChatLanguageModel = OpenAiStreamingChatModel.builder()
     // more configuration parameters here ...
     .build()
 
-model.generateFlow(messages).collect { reply ->
+model.chatFlow(messages).collect { reply ->
     when (reply) {
         is Completion ->
             println(
@@ -172,7 +172,7 @@ val model = OpenAiChatModel.builder()
 val scope = CoroutineScope(Dispatchers.IO)
 
 runBlocking {
-  val result = model.generateAsync(
+  val result = model.chatAsync(
     listOf(
       systemMessage("You are helpful assistant"),
       userMessage("Make a haiku about Kotlin, Langchani4j and LLM"),
