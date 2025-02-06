@@ -47,12 +47,12 @@ Add the following dependencies to your `pom.xml`:
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>1.0.0-alpha1</version>
+      <version>1.0.0-beta1</version>
     </dependency>
     <dependency>
          <groupId>dev.langchain4j</groupId>
          <artifactId>langchain4j-open-ai</artifactId>
-      <version>1.0.0-alpha1</version>
+      <version>1.0.0-beta1</version>
     </dependency>
 </dependencies>
 ```
@@ -64,7 +64,7 @@ Add the following to your `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:$LATEST_VERSION")
-  implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-alpha1")
+  implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-beta1")
 }
 ```
 
