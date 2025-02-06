@@ -4,7 +4,7 @@
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
     <artifactId>root</artifactId>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>LangChain4j-Kotlin :: Root</name>
     <description>Kotlin enhancements for LangChain4j</description>
@@ -41,7 +41,7 @@
     </scm>
 
     <properties>
-        <argLine/>
+        <argLine />
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
@@ -250,17 +250,17 @@
                         <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                         <ratchetFrom>origin/main</ratchetFrom>
                         <java>
-                            <palantirJavaFormat/>
+                            <palantirJavaFormat />
                         </java>
                         <kotlin>
-                            <ktlint/>
+                            <ktlint />
                         </kotlin>
                         <markdown>
                             <includes>
                                 <!-- You have to set the target manually -->
                                 <include>**/*.md</include>
                             </includes>
-                            <flexmark/>
+                            <flexmark />
                         </markdown>
                         <pom>
                             <includes>
