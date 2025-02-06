@@ -7,6 +7,7 @@ import assertk.assertions.hasMessage
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import kotlinx.coroutines.flow.toList
@@ -40,7 +41,7 @@ internal class StreamingChatLanguageModelExtensionsKtTest {
                 handler.onPartialResponse(partialToken1)
                 handler.onPartialResponse(partialToken2)
                 handler.onCompleteResponse(completeResponse)
-            }.whenever(mockModel).chat(any(), any())
+            }.whenever(mockModel).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
 
             val flow =
                 mockModel.chatFlow {
@@ -58,7 +59,7 @@ internal class StreamingChatLanguageModelExtensionsKtTest {
             )
 
             // Verify interactions
-            verify(mockModel).chat(any(), any())
+            verify(mockModel).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
         }
 
     @Test
@@ -70,7 +71,7 @@ internal class StreamingChatLanguageModelExtensionsKtTest {
             doAnswer {
                 val handler = it.arguments[1] as StreamingChatResponseHandler
                 handler.onError(error)
-            }.whenever(mockModel).chat(any(), any())
+            }.whenever(mockModel).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
 
             val flow =
                 mockModel.chatFlow {
