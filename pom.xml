@@ -213,7 +213,7 @@
                 <plugin>
                     <groupId>com.github.ozsie</groupId>
                     <artifactId>detekt-maven-plugin</artifactId>
-                    <version>1.23.7</version>
+                    <version>1.23.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlinx</groupId>
