@@ -23,7 +23,7 @@
         <kotlinx.version>1.9.0</kotlinx.version>
         <langchain4j-kotlin.version>0.1.8</langchain4j-kotlin.version>
         <langchain4j.version>1.0.0-beta1</langchain4j.version>
-        <slf4j.version>2.0.16</slf4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <dependencyManagement>
