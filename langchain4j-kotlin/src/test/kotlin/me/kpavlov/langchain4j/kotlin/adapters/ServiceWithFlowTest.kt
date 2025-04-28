@@ -35,118 +35,135 @@ class ServiceWithFlowTest {
     private lateinit var model: StreamingChatLanguageModel
 
     @Test
-    fun `Should use TokenStreamToStringFlowAdapter`() = runTest {
-        val partialToken1 = "Hello"
-        val partialToken2 = "world"
-        val completeResponse = ChatResponse.builder().aiMessage(AiMessage("Hello")).build()
+    fun `Should use TokenStreamToStringFlowAdapter`() =
+        runTest {
+            val partialToken1 = "Hello"
+            val partialToken2 = "world"
+            val completeResponse = ChatResponse.builder().aiMessage(AiMessage("Hello")).build()
 
-        doAnswer {
-            val handler = it.arguments[1] as StreamingChatResponseHandler
-            handler.onPartialResponse(partialToken1)
-            handler.onPartialResponse(partialToken2)
-            handler.onCompleteResponse(completeResponse)
-        }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
+            doAnswer {
+                val handler = it.arguments[1] as StreamingChatResponseHandler
+                handler.onPartialResponse(partialToken1)
+                handler.onPartialResponse(partialToken2)
+                handler.onCompleteResponse(completeResponse)
+            }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
 
-        val assistant =
-            AiServices
-                .builder(Assistant::class.java)
-                .streamingChatLanguageModel(model)
-                .build()
+            val assistant =
+                AiServices
+                    .builder(Assistant::class.java)
+                    .streamingChatLanguageModel(model)
+                    .build()
 
-        val result = assistant.askQuestion(userName = "My friend", question = "How are you?")
-            .toList()
+            val result =
+                assistant
+                    .askQuestion(userName = "My friend", question = "How are you?")
+                    .toList()
 
-        assertThat(result).containsExactly(partialToken1, partialToken2)
-    }
-
-    @Test
-    fun `Should use TokenStreamToStringFlowAdapter error`() = runTest {
-        val partialToken1 = "Hello"
-        val partialToken2 = "world"
-        val error = RuntimeException("Test error")
-
-        doAnswer {
-            val handler = it.arguments[1] as StreamingChatResponseHandler
-            handler.onPartialResponse(partialToken1)
-            handler.onPartialResponse(partialToken2)
-            handler.onError(error)
-        }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
-
-        val assistant =
-            AiServices
-                .builder(Assistant::class.java)
-                .streamingChatLanguageModel(model)
-                .build()
-
-
-        val response = assistant.askQuestion(userName = "My friend", question = "How are you?")
-            .catch {
-                val message =
-                    requireNotNull(it.message) { "Only $error is allowed to occur here but found $it" }
-                emit(message)
-            }.toList()
-
-        assertThat(response).containsExactly(partialToken1, partialToken2, error.message)
-    }
+            assertThat(result).containsExactly(partialToken1, partialToken2)
+        }
 
     @Test
-    fun `Should use TokenStreamToReplyFlowAdapter`() = runTest {
-        val partialToken1 = "Hello"
-        val partialToken2 = "world"
-        val completeResponse = ChatResponse.builder().aiMessage(AiMessage("Hello")).build()
+    fun `Should use TokenStreamToStringFlowAdapter error`() =
+        runTest {
+            val partialToken1 = "Hello"
+            val partialToken2 = "world"
+            val error = RuntimeException("Test error")
 
-        doAnswer {
-            val handler = it.arguments[1] as StreamingChatResponseHandler
-            handler.onPartialResponse(partialToken1)
-            handler.onPartialResponse(partialToken2)
-            handler.onCompleteResponse(completeResponse)
-        }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
+            doAnswer {
+                val handler = it.arguments[1] as StreamingChatResponseHandler
+                handler.onPartialResponse(partialToken1)
+                handler.onPartialResponse(partialToken2)
+                handler.onError(error)
+            }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
 
-        val assistant =
-            AiServices
-                .builder(Assistant::class.java)
-                .streamingChatLanguageModel(model)
-                .build()
+            val assistant =
+                AiServices
+                    .builder(Assistant::class.java)
+                    .streamingChatLanguageModel(model)
+                    .build()
 
-        val result = assistant.askQuestion2(userName = "My friend", question = "How are you?")
-            .toList()
+            val response =
+                assistant
+                    .askQuestion(userName = "My friend", question = "How are you?")
+                    .catch {
+                        val message =
+                            requireNotNull(
+                                it.message,
+                            ) { "Only $error is allowed to occur here but found $it" }
+                        emit(message)
+                    }.toList()
 
-        assertThat(result).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
-        assertThat(result).index(2).isInstanceOf(CompleteResponse::class)
-    }
+            assertThat(response).containsExactly(partialToken1, partialToken2, error.message)
+        }
 
     @Test
-    fun `Should use TokenStreamToReplyFlowAdapter error`() = runTest {
-        val partialToken1 = "Hello"
-        val partialToken2 = "world"
-        val error = RuntimeException("Test error")
+    fun `Should use TokenStreamToReplyFlowAdapter`() =
+        runTest {
+            val partialToken1 = "Hello"
+            val partialToken2 = "world"
+            val completeResponse = ChatResponse.builder().aiMessage(AiMessage("Hello")).build()
 
-        doAnswer {
-            val handler = it.arguments[1] as StreamingChatResponseHandler
-            handler.onPartialResponse(partialToken1)
-            handler.onPartialResponse(partialToken2)
-            handler.onError(error)
-        }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
+            doAnswer {
+                val handler = it.arguments[1] as StreamingChatResponseHandler
+                handler.onPartialResponse(partialToken1)
+                handler.onPartialResponse(partialToken2)
+                handler.onCompleteResponse(completeResponse)
+            }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
 
-        val assistant =
-            AiServices
-                .builder(Assistant::class.java)
-                .streamingChatLanguageModel(model)
-                .build()
+            val assistant =
+                AiServices
+                    .builder(Assistant::class.java)
+                    .streamingChatLanguageModel(model)
+                    .build()
 
-        val response = assistant.askQuestion2(userName = "My friend", question = "How are you?")
-            .catch { emit(StreamingChatLanguageModelReply.Error(it)) }
-            .toList()
+            val result =
+                assistant
+                    .askQuestion2(userName = "My friend", question = "How are you?")
+                    .toList()
 
-        assertThat(response).hasSize(3)
-        assertThat(response).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
-        assertThat(response).index(2).isInstanceOf(StreamingChatLanguageModelReply.Error::class)
-    }
+            assertThat(
+                result,
+            ).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
+            assertThat(result).index(2).isInstanceOf(CompleteResponse::class)
+        }
+
+    @Test
+    fun `Should use TokenStreamToReplyFlowAdapter error`() =
+        runTest {
+            val partialToken1 = "Hello"
+            val partialToken2 = "world"
+            val error = RuntimeException("Test error")
+
+            doAnswer {
+                val handler = it.arguments[1] as StreamingChatResponseHandler
+                handler.onPartialResponse(partialToken1)
+                handler.onPartialResponse(partialToken2)
+                handler.onError(error)
+            }.whenever(model).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
+
+            val assistant =
+                AiServices
+                    .builder(Assistant::class.java)
+                    .streamingChatLanguageModel(model)
+                    .build()
+
+            val response =
+                assistant
+                    .askQuestion2(userName = "My friend", question = "How are you?")
+                    .catch { emit(StreamingChatLanguageModelReply.Error(it)) }
+                    .toList()
+
+            assertThat(response).hasSize(3)
+            assertThat(
+                response,
+            ).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
+            assertThat(response).index(2).isInstanceOf(StreamingChatLanguageModelReply.Error::class)
+        }
 
     @Suppress("unused")
     private interface Assistant {
         @dev.langchain4j.service.UserMessage(
-            "Hello, I am {{ userName }}. {{ message }}."
+            "Hello, I am {{ userName }}. {{ message }}.",
         )
         fun askQuestion(
             @UserName userName: String,
@@ -154,7 +171,7 @@ class ServiceWithFlowTest {
         ): Flow<String>
 
         @dev.langchain4j.service.UserMessage(
-            "Hello, I am {{ userName }}. {{ message }}."
+            "Hello, I am {{ userName }}. {{ message }}.",
         )
         fun askQuestion2(
             @UserName userName: String,
@@ -162,4 +179,3 @@ class ServiceWithFlowTest {
         ): Flow<StreamingChatLanguageModelReply>
     }
 }
-

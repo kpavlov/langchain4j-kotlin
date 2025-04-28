@@ -2,10 +2,10 @@ package me.kpavlov.langchain4j.kotlin.adapters
 
 import dev.langchain4j.service.TokenStream
 import dev.langchain4j.spi.services.TokenStreamAdapter
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
 import kotlinx.coroutines.flow.Flow
 import me.kpavlov.langchain4j.kotlin.model.chat.asFlow
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
     override fun canAdaptTokenStreamTo(type: Type?): Boolean {

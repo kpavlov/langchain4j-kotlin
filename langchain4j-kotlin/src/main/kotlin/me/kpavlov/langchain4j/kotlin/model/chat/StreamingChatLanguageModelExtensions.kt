@@ -6,11 +6,9 @@ import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import dev.langchain4j.service.TokenStream
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import me.kpavlov.langchain4j.kotlin.model.chat.request.ChatRequestBuilder
 import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
@@ -129,27 +127,29 @@ fun StreamingChatLanguageModel.chatFlow(
         }
     }
 
-fun TokenStream.asFlow(): Flow<String> = flow {
-    callbackFlow {
-        onPartialResponse { trySend(it) }
-        onCompleteResponse { close() }
-        onError { close(it) }
-        start()
-        awaitClose()
-    }.buffer(Channel.UNLIMITED).collect(this)
-}
+fun TokenStream.asFlow(): Flow<String> =
+    flow {
+        callbackFlow {
+            onPartialResponse { trySend(it) }
+            onCompleteResponse { close() }
+            onError { close(it) }
+            start()
+            awaitClose()
+        }.buffer(Channel.UNLIMITED).collect(this)
+    }
 
-fun TokenStream.asReplyFlow(): Flow<StreamingChatLanguageModelReply> =  flow {
-    callbackFlow<StreamingChatLanguageModelReply> {
-        onPartialResponse { token ->
-            trySend(StreamingChatLanguageModelReply.PartialResponse(token))
-        }
-        onCompleteResponse { response ->
-            trySend(StreamingChatLanguageModelReply.CompleteResponse(response))
-            close()
-        }
-        onError { throwable -> close(throwable) }
-        start()
-        awaitClose()
-    }.buffer(Channel.UNLIMITED).collect(this)
-}
+fun TokenStream.asReplyFlow(): Flow<StreamingChatLanguageModelReply> =
+    flow {
+        callbackFlow<StreamingChatLanguageModelReply> {
+            onPartialResponse { token ->
+                trySend(StreamingChatLanguageModelReply.PartialResponse(token))
+            }
+            onCompleteResponse { response ->
+                trySend(StreamingChatLanguageModelReply.CompleteResponse(response))
+                close()
+            }
+            onError { throwable -> close(throwable) }
+            start()
+            awaitClose()
+        }.buffer(Channel.UNLIMITED).collect(this)
+    }
