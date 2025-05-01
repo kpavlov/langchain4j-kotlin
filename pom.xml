@@ -57,7 +57,7 @@
         <awaitility.version>4.2.2</awaitility.version>
         <finchly.version>0.1.1</finchly.version>
         <junit.version>5.12.2</junit.version>
-        <kotlinx.version>1.10.2</kotlinx.version>
+        <kotlinx-coroutines.version>1.8.1</kotlinx-coroutines.version>
         <langchain4j.version>1.0.0-beta1</langchain4j.version>
         <mockito-kotlin.version>5.4.0</mockito-kotlin.version>
         <mockito.version>5.17.0</mockito.version>
@@ -76,7 +76,7 @@
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-                <version>${kotlinx.version}</version>
+                <version>${kotlinx-coroutines.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -87,8 +87,8 @@
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-coroutines-test</artifactId>
-                <version>${kotlinx.version}</version>
+                <artifactId>kotlinx-coroutines-test-jvm</artifactId>
+                <version>${kotlinx-coroutines.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -155,11 +155,6 @@
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility-kotlin</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-test</artifactId>
             <scope>test</scope>
@@ -214,6 +209,8 @@
                     <groupId>com.github.ozsie</groupId>
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>1.23.8</version>
+                    <configuration>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlinx</groupId>
@@ -281,11 +278,12 @@
                     <extensions>true</extensions>
                     <configuration>
                         <args>
+                            <arg>-Werror</arg>
+                            <arg>-Xjspecify-annotations=strict</arg>
                             <arg>-Xjsr305=strict</arg>
-                            <!--<arg>-Werror</arg>-->
+                            <arg>-Xtype-enhancement-improvements-strict-mode</arg>
                         </args>
                         <javaParameters>true</javaParameters>
-                        <multiPlatform>true</multiPlatform>
                     </configuration>
                 </plugin>
                 <plugin>
