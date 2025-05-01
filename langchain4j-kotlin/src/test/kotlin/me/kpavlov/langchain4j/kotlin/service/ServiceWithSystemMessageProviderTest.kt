@@ -5,25 +5,35 @@ import assertk.assertions.isEqualTo
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
-import dev.langchain4j.model.output.Response
+import dev.langchain4j.model.chat.request.ChatRequest
+import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.UserMessage
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
 
-@ExtendWith(MockitoExtension::class)
 internal class ServiceWithSystemMessageProviderTest {
-    @Mock
-    lateinit var model: ChatLanguageModel
-
     @Test
     fun `Should use SystemMessageProvider`() {
-        model =
-            ChatLanguageModel {
-                assertThat(it.first()).isEqualTo(SystemMessage.from("You are helpful assistant"))
-                Response.from(AiMessage.from("I'm fine, thanks"))
+        val chatResponse = ChatResponse.builder().aiMessage(AiMessage("I'm fine, thanks")).build()
+
+        val model =
+            object : ChatLanguageModel {
+                override fun chat(chatRequest: ChatRequest): ChatResponse {
+                    chatRequest.messages() shouldHaveSize 2
+                    val systemMessage =
+                        chatRequest.messages().first {
+                            it is SystemMessage
+                        } as SystemMessage
+                    val userMessage =
+                        chatRequest.messages().first {
+                            it is dev.langchain4j.data.message.UserMessage
+                        } as dev.langchain4j.data.message.UserMessage
+                    systemMessage.text() shouldBe "You are helpful assistant"
+                    userMessage.singleText() shouldBe "How are you"
+                    return chatResponse
+                }
             }
 
         val assistant =
