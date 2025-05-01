@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
-class MetadataExtensionsTest {
+internal class MetadataExtensionsTest {
     @Test
     fun `merge should combine unique metadata from both objects`() {
         val metadata1 =

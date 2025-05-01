@@ -26,7 +26,7 @@ import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
  * @see ChatRequest
  * @see ChatResponse
  */
-suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse =
+public suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse =
     coroutineScope { this@chatAsync.chat(request) }
 
 /**
@@ -53,7 +53,7 @@ suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse =
  * @see ChatRequest.Builder
  * @see chatAsync
  */
-suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): ChatResponse =
+public suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): ChatResponse =
     chatAsync(requestBuilder.build())
 
 /**
@@ -79,7 +79,7 @@ suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): Ch
  *    associated metadata.
  * @throws Exception if the chat request fails or encounters an error during execution.
  */
-suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): ChatResponse =
+public suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): ChatResponse =
     chatAsync(chatRequest(block))
 
 /**
@@ -109,5 +109,5 @@ suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): C
  * @see ChatRequest.Builder
  * @see ChatRequestBuilder
  */
-fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
+public fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
     this.chat(requestBuilder.build())

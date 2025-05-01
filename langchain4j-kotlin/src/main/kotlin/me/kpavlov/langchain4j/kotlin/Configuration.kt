@@ -11,14 +11,14 @@ import java.util.Properties
  * their renderers. The configurations are loaded from a properties file, and components are instantiated dynamically
  * based on the class names specified in the properties.
  */
-object Configuration {
-    val properties: Properties = loadProperties()
+public object Configuration {
+    public val properties: Properties = loadProperties()
 
-    operator fun get(key: String): String = properties.getProperty(key)
+    public operator fun get(key: String): String = properties.getProperty(key)
 
-    val promptTemplateSource: PromptTemplateSource =
+    public val promptTemplateSource: PromptTemplateSource =
         createInstanceByName(this["prompt.template.source"])
-    val promptTemplateRenderer: TemplateRenderer =
+    public val promptTemplateRenderer: TemplateRenderer =
         createInstanceByName(this["prompt.template.renderer"])
 }
 

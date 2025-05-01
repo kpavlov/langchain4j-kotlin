@@ -7,7 +7,7 @@ package me.kpavlov.langchain4j.kotlin
  * and its implementations to specify the input parameter for retrieving
  * system messages.
  */
-typealias ChatMemoryId = Any
+public typealias ChatMemoryId = Any
 
 /**
  * Type alias for the name of a template.
@@ -16,7 +16,7 @@ typealias ChatMemoryId = Any
  * of the codebase, providing a clearer and more specific meaning compared
  * to using `String` directly.
  */
-typealias TemplateName = String
+public typealias TemplateName = String
 
 /**
  * Represents the content of a template.
@@ -25,7 +25,7 @@ typealias TemplateName = String
  * which is expected to be in the form of a string. Various classes and functions that deal
  * with templates will utilize this type alias to ensure consistency and clarity.
  */
-typealias TemplateContent = String
+public typealias TemplateContent = String
 
 /**
  * Type alias for a string representing the content of a prompt.
@@ -34,4 +34,4 @@ typealias TemplateContent = String
  * by various functions and methods within the system that deal with
  * generating and handling prompts.
  */
-typealias PromptContent = String
+public typealias PromptContent = String

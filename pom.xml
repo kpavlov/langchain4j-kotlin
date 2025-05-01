@@ -41,7 +41,7 @@
     </scm>
 
     <properties>
-        <argLine />
+        <argLine/>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
@@ -156,7 +156,7 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-test</artifactId>
+            <artifactId>kotlinx-coroutines-test-jvm</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -209,8 +209,7 @@
                     <groupId>com.github.ozsie</groupId>
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>1.23.8</version>
-                    <configuration>
-                    </configuration>
+                    <configuration/>
                 </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlinx</groupId>
@@ -247,17 +246,17 @@
                         <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                         <ratchetFrom>origin/main</ratchetFrom>
                         <java>
-                            <palantirJavaFormat />
+                            <palantirJavaFormat/>
                         </java>
                         <kotlin>
-                            <ktlint />
+                            <ktlint/>
                         </kotlin>
                         <markdown>
                             <includes>
                                 <!-- You have to set the target manually -->
                                 <include>**/*.md</include>
                             </includes>
-                            <flexmark />
+                            <flexmark/>
                         </markdown>
                         <pom>
                             <includes>
@@ -279,6 +278,8 @@
                     <configuration>
                         <args>
                             <arg>-Werror</arg>
+                            <arg>-Wextra</arg>
+                            <arg>-Xexplicit-api=strict</arg>
                             <arg>-Xjspecify-annotations=strict</arg>
                             <arg>-Xjsr305=strict</arg>
                             <arg>-Xtype-enhancement-improvements-strict-mode</arg>

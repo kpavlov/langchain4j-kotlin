@@ -7,8 +7,8 @@ import me.kpavlov.langchain4j.kotlin.model.chat.asFlow
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
-    override fun canAdaptTokenStreamTo(type: Type?): Boolean {
+public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
+    public override fun canAdaptTokenStreamTo(type: Type?): Boolean {
         if (type is ParameterizedType) {
             if (type.rawType === Flow::class.java) {
                 val typeArguments: Array<Type?> = type.actualTypeArguments
@@ -18,5 +18,5 @@ class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
         return false
     }
 
-    override fun adapt(tokenStream: TokenStream): Any = tokenStream.asFlow()
+    public override fun adapt(tokenStream: TokenStream): Any = tokenStream.asFlow()
 }

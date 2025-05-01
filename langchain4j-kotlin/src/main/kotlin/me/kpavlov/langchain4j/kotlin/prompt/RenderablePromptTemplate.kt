@@ -16,8 +16,8 @@ private val logger = LoggerFactory.getLogger(RenderablePromptTemplate::class.jav
  * @property content The content of the template.
  * @property templateRenderer The renderer used for generating the final template string from the content and variables.
  */
-class RenderablePromptTemplate(
-    val name: TemplateName,
+public class RenderablePromptTemplate(
+    public val name: TemplateName,
     private val content: TemplateContent,
     private val templateRenderer: TemplateRenderer,
 ) : PromptTemplate,
