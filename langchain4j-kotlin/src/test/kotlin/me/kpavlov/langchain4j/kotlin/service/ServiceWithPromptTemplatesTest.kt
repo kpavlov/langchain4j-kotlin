@@ -2,40 +2,45 @@ package me.kpavlov.langchain4j.kotlin.service
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
-import dev.langchain4j.model.output.Response
+import dev.langchain4j.model.chat.request.ChatRequest
+import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.junit.jupiter.MockitoExtension
 
-@ExtendWith(MockitoExtension::class)
 internal class ServiceWithPromptTemplatesTest {
-    private lateinit var model: ChatLanguageModel
-
     @Test
     fun `Should use System and User Prompt Templates`() {
-        model =
-            ChatLanguageModel {
-                assertThat(
-                    it[0],
-                ).isEqualTo(
-                    SystemMessage.from("You are helpful assistant using chatMemoryID=default"),
-                )
-                assertThat(it[1])
-                    .isInstanceOf(UserMessage::class.java)
-                    .given { userPrompt ->
-                        assertThat(
-                            userPrompt.singleText(),
-                        ).isEqualTo("Hello, My friend! How are you?")
-                    }
-                Response.from(AiMessage.from("I'm fine, thanks"))
+        val chatResponse =
+            ChatResponse
+                .builder()
+                .aiMessage(AiMessage("I'm fine, thanks"))
+                .build()
+
+        val model =
+            object : ChatLanguageModel {
+                override fun chat(chatRequest: ChatRequest): ChatResponse {
+                    chatRequest.messages() shouldHaveSize 2
+                    val systemMessage =
+                        chatRequest.messages().first { it is SystemMessage } as SystemMessage
+                    val userMessage =
+                        chatRequest.messages().first {
+                            it is UserMessage
+                        } as UserMessage
+
+                    systemMessage.text() shouldBe
+                        "You are helpful assistant using chatMemoryID=default"
+                    userMessage.singleText() shouldBe "Hello, My friend! How are you?"
+
+                    return chatResponse
+                }
             }
 
         val assistant =
