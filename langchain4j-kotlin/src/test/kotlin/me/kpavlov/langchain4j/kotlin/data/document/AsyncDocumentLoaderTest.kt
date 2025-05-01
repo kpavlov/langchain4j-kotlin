@@ -10,6 +10,7 @@ import dev.langchain4j.data.document.DocumentSource
 import dev.langchain4j.data.document.parser.TextDocumentParser
 import dev.langchain4j.data.document.source.FileSystemSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.test.runTest
@@ -19,6 +20,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AsyncDocumentLoaderTest {
     private val logger = org.slf4j.LoggerFactory.getLogger(javaClass)
     private lateinit var documentSource: DocumentSource

@@ -2,7 +2,7 @@ build:
 	  mvn clean verify site
 
 apidocs:
-	  mvn clean dokka:dokka -pl !reports,!samples && \
+	  mvn clean dokka:dokka -pl !reports && \
     mkdir -p target/docs && \
 		cp -R langchain4j-kotlin/target/dokka target/docs/api
 
