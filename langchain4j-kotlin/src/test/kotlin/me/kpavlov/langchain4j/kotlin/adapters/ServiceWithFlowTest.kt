@@ -30,7 +30,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.whenever
 
 @ExtendWith(MockitoExtension::class)
-class ServiceWithFlowTest {
+internal class ServiceWithFlowTest {
     @Mock
     private lateinit var model: StreamingChatLanguageModel
 

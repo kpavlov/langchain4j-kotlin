@@ -10,7 +10,7 @@ import me.kpavlov.langchain4j.kotlin.TemplateContent
  * incorporate variables or placeholders.
  */
 public interface PromptTemplate {
-    fun content(): TemplateContent
+    public fun content(): TemplateContent
 }
 
 /**
@@ -25,5 +25,5 @@ public interface PromptTemplate {
 public data class SimplePromptTemplate(
     private val content: TemplateContent,
 ) : PromptTemplate {
-    override fun content(): TemplateContent = content
+    public override fun content(): TemplateContent = content
 }

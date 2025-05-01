@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
-class ServiceWithPromptTemplatesTest {
+internal class ServiceWithPromptTemplatesTest {
     private lateinit var model: ChatLanguageModel
 
     @Test

@@ -7,7 +7,7 @@ import me.kpavlov.langchain4j.kotlin.data.document.loadAsync
 import org.slf4j.Logger
 import java.nio.file.Paths
 
-suspend fun loadDocument(
+public suspend fun loadDocument(
     documentName: String,
     logger: Logger,
 ): Document {
