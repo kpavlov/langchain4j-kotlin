@@ -20,6 +20,7 @@ public class AsyncAiServices<T : Any>(
     private val tokenStreamAdapters =
         ServiceHelper.loadFactories<TokenStreamAdapter>(TokenStreamAdapter::class.java)
 
+    @Suppress("NestedBlockDepth")
     override fun build(): T {
         performBasicValidation()
 
@@ -27,7 +28,8 @@ public class AsyncAiServices<T : Any>(
             ChatMemoryAccess::class.java.isAssignableFrom(context.aiServiceClass)
         ) {
             throw illegalConfiguration(
-                "In order to have a service implementing ChatMemoryAccess, please configure the ChatMemoryProvider on the '%s'.",
+                "In order to have a service implementing ChatMemoryAccess, " +
+                    "please configure the ChatMemoryProvider on the '%s'.",
                 context.aiServiceClass.name,
             )
         }
@@ -38,7 +40,8 @@ public class AsyncAiServices<T : Any>(
             ) {
                 throw illegalConfiguration(
                     "The @Moderate annotation is present, but the moderationModel is not set up. " +
-                        "Please ensure a valid moderationModel is configured before using the @Moderate annotation.",
+                        "Please ensure a valid moderationModel is configured " +
+                        "before using the @Moderate annotation.",
                 )
             }
             if (method.returnType in
@@ -59,7 +62,8 @@ public class AsyncAiServices<T : Any>(
                 for (parameter in method.parameters) {
                     if (parameter.isAnnotationPresent(MemoryId::class.java)) {
                         throw illegalConfiguration(
-                            "In order to use @MemoryId, please configure the ChatMemoryProvider on the '%s'.",
+                            "In order to use @MemoryId, please configure " +
+                                "ChatMemoryProvider on the '%s'.",
                             context.aiServiceClass.name,
                         )
                     }
