@@ -73,6 +73,7 @@ internal class ServiceInvocationHandler<T : Any>(
         "ComplexCondition",
     )
     suspend fun invoke(
+        @Suppress("unused")
         proxy: Any?,
         method: Method,
         args: Array<Any?>,
@@ -86,7 +87,9 @@ internal class ServiceInvocationHandler<T : Any>(
         if (method.declaringClass == ChatMemoryAccess::class.java && args.size >= 1) {
             return when (method.name) {
                 "getChatMemory" -> chatMemoryService.getChatMemoryAsync(args[0]!!)
-                "evictChatMemory" -> chatMemoryService.evictChatMemoryAsync(args[0]!!) != null
+                "evictChatMemory" -> {
+                    chatMemoryService.evictChatMemoryAsync(args[0]!!) != null
+                }
                 else -> throw UnsupportedOperationException(
                     "Unknown method on ChatMemoryAccess class: ${method.name}",
                 )

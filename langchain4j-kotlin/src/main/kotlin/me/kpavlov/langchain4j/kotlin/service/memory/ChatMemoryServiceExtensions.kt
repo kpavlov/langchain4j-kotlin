@@ -9,8 +9,8 @@ public suspend fun ChatMemoryService.getOrCreateChatMemoryAsync(
     memoryId: ChatMemoryId,
 ): ChatMemory = coroutineScope { this@getOrCreateChatMemoryAsync.getOrCreateChatMemory(memoryId) }
 
-public suspend fun ChatMemoryService.getChatMemoryAsync(memoryId: ChatMemoryId): ChatMemory =
+public suspend fun ChatMemoryService.getChatMemoryAsync(memoryId: ChatMemoryId): ChatMemory? =
     coroutineScope { this@getChatMemoryAsync.getChatMemory(memoryId) }
 
-public suspend fun ChatMemoryService.evictChatMemoryAsync(memoryId: ChatMemoryId): ChatMemory =
+public suspend fun ChatMemoryService.evictChatMemoryAsync(memoryId: ChatMemoryId): ChatMemory? =
     coroutineScope { this@evictChatMemoryAsync.evictChatMemory(memoryId) }
