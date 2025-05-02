@@ -73,8 +73,6 @@ internal class ServiceInvocationHandler<T : Any>(
         "ComplexCondition",
     )
     suspend fun invoke(
-        @Suppress("unused")
-        proxy: Any?,
         method: Method,
         args: Array<Any?>,
     ): Any? {
