@@ -8,7 +8,7 @@ apidocs:
 
 lint:prepare
 		ktlint && \
-		mvn spotless:check
+		mvn spotless:check detekt:check
 
 # https://docs.openrewrite.org/recipes/maven/bestpractices
 format:prepare
