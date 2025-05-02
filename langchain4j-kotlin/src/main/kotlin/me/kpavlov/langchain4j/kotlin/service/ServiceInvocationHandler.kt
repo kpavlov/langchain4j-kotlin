@@ -49,6 +49,7 @@ internal class ServiceInvocationHandler<T : Any>(
     private val helper = DefaultAiServicesOpener<T>(context)
 
     @Throws(Exception::class)
+    @Suppress("FunctionTooLong")
     override fun invoke(
         proxy: Any?,
         method: Method,
@@ -171,6 +172,7 @@ internal class ServiceInvocationHandler<T : Any>(
         }
     }
 
+    @Suppress("TooManyParameters")
     private fun handleNonStreamingCall(
         returnType: Type,
         messages: MutableList<ChatMessage?>,
