@@ -5,7 +5,6 @@ import dev.langchain4j.service.AiServices
 import dev.langchain4j.spi.services.AiServicesFactory
 
 public class AsyncAiServicesFactory : AiServicesFactory {
-    override fun <T : Any> create(context: AiServiceContext): AiServices<T> {
-        return AsyncAiServices(context)
-    }
+    override fun <T : Any> create(context: AiServiceContext): AiServices<T> =
+        AsyncAiServices(context)
 }

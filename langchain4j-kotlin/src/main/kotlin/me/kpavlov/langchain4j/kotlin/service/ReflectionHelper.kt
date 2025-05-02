@@ -18,14 +18,15 @@ import kotlin.coroutines.resumeWithException
 
 @OptIn(DelicateCoroutinesApi::class)
 internal object ReflectionHelper {
-
     private val vtDispatcher = Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()
 
     private fun getReturnType(method: Method): Type {
         val continuationParam = method.parameterTypes.findLast { it.kotlin is Continuation<*> }
         if (continuationParam != null) {
             return continuationParam.genericInterfaces[0]
-                ?: throw IllegalStateException("Can't find generic interface of continuation parameter")
+                ?: throw IllegalStateException(
+                    "Can't find generic interface of continuation parameter",
+                )
         }
         return method.getGenericReturnType()
     }
@@ -35,33 +36,36 @@ internal object ReflectionHelper {
         if (parameters.isEmpty()) return getReturnType(method)
         val lastParameter = parameters.last()
         // Check if the last parameter is Continuation<T>
-        return (if (lastParameter is ParameterizedType &&
-            (lastParameter.rawType as? Class<*>)?.name == Continuation::class.java.name
-        ) {
-            // T is the first (and only) type argument
-            val type = lastParameter.actualTypeArguments.first()
-            if (type is WildcardType) {
-                type.lowerBounds.first()
+        return (
+            if (lastParameter is ParameterizedType &&
+                (lastParameter.rawType as? Class<*>)?.name == Continuation::class.java.name
+            ) {
+                // T is the first (and only) type argument
+                val type = lastParameter.actualTypeArguments.first()
+                if (type is WildcardType) {
+                    type.lowerBounds.first()
+                } else {
+                    type
+                }
             } else {
-                type
+                getReturnType(method) // Not a suspend function, or not detectably so
             }
-        } else {
-            getReturnType(method) // Not a suspend function, or not detectably so
-        })
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> createSuspendProxy(
         iface: Class<T>,
-        handler: suspend (method: java.lang.reflect.Method, args: Array<out Any?>) -> Any?
+        handler: suspend (method: java.lang.reflect.Method, args: Array<out Any?>) -> Any?,
     ): T {
         return Proxy.newProxyInstance(
             iface.classLoader,
             arrayOf(iface),
             InvocationHandler { _, method, args ->
                 // If not a suspend method, optionally fall back
-                val cont = args.lastOrNull() as? Continuation<Any?>
-                    ?: return@InvocationHandler method.invoke(this, *args)
+                val cont =
+                    args.lastOrNull() as? Continuation<Any?>
+                        ?: return@InvocationHandler method.invoke(this, *args)
 
                 // Remove Continuation for our handler
                 val argsForSuspend = args.dropLast(1).toTypedArray()
@@ -69,7 +73,7 @@ internal object ReflectionHelper {
                 // Launch coroutine for the suspend implementation
                 // (here, for demonstration, using a helper)
                 handleSuspend(handler, method, argsForSuspend, cont)
-            }
+            },
         ) as T
     }
 
@@ -78,7 +82,7 @@ internal object ReflectionHelper {
         handler: suspend (java.lang.reflect.Method, Array<out Any?>) -> Any?,
         method: java.lang.reflect.Method,
         args: Array<out Any?>,
-        cont: Continuation<Any?>
+        cont: Continuation<Any?>,
     ): Any? {
         // Use coroutine machinery to start the suspend block
         // If using Kotlin 1.3+, this is the correct way
@@ -100,9 +104,7 @@ internal object ReflectionHelper {
     }
 }
 
-
 public fun main() {
-
     val proxy =
         ReflectionHelper.createSuspendProxy(ReflectionHelper.MyApi::class.java) { method, args ->
             "${Thread.currentThread()}: Hello, $method(${args[0]})"
@@ -111,6 +113,4 @@ public fun main() {
     runBlocking {
         println(proxy.greet("world")) // Prints: Hello, world
     }
-
 }
-

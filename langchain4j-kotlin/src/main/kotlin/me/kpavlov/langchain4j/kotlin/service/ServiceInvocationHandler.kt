@@ -43,13 +43,17 @@ import java.util.concurrent.Future
 internal class ServiceInvocationHandler<T : Any>(
     private val context: AiServiceContext,
     private val serviceOutputParser: ServiceOutputParser,
-    private val tokenStreamAdapters: Collection<TokenStreamAdapter>
+    private val tokenStreamAdapters: Collection<TokenStreamAdapter>,
 ) : InvocationHandler {
     private val executor: ExecutorService = Executors.newCachedThreadPool()
     private val helper = DefaultAiServicesOpener<T>(context)
 
     @Throws(Exception::class)
-    override fun invoke(proxy: Any?, method: Method, args: Array<Any?>): Any? {
+    override fun invoke(
+        proxy: Any?,
+        method: Method,
+        args: Array<Any?>,
+    ): Any? {
         if (method.declaringClass == Any::class.java) {
             // methods like equals(), hashCode() and toString() should not be handled by this proxy
             return method.invoke(this, *args)
@@ -60,7 +64,7 @@ internal class ServiceInvocationHandler<T : Any>(
                 "getChatMemory" -> context.chatMemoryService.getChatMemory(args[0])
                 "evictChatMemory" -> context.chatMemoryService.evictChatMemory(args[0]) != null
                 else -> throw UnsupportedOperationException(
-                    "Unknown method on ChatMemoryAccess class: ${method.name}"
+                    "Unknown method on ChatMemoryAccess class: ${method.name}",
                 )
             }
         }
@@ -68,10 +72,12 @@ internal class ServiceInvocationHandler<T : Any>(
         helper.validateParameters(method)
 
         val memoryId = helper.findMemoryId(method, args).orElse(ChatMemoryService.DEFAULT)
-        val chatMemory = if (context.hasChatMemory())
-            context.chatMemoryService.getOrCreateChatMemory(memoryId)
-        else
-            null
+        val chatMemory =
+            if (context.hasChatMemory()) {
+                context.chatMemoryService.getOrCreateChatMemory(memoryId)
+            } else {
+                null
+            }
 
         val systemMessage = helper.prepareSystemMessage(memoryId, method, args)
         var userMessage = helper.prepareUserMessage(method, args)
@@ -99,16 +105,17 @@ internal class ServiceInvocationHandler<T : Any>(
             userMessage = appendOutputFormatInstructions(returnType, userMessage)
         }
 
-        val messages = if (chatMemory != null) {
-            systemMessage?.let(chatMemory::add)
-            chatMemory.add(userMessage)
-            chatMemory.messages()
-        } else {
-            mutableListOf<ChatMessage?>().apply {
-                systemMessage?.let(this::add)
-                add(userMessage)
+        val messages =
+            if (chatMemory != null) {
+                systemMessage?.let(chatMemory::add)
+                chatMemory.add(userMessage)
+                chatMemory.messages()
+            } else {
+                mutableListOf<ChatMessage?>().apply {
+                    systemMessage?.let(this::add)
+                    add(userMessage)
+                }
             }
-        }
 
         val moderationFuture = triggerModerationIfNeeded(method, messages)
 
@@ -121,7 +128,7 @@ internal class ServiceInvocationHandler<T : Any>(
                 messages,
                 toolExecutionContext,
                 augmentationResult,
-                memoryId
+                memoryId,
             )
         } else {
             handleNonStreamingCall(
@@ -133,7 +140,7 @@ internal class ServiceInvocationHandler<T : Any>(
                 chatMemory,
                 memoryId,
                 supportsJsonSchema,
-                jsonSchema
+                jsonSchema,
             )
         }
     }
@@ -143,18 +150,20 @@ internal class ServiceInvocationHandler<T : Any>(
         messages: MutableList<ChatMessage?>,
         toolExecutionContext: dev.langchain4j.service.tool.ToolExecutionContext,
         augmentationResult: AugmentationResult?,
-        memoryId: Any
+        memoryId: Any,
     ): Any? {
-        val tokenStream = AiServiceTokenStream(
-            AiServiceTokenStreamParameters.builder()
-                .messages(messages)
-                .toolSpecifications(toolExecutionContext.toolSpecifications())
-                .toolExecutors(toolExecutionContext.toolExecutors())
-                .retrievedContents(augmentationResult?.contents())
-                .context(context)
-                .memoryId(memoryId)
-                .build()
-        )
+        val tokenStream =
+            AiServiceTokenStream(
+                AiServiceTokenStreamParameters
+                    .builder()
+                    .messages(messages)
+                    .toolSpecifications(toolExecutionContext.toolSpecifications())
+                    .toolExecutors(toolExecutionContext.toolExecutors())
+                    .retrievedContents(augmentationResult?.contents())
+                    .context(context)
+                    .memoryId(memoryId)
+                    .build(),
+            )
         // TODO moderation
         return when {
             returnType == TokenStream::class.java -> tokenStream
@@ -171,48 +180,61 @@ internal class ServiceInvocationHandler<T : Any>(
         chatMemory: ChatMemory?,
         memoryId: ChatMemoryId,
         supportsJsonSchema: Boolean,
-        jsonSchema: JsonSchema?
+        jsonSchema: JsonSchema?,
     ): Any? {
-        val responseFormat = if (supportsJsonSchema && jsonSchema != null) {
-            ResponseFormat.builder()
-                .type(ResponseFormatType.JSON)
-                .jsonSchema(jsonSchema)
+        val responseFormat =
+            if (supportsJsonSchema && jsonSchema != null) {
+                ResponseFormat
+                    .builder()
+                    .type(ResponseFormatType.JSON)
+                    .jsonSchema(jsonSchema)
+                    .build()
+            } else {
+                null
+            }
+
+        val parameters =
+            ChatRequestParameters
+                .builder()
+                .toolSpecifications(toolExecutionContext.toolSpecifications())
+                .responseFormat(responseFormat)
                 .build()
-        } else null
 
-        val parameters = ChatRequestParameters.builder()
-            .toolSpecifications(toolExecutionContext.toolSpecifications())
-            .responseFormat(responseFormat)
-            .build()
-
-        val chatRequest = ChatRequest.builder()
-            .messages(messages)
-            .parameters(parameters)
-            .build()
+        val chatRequest =
+            ChatRequest
+                .builder()
+                .messages(messages)
+                .parameters(parameters)
+                .build()
 
         var chatResponse = context.chatModel.chat(chatRequest)
 
         AiServices.verifyModerationIfNeeded(moderationFuture)
 
-        val toolExecutionResult = context.toolService.executeInferenceAndToolsLoop(
-            chatResponse,
-            parameters,
-            messages,
-            context.chatModel,
-            chatMemory,
-            memoryId,
-            toolExecutionContext.toolExecutors()
-        )
+        val toolExecutionResult =
+            context.toolService.executeInferenceAndToolsLoop(
+                chatResponse,
+                parameters,
+                messages,
+                context.chatModel,
+                chatMemory,
+                memoryId,
+                toolExecutionContext.toolExecutors(),
+            )
 
         chatResponse = toolExecutionResult.chatResponse()
         val finishReason = chatResponse.metadata().finishReason()
-        val response = Response.from<AiMessage?>(
-            chatResponse.aiMessage(), toolExecutionResult.tokenUsageAccumulator(), finishReason
-        )
+        val response =
+            Response.from<AiMessage?>(
+                chatResponse.aiMessage(),
+                toolExecutionResult.tokenUsageAccumulator(),
+                finishReason,
+            )
 
         val parsedResponse = serviceOutputParser.parse(response, returnType)
         return if (TypeUtils.typeHasRawClass(returnType, Result::class.java)) {
-            Result.builder<Any?>()
+            Result
+                .builder<Any?>()
                 .content(parsedResponse)
                 .tokenUsage(toolExecutionResult.tokenUsageAccumulator())
                 .sources(augmentationResult?.contents())
@@ -227,35 +249,47 @@ internal class ServiceInvocationHandler<T : Any>(
     private fun canAdaptTokenStreamTo(returnType: Type): Boolean =
         tokenStreamAdapters.any { it.canAdaptTokenStreamTo(returnType) }
 
-    private fun adapt(tokenStream: TokenStream, returnType: Type): Any? =
-        tokenStreamAdapters.firstOrNull { it.canAdaptTokenStreamTo(returnType) }
+    private fun adapt(
+        tokenStream: TokenStream,
+        returnType: Type,
+    ): Any? =
+        tokenStreamAdapters
+            .firstOrNull { it.canAdaptTokenStreamTo(returnType) }
             ?.adapt(tokenStream)
             ?: throw IllegalStateException("Can't find suitable TokenStreamAdapter")
 
     private fun supportsJsonSchema(): Boolean =
-        context.chatModel?.supportedCapabilities()
+        context.chatModel
+            ?.supportedCapabilities()
             ?.contains(Capability.RESPONSE_FORMAT_JSON_SCHEMA) ?: false
 
     private fun appendOutputFormatInstructions(
         returnType: Type,
-        userMessage: UserMessage
+        userMessage: UserMessage,
     ): UserMessage {
         val outputFormatInstructions = serviceOutputParser.outputFormatInstructions(returnType)
         val text = userMessage.singleText() + outputFormatInstructions
-        return if (Utils.isNotNullOrBlank(userMessage.name())) UserMessage.from(userMessage.name(), text)
-        else UserMessage.from(text)
+        return if (Utils.isNotNullOrBlank(userMessage.name())) {
+            UserMessage.from(userMessage.name(), text)
+        } else {
+            UserMessage.from(text)
+        }
     }
 
     private fun triggerModerationIfNeeded(
         method: Method,
-        messages: MutableList<ChatMessage?>
+        messages: MutableList<ChatMessage?>,
     ): Future<Moderation?>? =
         if (method.isAnnotationPresent(Moderate::class.java)) {
-            executor.submit(Callable<Moderation?> {
-                val messagesToModerate = AiServices.removeToolMessages(messages)
-                context.moderationModel
-                    .moderate(messagesToModerate)
-                    .content()
-            })
-        } else null
+            executor.submit(
+                Callable<Moderation?> {
+                    val messagesToModerate = AiServices.removeToolMessages(messages)
+                    context.moderationModel
+                        .moderate(messagesToModerate)
+                        .content()
+                },
+            )
+        } else {
+            null
+        }
 }
