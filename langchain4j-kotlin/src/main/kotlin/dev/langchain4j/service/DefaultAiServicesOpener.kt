@@ -1,16 +1,14 @@
 package dev.langchain4j.service
 
-import dev.langchain4j.data.message.SystemMessage
-import dev.langchain4j.data.message.UserMessage
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
 import java.lang.reflect.Method
 import java.util.Optional
 
-internal class DefaultAiServicesOpener<T : Any>(
-    context: AiServiceContext,
-) {
-    private val defaultAiServices = DefaultAiServices<T>(context)
-
+/**
+ * This is a hack to access package-private methods in [DefaultAiServices].
+ * It is not supposed to be used directly.
+ */
+internal object DefaultAiServicesOpener {
     /**
      * This class is used to open package-private methods in [DefaultAiServices].
      * It is not supposed to be used directly.
@@ -31,6 +29,7 @@ internal class DefaultAiServicesOpener<T : Any>(
         return findMemoryId.invoke(null, method, args) as Optional<Any>
     }
 
+    @Suppress("TooGenericExceptionCaught")
     internal fun validateParameters(method: Method) {
         val validateParameters =
             DefaultAiServices::class.java.getDeclaredMethod(
@@ -49,44 +48,5 @@ internal class DefaultAiServicesOpener<T : Any>(
             }
             throw e
         }
-    }
-
-    internal fun prepareUserMessage(
-        method: Method,
-        args: Array<Any?>,
-    ): UserMessage {
-        val prepareUserMessage =
-            DefaultAiServices::class.java.getDeclaredMethod(
-                "prepareUserMessage",
-                Method::class.java,
-                Array<Any?>::class.java,
-            )
-        prepareUserMessage.isAccessible = true
-        return prepareUserMessage.invoke(null, method, args) as UserMessage
-    }
-
-    internal fun prepareSystemMessage(
-        memoryId: Any?,
-        method: Method,
-        args: Array<Any?>,
-    ): SystemMessage? {
-        val prepareSystemMessage =
-            DefaultAiServices::class.java.getDeclaredMethod(
-                "prepareSystemMessage",
-                Any::class.java,
-                Method::class.java,
-                Array<Any?>::class.java,
-            )
-        prepareSystemMessage.isAccessible = true
-        // val callArgs = args.filter { it !is Continuation<*> }
-        @Suppress("UNCHECKED_CAST")
-        val result =
-            prepareSystemMessage.invoke(
-                defaultAiServices,
-                memoryId,
-                method,
-                args,
-            ) as Optional<SystemMessage>
-        return result.orElse(null)
     }
 }

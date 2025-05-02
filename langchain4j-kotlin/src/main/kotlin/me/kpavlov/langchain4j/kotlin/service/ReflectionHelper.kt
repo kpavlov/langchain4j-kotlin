@@ -1,6 +1,7 @@
 package me.kpavlov.langchain4j.kotlin.service
 
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -20,9 +21,11 @@ import kotlin.coroutines.resumeWithException
 internal object ReflectionHelper {
     private val vtDispatcher = Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()
 
+    @Throws(kotlin.IllegalStateException::class)
     private fun getReturnType(method: Method): Type {
         val continuationParam = method.parameterTypes.findLast { it.kotlin is Continuation<*> }
         if (continuationParam != null) {
+            @Suppress("UseCheckOrError")
             return continuationParam.genericInterfaces[0]
                 ?: throw IllegalStateException(
                     "Can't find generic interface of continuation parameter",
@@ -56,7 +59,7 @@ internal object ReflectionHelper {
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> createSuspendProxy(
         iface: Class<T>,
-        handler: suspend (method: java.lang.reflect.Method, args: Array<out Any?>) -> Any?,
+        handler: suspend (method: java.lang.reflect.Method, args: Array<Any?>) -> Any?,
     ): T {
         return Proxy.newProxyInstance(
             iface.classLoader,
@@ -65,49 +68,46 @@ internal object ReflectionHelper {
                 // If not a suspend method, optionally fall back
                 val cont =
                     args.lastOrNull() as? Continuation<Any?>
-                        ?: return@InvocationHandler method.invoke(this, *args)
+                        ?: return@InvocationHandler method.invoke(this, args)
 
                 // Remove Continuation for our handler
                 val argsForSuspend = args.dropLast(1).toTypedArray()
 
                 // Launch coroutine for the suspend implementation
                 // (here, for demonstration, using a helper)
-                handleSuspend(handler, method, argsForSuspend, cont)
+                // Use coroutine machinery to start the suspend block
+                // If using Kotlin 1.3+, this is the correct way
+                // Uses GlobalScope (be sure that's okay for your use-case!)
+                GlobalScope.launch(vtDispatcher) {
+                    @Suppress("TooGenericExceptionCaught")
+                    try {
+                        val result = handler(method, argsForSuspend)
+                        cont.resume(result)
+                    } catch (e: Throwable) {
+                        cont.resumeWithException(e)
+                    }
+                }
+                COROUTINE_SUSPENDED
             },
         ) as T
-    }
-
-    // Helper to launch suspend code and resume the continuation
-    fun handleSuspend(
-        handler: suspend (java.lang.reflect.Method, Array<out Any?>) -> Any?,
-        method: java.lang.reflect.Method,
-        args: Array<out Any?>,
-        cont: Continuation<Any?>,
-    ): Any? {
-        // Use coroutine machinery to start the suspend block
-        // If using Kotlin 1.3+, this is the correct way
-        // Uses GlobalScope (be sure that's okay for your use-case!)
-        kotlinx.coroutines.GlobalScope.launch(vtDispatcher) {
-            try {
-                val result = handler(method, args)
-                cont.resume(result)
-            } catch (e: Throwable) {
-                cont.resumeWithException(e)
-            }
-        }
-        return COROUTINE_SUSPENDED
     }
 
     @FunctionalInterface
     interface MyApi {
         suspend fun greet(name: String): String
     }
+
+    internal fun dropContinuationArg(args: Array<Any?>): Array<Any?> =
+        args
+            .dropLastWhile {
+                it is Continuation<*>
+            }.toTypedArray()
 }
 
 public fun main() {
     val proxy =
         ReflectionHelper.createSuspendProxy(ReflectionHelper.MyApi::class.java) { method, args ->
-            "${Thread.currentThread()}: Hello, $method(${args[0]})"
+            "${Thread.currentThread()}: Hello, $method(${args[0]} )"
         }
 
     runBlocking {

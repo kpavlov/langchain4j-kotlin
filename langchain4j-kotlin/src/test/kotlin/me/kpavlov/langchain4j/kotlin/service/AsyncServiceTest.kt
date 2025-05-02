@@ -6,7 +6,6 @@ import dev.langchain4j.data.message.UserMessage
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
-import dev.langchain4j.service.AiServices
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -41,9 +40,10 @@ internal class AsyncServiceTest {
                 }
 
             val assistant =
-                AiServices
-                    .builder(AsyncAssistant::class.java)
-                    .chatLanguageModel(model)
+                createAiService(
+                    serviceClass = AsyncAssistant::class.java,
+                    factory = AsyncAiServicesFactory(),
+                ).chatLanguageModel(model)
                     .build()
 
             val response = assistant.askQuestion()

@@ -11,7 +11,6 @@ import dev.langchain4j.service.TypeUtils
 import dev.langchain4j.service.output.ServiceOutputParser
 import dev.langchain4j.spi.ServiceHelper
 import dev.langchain4j.spi.services.TokenStreamAdapter
-import java.lang.reflect.Proxy
 
 public class AsyncAiServices<T : Any>(
     context: AiServiceContext,
@@ -71,14 +70,10 @@ public class AsyncAiServices<T : Any>(
             }
         }
 
-        val proxyInstance =
-            Proxy.newProxyInstance(
-                context.aiServiceClass.classLoader,
-                arrayOf(context.aiServiceClass),
-                ServiceInvocationHandler<T>(context, serviceOutputParser, tokenStreamAdapters),
-            )
-
-        @Suppress("UNCHECKED_CAST")
-        return proxyInstance as T
+        val handler = ServiceInvocationHandler<T>(context, serviceOutputParser, tokenStreamAdapters)
+        @Suppress("UNCHECKED_CAST", "unused")
+        return ReflectionHelper.createSuspendProxy(context.aiServiceClass) { method, args ->
+            return@createSuspendProxy handler.invoke(null, method, args)
+        } as T
     }
 }
