@@ -21,7 +21,7 @@
         <!-- Dependencies -->
         <finchly.version>0.1.1</finchly.version>
         <kotlinx.version>1.10.2</kotlinx.version>
-        <langchain4j-kotlin.version>0.1.10</langchain4j-kotlin.version>
+        <langchain4j-kotlin.version>0.1.11</langchain4j-kotlin.version>
         <langchain4j.version>1.0.0-rc1</langchain4j.version>
         <slf4j.version>2.0.17</slf4j.version>
     </properties>
