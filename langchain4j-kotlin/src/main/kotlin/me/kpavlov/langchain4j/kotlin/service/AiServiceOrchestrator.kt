@@ -20,7 +20,6 @@ import dev.langchain4j.service.AiServiceContext
 import dev.langchain4j.service.AiServiceTokenStream
 import dev.langchain4j.service.AiServiceTokenStreamParameters
 import dev.langchain4j.service.AiServices
-import dev.langchain4j.service.DefaultAiServicesOpener
 import dev.langchain4j.service.IllegalConfigurationException
 import dev.langchain4j.service.Moderate
 import dev.langchain4j.service.Result
@@ -32,7 +31,10 @@ import dev.langchain4j.service.output.ServiceOutputParser
 import dev.langchain4j.service.tool.ToolServiceContext
 import dev.langchain4j.spi.services.TokenStreamAdapter
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
+import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
+import me.kpavlov.langchain4j.kotlin.service.ReflectionHelper.validateParameters
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.asString
+import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findMemoryId
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findTemplateVariables
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findUserMessageTemplateFromTheOnlyArgument
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findUserName
@@ -54,13 +56,12 @@ import java.util.function.Supplier
 
 @ApiStatus.Internal
 @Suppress("TooManyFunctions", "detekt:all")
-internal class ServiceInvocationHandler<T : Any>(
+internal class AiServiceOrchestrator<T : Any>(
     private val context: AiServiceContext,
     private val serviceOutputParser: ServiceOutputParser,
     private val tokenStreamAdapters: Collection<TokenStreamAdapter>,
 ) {
     private val executor: ExecutorService = Executors.newCachedThreadPool()
-    private val helper = DefaultAiServicesOpener
 
     @Throws(Exception::class)
     @Suppress(
@@ -71,7 +72,7 @@ internal class ServiceInvocationHandler<T : Any>(
         "UseCheckOrError",
         "ComplexCondition",
     )
-    suspend fun invoke(
+    suspend fun execute(
         method: Method,
         args: Array<Any?>,
     ): Any? {
@@ -87,17 +88,17 @@ internal class ServiceInvocationHandler<T : Any>(
                 "evictChatMemory" -> {
                     chatMemoryService.evictChatMemoryAsync(args[0]!!) != null
                 }
+
                 else -> throw UnsupportedOperationException(
                     "Unknown method on ChatMemoryAccess class: ${method.name}",
                 )
             }
         }
 
-        helper.validateParameters(method)
+        validateParameters(method)
 
         val memoryId =
-            helper
-                .findMemoryId(method, args)
+            findMemoryId(method, args)
                 .orElse(ChatMemoryService.DEFAULT)
         val chatMemory =
             if (context.hasChatMemory()) {
@@ -199,7 +200,7 @@ internal class ServiceInvocationHandler<T : Any>(
     }
 
     @Suppress("LongParameterList")
-    private fun handleNonStreamingCall(
+    private suspend fun handleNonStreamingCall(
         returnType: Type,
         messages: MutableList<ChatMessage?>,
         toolServiceContext: ToolServiceContext,
@@ -235,7 +236,7 @@ internal class ServiceInvocationHandler<T : Any>(
                 .parameters(parameters)
                 .build()
 
-        var chatResponse = context.chatModel.chat(chatRequest)
+        var chatResponse = context.chatModel.chatAsync(chatRequest)
 
         AiServices.verifyModerationIfNeeded(moderationFuture)
 

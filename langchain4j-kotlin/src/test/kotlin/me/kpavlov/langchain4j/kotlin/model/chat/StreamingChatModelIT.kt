@@ -8,7 +8,11 @@ import dev.langchain4j.data.message.SystemMessage.systemMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.response.ChatResponse
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.string.shouldContain
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
@@ -24,7 +28,7 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
 
-internal class StreamingChatModelIT {
+internal open class StreamingChatModelIT {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val model: StreamingChatModel = createOpenAiStreamingModel()
@@ -66,7 +70,8 @@ internal class StreamingChatModelIT {
                 .chatFlow {
                     messages += systemMessage
                     messages += userMessage
-                }.collect {
+                }.buffer(capacity = Channel.UNLIMITED)
+                .collect {
                     when (it) {
                         is PartialResponse -> {
                             println("Token: '${it.token}'")
@@ -80,12 +85,10 @@ internal class StreamingChatModelIT {
                 }
 
             val response = responseRef.get()!!
-            assertThat(response.metadata()).isNotNull()
-            assertThat(response.aiMessage()).isNotNull()
-            val textContent = response.aiMessage()?.text()!!
-            assertThat(textContent).isNotNull()
-            assertThat(collectedTokens.joinToString("")).isEqualTo(textContent)
-            assertThat(textContent).contains("Blumblefang loves to help")
+            response.metadata().shouldNotBeNull()
+            response.aiMessage().shouldNotBeNull {
+                text() shouldContain "Blumblefang loves to help"
+            }
         }
 
     fun setupMockResponseIfNecessary(

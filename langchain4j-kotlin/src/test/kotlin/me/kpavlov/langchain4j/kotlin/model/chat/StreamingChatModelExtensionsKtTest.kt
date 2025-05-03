@@ -53,11 +53,12 @@ internal class StreamingChatModelExtensionsKtTest {
             val result = flow.toList()
 
             // Assert partial responses
-            result shouldContainExactly listOf(
-                PartialResponse(partialToken1),
-                PartialResponse(partialToken2),
-                CompleteResponse(completeResponse),
-            )
+            result shouldContainExactly
+                listOf(
+                    PartialResponse(partialToken1),
+                    PartialResponse(partialToken2),
+                    CompleteResponse(completeResponse),
+                )
 
             // Verify interactions
             verify(mockModel).chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
@@ -69,9 +70,11 @@ internal class StreamingChatModelExtensionsKtTest {
             val partialToken0 = "start"
             val partialToken1 = "hello"
             val partialToken2 = "world"
-            val completeResponse = ChatResponse.builder()
-                .aiMessage(aiMessage("Done"))
-                .build()
+            val completeResponse =
+                ChatResponse
+                    .builder()
+                    .aiMessage(aiMessage("Done"))
+                    .build()
 
             // Simulate the streaming behavior with a mocked handler
             doAnswer {
@@ -84,25 +87,25 @@ internal class StreamingChatModelExtensionsKtTest {
                 .chat(any<ChatRequest>(), any<StreamingChatResponseHandler>())
 
             val result = mutableListOf<StreamingChatModelReply>()
-            mockModel.chatFlow(
-                bufferCapacity = 1,
-                onBufferOverflow = BufferOverflow.DROP_OLDEST
-            ) {
-                messages += userMessage("Hey, there!")
-            }
-                .onEach {
+            mockModel
+                .chatFlow(
+                    bufferCapacity = 1,
+                    onBufferOverflow = BufferOverflow.DROP_OLDEST,
+                ) {
+                    messages += userMessage("Hey, there!")
+                }.onEach {
                     println(it)
                     delay(100)
-                }
-                .collect {
+                }.collect {
                     result.add(it)
                 }
 
             // Assert partial responses
-            result shouldContainExactly listOf(
-                PartialResponse(partialToken0),
-                CompleteResponse(completeResponse),
-            )
+            result shouldContainExactly
+                listOf(
+                    PartialResponse(partialToken0),
+                    CompleteResponse(completeResponse),
+                )
 
             // Verify interactions
             verify(mockModel)
@@ -125,9 +128,10 @@ internal class StreamingChatModelExtensionsKtTest {
                     messages += userMessage("Hey, there!")
                 }
 
-            val exception = shouldThrow<RuntimeException> {
-                flow.toList()
-            }
+            val exception =
+                shouldThrow<RuntimeException> {
+                    flow.toList()
+                }
 
             exception shouldHaveMessage "Test error"
         }

@@ -4,7 +4,7 @@
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
     <artifactId>root</artifactId>
-    <version>0.1.11-SNAPSHOT</version>
+    <version>0.1.13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>LangChain4j-Kotlin :: Root</name>
     <description>Kotlin enhancements for LangChain4j</description>
@@ -41,11 +41,11 @@
     </scm>
 
     <properties>
-        <argLine/>
+        <argLine />
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
-        <kotlin.version>2.1.20</kotlin.version>
+        <kotlin.version>2.1.21</kotlin.version>
         <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
@@ -53,12 +53,13 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <!-- Dependencies -->
-        <ai-mocks.version>0.1.1</ai-mocks.version>
+        <ai-mocks.version>0.3.5</ai-mocks.version>
         <awaitility.version>4.2.2</awaitility.version>
         <finchly.version>0.1.1</finchly.version>
         <junit.version>5.12.2</junit.version>
+        <kotest.version>5.9.1</kotest.version>
         <kotlinx-coroutines.version>1.8.1</kotlinx-coroutines.version>
-        <langchain4j.version>1.0.0-beta4</langchain4j.version>
+        <langchain4j.version>1.0.0</langchain4j.version>
         <mockito-kotlin.version>5.4.0</mockito-kotlin.version>
         <mockito.version>5.17.0</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
@@ -114,10 +115,8 @@
             </dependency>
             <dependency>
                 <groupId>me.kpavlov.aimocks</groupId>
-                <artifactId>bom</artifactId>
+                <artifactId>ai-mocks-openai-jvm</artifactId>
                 <version>${ai-mocks.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito.kotlin</groupId>
@@ -143,7 +142,11 @@
                 <version>${finchly.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>io.kotest</groupId>
+                <artifactId>kotest-assertions-core-jvm</artifactId>
+                <version>${kotest.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -209,7 +212,7 @@
                     <groupId>com.github.ozsie</groupId>
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>1.23.8</version>
-                    <configuration/>
+                    <configuration />
                 </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlinx</groupId>
@@ -246,17 +249,17 @@
                         <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                         <ratchetFrom>origin/main</ratchetFrom>
                         <java>
-                            <palantirJavaFormat/>
+                            <palantirJavaFormat />
                         </java>
                         <kotlin>
-                            <ktlint/>
+                            <ktlint />
                         </kotlin>
                         <markdown>
                             <includes>
                                 <!-- You have to set the target manually -->
                                 <include>**/*.md</include>
                             </includes>
-                            <flexmark/>
+                            <flexmark />
                         </markdown>
                         <pom>
                             <includes>
@@ -457,7 +460,7 @@
                     <plugin>
                         <groupId>org.openrewrite.maven</groupId>
                         <artifactId>rewrite-maven-plugin</artifactId>
-                        <version>6.7.0</version>
+                        <version>6.8.1</version>
                         <configuration>
                             <exportDatatables>true</exportDatatables>
                             <activeRecipes>

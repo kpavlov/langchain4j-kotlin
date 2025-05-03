@@ -4,7 +4,7 @@
     <parent>
         <groupId>me.kpavlov.langchain4j.kotlin</groupId>
         <artifactId>root</artifactId>
-        <version>0.1.11-SNAPSHOT</version>
+        <version>0.1.13-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -15,6 +15,11 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
@@ -31,8 +36,9 @@
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -57,7 +63,12 @@
         </dependency>
         <dependency>
             <groupId>me.kpavlov.aimocks</groupId>
-            <artifactId>ai-mocks-openai</artifactId>
+            <artifactId>ai-mocks-openai-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

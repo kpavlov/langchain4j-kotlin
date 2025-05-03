@@ -13,11 +13,12 @@ import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
 internal class ServiceWithPromptTemplatesTest {
     @Test
-    fun `Should use System and User Prompt Templates`() {
+    fun `Should use System and User Prompt Templates`() = runTest {
         val chatResponse =
             ChatResponse
                 .builder()
@@ -62,7 +63,7 @@ internal class ServiceWithPromptTemplatesTest {
         @dev.langchain4j.service.UserMessage(
             "prompts/ServiceWithTemplatesTest/default-user-prompt.mustache",
         )
-        fun askQuestion(
+        suspend fun askQuestion(
             @UserName userName: String,
             @V("message") question: String,
         ): String

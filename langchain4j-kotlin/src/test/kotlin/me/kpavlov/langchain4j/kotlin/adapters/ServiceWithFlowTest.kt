@@ -1,10 +1,7 @@
 package me.kpavlov.langchain4j.kotlin.adapters
 
 import assertk.assertThat
-import assertk.assertions.containsExactly
 import assertk.assertions.hasSize
-import assertk.assertions.index
-import assertk.assertions.isInstanceOf
 import assertk.assertions.startsWith
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.model.chat.StreamingChatModel
@@ -15,8 +12,6 @@ import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeSameInstanceAs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.toList
@@ -32,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.whenever
-import kotlin.collections.listOf
 
 @ExtendWith(MockitoExtension::class)
 internal class ServiceWithFlowTest {

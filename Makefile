@@ -1,4 +1,5 @@
 build:
+	mvn --version
 	mvn clean verify site -Prelease -Dgpg.skip
 
 apidocs:
