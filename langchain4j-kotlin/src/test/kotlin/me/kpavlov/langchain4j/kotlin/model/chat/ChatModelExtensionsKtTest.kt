@@ -1,10 +1,9 @@
 package me.kpavlov.langchain4j.kotlin.model.chat
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -40,7 +39,7 @@ internal class ChatModelExtensionsKtTest {
 
             val actualResponse = mockModel.chatAsync(request)
 
-            assertThat(actualResponse).isEqualTo(expectedResponse)
+            actualResponse shouldBe expectedResponse
             verify(mockModel).chat(request)
         }
 
@@ -52,7 +51,7 @@ internal class ChatModelExtensionsKtTest {
 
             val actualResponse = mockModel.chatAsync(requestBuilder)
 
-            assertThat(actualResponse).isEqualTo(expectedResponse)
+            actualResponse shouldBe expectedResponse
             verify(mockModel).chat(request)
         }
 
@@ -64,7 +63,7 @@ internal class ChatModelExtensionsKtTest {
 
             val actualResponse = mockModel.chat(requestBuilder)
 
-            assertThat(actualResponse).isEqualTo(expectedResponse)
+            actualResponse shouldBe expectedResponse
             verify(mockModel).chat(request)
         }
 }

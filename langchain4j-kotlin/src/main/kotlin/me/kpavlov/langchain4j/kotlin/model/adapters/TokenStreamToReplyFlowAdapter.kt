@@ -1,10 +1,10 @@
-package me.kpavlov.langchain4j.kotlin.adapters
+package me.kpavlov.langchain4j.kotlin.model.adapters
 
 import dev.langchain4j.service.TokenStream
 import dev.langchain4j.spi.services.TokenStreamAdapter
 import kotlinx.coroutines.flow.Flow
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply
-import me.kpavlov.langchain4j.kotlin.model.chat.asReplyFlow
+import me.kpavlov.langchain4j.kotlin.service.asReplyFlow
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 

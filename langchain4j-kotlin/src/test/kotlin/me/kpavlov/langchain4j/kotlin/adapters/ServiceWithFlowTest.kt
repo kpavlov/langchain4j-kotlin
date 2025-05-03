@@ -14,6 +14,9 @@ import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.toList
@@ -21,6 +24,7 @@ import kotlinx.coroutines.test.runTest
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.CompleteResponse
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.PartialResponse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -28,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.whenever
+import kotlin.collections.listOf
 
 @ExtendWith(MockitoExtension::class)
 internal class ServiceWithFlowTest {
@@ -59,7 +64,7 @@ internal class ServiceWithFlowTest {
                     .askQuestion(userName = "My friend", question = "How are you?")
                     .toList()
 
-            assertThat(result).containsExactly(partialToken1, partialToken2)
+            result shouldContainExactly listOf(partialToken1, partialToken2)
         }
 
     @Test
@@ -93,7 +98,7 @@ internal class ServiceWithFlowTest {
                         emit(message)
                     }.toList()
 
-            assertThat(response).containsExactly(partialToken1, partialToken2, error.message)
+            response shouldContainExactly listOf(partialToken1, partialToken2, error.message)
         }
 
     @Test
@@ -124,7 +129,7 @@ internal class ServiceWithFlowTest {
             assertThat(
                 result,
             ).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
-            assertThat(result).index(2).isInstanceOf(CompleteResponse::class)
+            assertTrue(result[2] is CompleteResponse)
         }
 
     @Test
@@ -157,7 +162,7 @@ internal class ServiceWithFlowTest {
             assertThat(
                 response,
             ).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
-            assertThat(response).index(2).isInstanceOf(StreamingChatModelReply.Error::class)
+            assertTrue(response[2] is StreamingChatModelReply.Error)
         }
 
     @Suppress("unused")

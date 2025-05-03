@@ -1,2 +1,2 @@
-me.kpavlov.langchain4j.kotlin.adapters.TokenStreamToStringFlowAdapter
-me.kpavlov.langchain4j.kotlin.adapters.TokenStreamToReplyFlowAdapter
+me.kpavlov.langchain4j.kotlin.model.adapters.TokenStreamToStringFlowAdapter
+me.kpavlov.langchain4j.kotlin.model.adapters.TokenStreamToReplyFlowAdapter

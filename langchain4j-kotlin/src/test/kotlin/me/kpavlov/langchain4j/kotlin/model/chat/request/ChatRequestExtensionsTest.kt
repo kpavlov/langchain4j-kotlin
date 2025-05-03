@@ -1,11 +1,5 @@
 package me.kpavlov.langchain4j.kotlin.model.chat.request
 
-import assertk.assertThat
-import assertk.assertions.containsExactly
-import assertk.assertions.isCloseTo
-import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
-import assertk.assertions.isNotEqualTo
 import dev.langchain4j.agent.tool.ToolSpecification
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
@@ -14,6 +8,12 @@ import dev.langchain4j.model.chat.request.DefaultChatRequestParameters
 import dev.langchain4j.model.chat.request.ResponseFormat
 import dev.langchain4j.model.chat.request.ToolChoice
 import dev.langchain4j.model.openai.OpenAiChatRequestParameters
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.doubles.shouldBeWithinPercentageOf
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.beInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 
@@ -33,12 +33,12 @@ internal class ChatRequestExtensionsTest {
                 parameters = params
             }
 
-        assertThat(result.messages()).containsExactly(
+        result.messages() shouldContainExactly listOf(
             systemMessage,
             userMessage,
         )
-        assertThat(result.parameters()).isEqualTo(params)
-        assertThat(result.parameters().temperature()).isNotEqualTo(0.1)
+        result.parameters() shouldBe params
+        result.parameters().temperature() shouldNotBe 0.1
     }
 
     @Test
@@ -66,18 +66,18 @@ internal class ChatRequestExtensionsTest {
                 }
             }
         val parameters = result.parameters()
-        assertThat(parameters).isInstanceOf(DefaultChatRequestParameters::class)
-        assertThat(parameters.temperature()).isCloseTo(0.1, 0.000001)
-        assertThat(parameters.modelName()).isEqualTo("super-model")
-        assertThat(parameters.topP()).isCloseTo(0.2, 0.000001)
-        assertThat(parameters.topK()).isEqualTo(3)
-        assertThat(parameters.frequencyPenalty()).isCloseTo(0.4, 0.000001)
-        assertThat(parameters.presencePenalty()).isCloseTo(0.5, 0.000001)
-        assertThat(parameters.maxOutputTokens()).isEqualTo(6)
-        assertThat(parameters.stopSequences()).containsExactly("halt", "stop")
-        assertThat(parameters.toolSpecifications()).containsExactly(toolSpec)
-        assertThat(parameters.toolChoice()).isEqualTo(ToolChoice.REQUIRED)
-        assertThat(parameters.responseFormat()).isEqualTo(ResponseFormat.JSON)
+        parameters should beInstanceOf<DefaultChatRequestParameters>()
+        parameters.temperature().shouldBeWithinPercentageOf(0.1, 0.000001)
+        parameters.modelName() shouldBe "super-model"
+        parameters.topP().shouldBeWithinPercentageOf(0.2, 0.000001)
+        parameters.topK() shouldBe 3
+        parameters.frequencyPenalty().shouldBeWithinPercentageOf(0.4, 0.000001)
+        parameters.presencePenalty().shouldBeWithinPercentageOf(0.5, 0.000001)
+        parameters.maxOutputTokens() shouldBe 6
+        parameters.stopSequences() shouldContainExactly listOf("halt", "stop")
+        parameters.toolSpecifications() shouldContainExactly listOf(toolSpec)
+        parameters.toolChoice() shouldBe ToolChoice.REQUIRED
+        parameters.responseFormat() shouldBe ResponseFormat.JSON
     }
 
     @Test
@@ -94,7 +94,7 @@ internal class ChatRequestExtensionsTest {
                 }
             }
         val parameters = result.parameters() as OpenAiChatRequestParameters
-        assertThat(parameters.temperature()).isCloseTo(0.1, 0.000001)
-        assertThat(parameters.seed()).isEqualTo(42)
+        parameters.temperature().shouldBeWithinPercentageOf(0.1, 0.000001)
+        parameters.seed() shouldBe 42
     }
 }
