@@ -32,6 +32,7 @@ import dev.langchain4j.service.output.ServiceOutputParser
 import dev.langchain4j.service.tool.ToolServiceContext
 import dev.langchain4j.spi.services.TokenStreamAdapter
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
+import me.kpavlov.langchain4j.kotlin.service.ReflectionHelper.validateParameters
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.asString
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findTemplateVariables
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findUserMessageTemplateFromTheOnlyArgument
@@ -93,7 +94,7 @@ internal class ServiceInvocationHandler<T : Any>(
             }
         }
 
-        helper.validateParameters(method)
+        validateParameters(method)
 
         val memoryId =
             helper

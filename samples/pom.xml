@@ -13,16 +13,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
-        <kotlin.version>2.1.20</kotlin.version>
+        <kotlin.version>1.9.25</kotlin.version>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
         <!-- Dependencies -->
         <finchly.version>0.1.1</finchly.version>
-        <kotlinx.version>1.10.2</kotlinx.version>
+        <kotlinx.version>1.8.1</kotlinx.version>
         <langchain4j-kotlin.version>0.1.11</langchain4j-kotlin.version>
-        <langchain4j.version>1.0.0-rc1</langchain4j.version>
+        <langchain4j.version>1.0.0-beta4</langchain4j.version>
         <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
@@ -70,7 +69,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-core</artifactId>
-            <version>${langchain4j.version}</version>
+            <version>1.0.0-rc1</version>
             <classifier>tests</classifier>
         </dependency>
         <dependency>
@@ -92,6 +91,23 @@
             <version>${finchly.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-test-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
+            <version>5.9.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -100,10 +116,15 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-                <extensions>true</extensions>
+                <extensions>true</extensions> <!-- You can set this option
+            to automatically take information about lifecycles -->
                 <executions>
                     <execution>
                         <id>compile</id>
+                        <goals>
+                            <goal>compile</goal> <!-- You can skip the <goals> element
+                        if you enable extensions for the plugin -->
+                        </goals>
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
@@ -113,6 +134,10 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal> <!-- You can skip the <goals> element
+                    if you enable extensions for the plugin -->
+                        </goals>
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
@@ -139,17 +164,17 @@
                     </execution>
                     <execution>
                         <id>java-compile</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <phase>compile</phase>
                     </execution>
                     <execution>
                         <id>java-test-compile</id>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
-                        <phase>test-compile</phase>
                     </execution>
                 </executions>
             </plugin>
