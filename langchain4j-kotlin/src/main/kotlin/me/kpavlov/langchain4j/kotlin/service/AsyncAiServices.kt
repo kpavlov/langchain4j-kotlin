@@ -2,12 +2,12 @@ package me.kpavlov.langchain4j.kotlin.service
 
 import dev.langchain4j.service.AiServiceContext
 import dev.langchain4j.service.AiServices
-import dev.langchain4j.service.ChatMemoryAccess
 import dev.langchain4j.service.IllegalConfigurationException.illegalConfiguration
 import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.Moderate
 import dev.langchain4j.service.Result
 import dev.langchain4j.service.TypeUtils
+import dev.langchain4j.service.memory.ChatMemoryAccess
 import dev.langchain4j.service.output.ServiceOutputParser
 import dev.langchain4j.spi.ServiceHelper
 import dev.langchain4j.spi.services.TokenStreamAdapter

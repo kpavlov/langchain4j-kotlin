@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.SystemMessage
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.service.AiServices
@@ -19,7 +19,7 @@ internal class ServiceWithSystemMessageProviderTest {
         val chatResponse = ChatResponse.builder().aiMessage(AiMessage("I'm fine, thanks")).build()
 
         val model =
-            object : ChatLanguageModel {
+            object : ChatModel {
                 override fun chat(chatRequest: ChatRequest): ChatResponse {
                     chatRequest.messages() shouldHaveSize 2
                     val systemMessage =
@@ -44,7 +44,7 @@ internal class ServiceWithSystemMessageProviderTest {
                         override fun getSystemMessage(chatMemoryID: Any): String =
                             "You are helpful assistant"
                     },
-                ).chatLanguageModel(model)
+                ).chatModel(model)
                 .build()
 
         val response = assistant.askQuestion("How are you")

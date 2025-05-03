@@ -1,6 +1,6 @@
 package me.kpavlov.langchain4j.kotlin.samples;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.mock.ChatModelMock;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.UserMessage;
@@ -14,7 +14,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ServiceWithTemplateSourceJavaExample {
 
   // Use for demo purposes
-  private static final ChatLanguageModel model = new ChatModelMock("Hello");
+  private static final ChatModel model = new ChatModelMock("Hello");
   private static final Logger LOGGER = getLogger(ServiceWithTemplateSourceJavaExample.class);
 
   private static final String PROMPT_TEMPLATE_PATH = "prompts/ServiceWithTemplateSourceJavaExample";
@@ -35,7 +35,7 @@ public class ServiceWithTemplateSourceJavaExample {
 
     final Assistant assistant = AiServices.builder(Assistant.class)
       .systemMessageProvider(systemMessageProvider)
-      .chatLanguageModel(model)
+      .chatModel(model)
       .build();
 
     String response = assistant.askQuestion("My friend", "How are you?");

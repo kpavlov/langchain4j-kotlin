@@ -7,6 +7,7 @@
 [![codecov](https://codecov.io/gh/kpavlov/langchain4j-kotlin/graph/badge.svg?token=VYIJ92CYHD)](https://codecov.io/gh/kpavlov/langchain4j-kotlin)
 [![Maintainability](https://api.codeclimate.com/v1/badges/176ba2c4e657d3e7981a/maintainability)](https://codeclimate.com/github/kpavlov/langchain4j-kotlin/maintainability)
 [![Api Docs](https://img.shields.io/badge/api-docs-blue)](https://kpavlov.github.io/langchain4j-kotlin/api/)
+
 Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j), providing coroutine support and Flow-based streaming capabilities for chat language models.
 
 See the [discussion](https://github.com/langchain4j/langchain4j/discussions/1897) on LangChain4j project.
@@ -72,10 +73,11 @@ dependencies {
 
 ### Basic Chat Request
 
-Extension can convert [`ChatLanguageModel`](https://docs.langchain4j.dev/tutorials/chat-and-language-models) response into [Kotlin Suspending Function](https://kotlinlang.org/docs/coroutines-basics.html):
+Extension can convert [`ChatModel`](https://docs.langchain4j.dev/tutorials/chat-and-language-models) response
+into [Kotlin Suspending Function](https://kotlinlang.org/docs/coroutines-basics.html):
 
 ```kotlin
-val model: ChatLanguageModel = OpenAiChatModel.builder()
+val model: ChatModel = OpenAiChatModel.builder()
     .apiKey("your-api-key")
     // more configuration parameters here ...
     .build()
@@ -110,25 +112,55 @@ Sample code:
 
 ### Streaming Chat Language Model support
 
-Extension can convert [StreamingChatLanguageModel](https://docs.langchain4j.dev/tutorials/response-streaming) response into [Kotlin Asynchronous Flow](https://kotlinlang.org/docs/flow.html):
+Extension can convert [StreamingChatModel](https://docs.langchain4j.dev/tutorials/response-streaming) response
+into [Kotlin Asynchronous Flow](https://kotlinlang.org/docs/flow.html):
 
 ```kotlin
-val model: StreamingChatLanguageModel = OpenAiStreamingChatModel.builder()
+val model: StreamingChatModel = OpenAiStreamingChatModel.builder()
     .apiKey("your-api-key")
     // more configuration parameters here ...
     .build()
 
-model.chatFlow(messages).collect { reply ->
+model.chatFlow {
+  messages += systemMessage("You are a helpful assistant")
+  messages += userMessage("Hello!")
+}.collect { reply ->
     when (reply) {
-        is Completion ->
+      is CompleteResponse ->
             println(
                 "Final response: ${reply.response.content().text()}",
             )
 
-        is Token -> println("Received token: ${reply.token}")
+      is PartialResponse -> println("Received token: ${reply.token}")
         else -> throw IllegalArgumentException("Unsupported event: $reply")
     }
 }
+```
+
+### Async AI Services
+
+The library adds support for coroutine-based async AI services:
+
+```kotlin
+// Define your service interface with suspending function
+interface Assistant {
+  @UserMessage("Hello, my name is {{name}}. {{question}}")
+  suspend fun chat(name: String, question: String): String
+}
+
+// Create the service using AsyncAiServicesFactory
+val assistant = createAiService(
+  serviceClass = AsyncAssistant::class.java,
+  factory = AsyncAiServicesFactory(),
+).chatModel(model)
+  .build()
+
+// Use with coroutines
+runBlocking {
+  val response = assistant.chat("John", "What is Kotlin?")
+  println(response)
+}
+
 ```
 
 ### Kotlin Notebook
@@ -140,7 +172,7 @@ The [Kotlin Notebook](https://kotlinlang.org/docs/kotlin-notebook-overview.html)
 * Visualize results directly in the notebook
 * Share reproducible examples with others
 
-You can easyly get started with LangChain4j-Kotlin notebooks:
+You can easily get started with LangChain4j-Kotlin notebooks:
 
 ```kotlin notebook
 %useLatestDescriptors
@@ -157,9 +189,11 @@ You can easyly get started with LangChain4j-Kotlin notebooks:
 import dev.langchain4j.data.message.SystemMessage.systemMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.openai.OpenAiChatModel
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
-import me.kpavlov.langchain4j.kotlin.model.chat.generateAsync
-
+import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
   
 val model = OpenAiChatModel.builder()
   .apiKey("demo")
@@ -172,17 +206,15 @@ val model = OpenAiChatModel.builder()
 val scope = CoroutineScope(Dispatchers.IO)
 
 runBlocking {
-  val result = model.chatAsync(
-    listOf(
-      systemMessage("You are helpful assistant"),
-      userMessage("Make a haiku about Kotlin, Langchani4j and LLM"),
-    )
-  )
+  val result = model.chatAsync {
+    messages += systemMessage("You are helpful assistant")
+    messages += userMessage("Make a haiku about Kotlin, Langchain4j and LLM")
+  }
   println(result.content().text())
 }
 ```
 
-Try [this Kotlin Notebook](langchain4j-kotlin/notebooks/lc4kNotebook.ipynb)  yourself:
+Try [this Kotlin Notebook](langchain4j-kotlin/notebooks/lc4kNotebook.ipynb) yourself:
 ![](docs/kotlin-notebook-1.png)
 
 ## Development Setup

@@ -2,7 +2,7 @@ package me.kpavlov.langchain4j.kotlin.model.chat
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import kotlinx.coroutines.test.runTest
@@ -14,9 +14,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExtendWith(MockitoExtension::class)
-internal class ChatLanguageModelExtensionsKtTest {
+internal class ChatModelExtensionsKtTest {
     @Mock
-    private lateinit var mockModel: ChatLanguageModel
+    private lateinit var mockModel: ChatModel
 
     @Mock
     private lateinit var request: ChatRequest
@@ -28,7 +28,7 @@ internal class ChatLanguageModelExtensionsKtTest {
     private lateinit var expectedResponse: ChatResponse
 
     /**
-     * This class tests the `chatAsync` extension function of `ChatLanguageModel`.
+     * This class tests the `chatAsync` extension function of `ChatModel`.
      * The function takes a `ChatRequest` or a `ChatRequest.Builder` as input,
      * performs asynchronous processing, and returns a `ChatResponse`.
      */

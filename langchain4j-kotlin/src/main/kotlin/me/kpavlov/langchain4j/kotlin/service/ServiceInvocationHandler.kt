@@ -1,6 +1,5 @@
 package me.kpavlov.langchain4j.kotlin.service
 
-import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
@@ -14,7 +13,6 @@ import dev.langchain4j.model.chat.request.ResponseFormatType
 import dev.langchain4j.model.chat.request.json.JsonSchema
 import dev.langchain4j.model.input.PromptTemplate
 import dev.langchain4j.model.moderation.Moderation
-import dev.langchain4j.model.output.Response
 import dev.langchain4j.rag.AugmentationRequest
 import dev.langchain4j.rag.AugmentationResult
 import dev.langchain4j.rag.query.Metadata
@@ -22,15 +20,16 @@ import dev.langchain4j.service.AiServiceContext
 import dev.langchain4j.service.AiServiceTokenStream
 import dev.langchain4j.service.AiServiceTokenStreamParameters
 import dev.langchain4j.service.AiServices
-import dev.langchain4j.service.ChatMemoryAccess
 import dev.langchain4j.service.DefaultAiServicesOpener
 import dev.langchain4j.service.IllegalConfigurationException
 import dev.langchain4j.service.Moderate
 import dev.langchain4j.service.Result
 import dev.langchain4j.service.TokenStream
 import dev.langchain4j.service.TypeUtils
+import dev.langchain4j.service.memory.ChatMemoryAccess
 import dev.langchain4j.service.memory.ChatMemoryService
 import dev.langchain4j.service.output.ServiceOutputParser
+import dev.langchain4j.service.tool.ToolServiceContext
 import dev.langchain4j.spi.services.TokenStreamAdapter
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.asString
@@ -145,14 +144,14 @@ internal class ServiceInvocationHandler<T : Any>(
                 }
             }
 
-        val toolExecutionContext =
-            context.toolService.executionContext(memoryId, userMessage)
+        val toolServiceContext =
+            context.toolService.createContext(memoryId, userMessage)
 
         return if (streaming) {
             handleStreamingCall(
                 returnType,
                 messages,
-                toolExecutionContext,
+                toolServiceContext,
                 augmentationResult,
                 memoryId,
             )
@@ -162,7 +161,7 @@ internal class ServiceInvocationHandler<T : Any>(
             handleNonStreamingCall(
                 returnType,
                 messages,
-                toolExecutionContext,
+                toolServiceContext,
                 augmentationResult,
                 moderationFuture,
                 chatMemory,
@@ -176,7 +175,7 @@ internal class ServiceInvocationHandler<T : Any>(
     private fun handleStreamingCall(
         returnType: Type,
         messages: MutableList<ChatMessage?>,
-        toolExecutionContext: dev.langchain4j.service.tool.ToolExecutionContext,
+        toolServiceContext: ToolServiceContext,
         augmentationResult: AugmentationResult?,
         memoryId: Any,
     ): Any? {
@@ -185,8 +184,8 @@ internal class ServiceInvocationHandler<T : Any>(
                 AiServiceTokenStreamParameters
                     .builder()
                     .messages(messages)
-                    .toolSpecifications(toolExecutionContext.toolSpecifications())
-                    .toolExecutors(toolExecutionContext.toolExecutors())
+                    .toolSpecifications(toolServiceContext.toolSpecifications())
+                    .toolExecutors(toolServiceContext.toolExecutors())
                     .retrievedContents(augmentationResult?.contents())
                     .context(context)
                     .memoryId(memoryId)
@@ -203,7 +202,7 @@ internal class ServiceInvocationHandler<T : Any>(
     private fun handleNonStreamingCall(
         returnType: Type,
         messages: MutableList<ChatMessage?>,
-        toolExecutionContext: dev.langchain4j.service.tool.ToolExecutionContext,
+        toolServiceContext: ToolServiceContext,
         augmentationResult: AugmentationResult?,
         moderationFuture: Future<Moderation?>?,
         chatMemory: ChatMemory?,
@@ -225,7 +224,7 @@ internal class ServiceInvocationHandler<T : Any>(
         val parameters =
             ChatRequestParameters
                 .builder()
-                .toolSpecifications(toolExecutionContext.toolSpecifications())
+                .toolSpecifications(toolServiceContext.toolSpecifications())
                 .responseFormat(responseFormat)
                 .build()
 
@@ -248,24 +247,18 @@ internal class ServiceInvocationHandler<T : Any>(
                 context.chatModel,
                 chatMemory,
                 memoryId,
-                toolExecutionContext.toolExecutors(),
+                toolServiceContext.toolExecutors(),
             )
 
         chatResponse = toolExecutionResult.chatResponse()
         val finishReason = chatResponse.metadata().finishReason()
-        val response =
-            Response.from<AiMessage?>(
-                chatResponse.aiMessage(),
-                toolExecutionResult.tokenUsageAccumulator(),
-                finishReason,
-            )
 
-        val parsedResponse = serviceOutputParser.parse(response, returnType)
+        val parsedResponse = serviceOutputParser.parse(chatResponse, returnType)
         return if (TypeUtils.typeHasRawClass(returnType, Result::class.java)) {
             Result
                 .builder<Any?>()
                 .content(parsedResponse)
-                .tokenUsage(toolExecutionResult.tokenUsageAccumulator())
+                .tokenUsage(chatResponse.tokenUsage())
                 .sources(augmentationResult?.contents())
                 .finishReason(finishReason)
                 .toolExecutions(toolExecutionResult.toolExecutions())

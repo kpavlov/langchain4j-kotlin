@@ -3,7 +3,7 @@ package me.kpavlov.langchain4j.kotlin.service
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import io.kotest.matchers.collections.shouldHaveSize
@@ -11,7 +11,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
-internal class AsyncServiceTest {
+internal class AsyncAiServicesTest {
     @Test
     fun `Should call suspend service`() =
         runTest {
@@ -22,7 +22,7 @@ internal class AsyncServiceTest {
                     .build()
 
             val model =
-                object : ChatLanguageModel {
+                object : ChatModel {
                     override fun chat(chatRequest: ChatRequest): ChatResponse {
                         chatRequest.messages() shouldHaveSize 2
                         val systemMessage =
@@ -43,7 +43,7 @@ internal class AsyncServiceTest {
                 createAiService(
                     serviceClass = AsyncAssistant::class.java,
                     factory = AsyncAiServicesFactory(),
-                ).chatLanguageModel(model)
+                ).chatModel(model)
                     .build()
 
             val response = assistant.askQuestion()

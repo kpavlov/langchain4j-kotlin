@@ -1,6 +1,6 @@
 package me.kpavlov.langchain4j.kotlin.model.chat
 
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import kotlinx.coroutines.coroutineScope
@@ -10,7 +10,7 @@ import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
 /**
  * Asynchronously processes a chat request using the language model within
  * a coroutine scope. This extension function provides a structured
- * concurrency wrapper around the synchronous [ChatLanguageModel.chat] method.
+ * concurrency wrapper around the synchronous [ChatModel.chat] method.
  *
  * Example usage:
  * ```kotlin
@@ -22,11 +22,11 @@ import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
  * @return [ChatResponse] containing the model's response and any additional
  *    metadata.
  * @throws Exception if the chat request fails or is interrupted.
- * @see ChatLanguageModel.chat
+ * @see ChatModel.chat
  * @see ChatRequest
  * @see ChatResponse
  */
-public suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatResponse =
+public suspend fun ChatModel.chatAsync(request: ChatRequest): ChatResponse =
     coroutineScope { this@chatAsync.chat(request) }
 
 /**
@@ -53,14 +53,14 @@ public suspend fun ChatLanguageModel.chatAsync(request: ChatRequest): ChatRespon
  * @see ChatRequest.Builder
  * @see chatAsync
  */
-public suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Builder): ChatResponse =
+public suspend fun ChatModel.chatAsync(requestBuilder: ChatRequest.Builder): ChatResponse =
     chatAsync(requestBuilder.build())
 
 /**
  * Asynchronously processes a chat request by configuring a `ChatRequest`
  * using a provided builder block. This method facilitates the creation
  * of well-structured chat requests using a `ChatRequestBuilder` and
- * executes the request using the associated `ChatLanguageModel`.
+ * executes the request using the associated `ChatModel`.
  *
  * Example usage:
  * ```kotlin
@@ -79,7 +79,7 @@ public suspend fun ChatLanguageModel.chatAsync(requestBuilder: ChatRequest.Build
  *    associated metadata.
  * @throws Exception if the chat request fails or encounters an error during execution.
  */
-public suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> Unit): ChatResponse =
+public suspend fun ChatModel.chatAsync(block: ChatRequestBuilder.() -> Unit): ChatResponse =
     chatAsync(chatRequest(block))
 
 /**
@@ -109,5 +109,5 @@ public suspend fun ChatLanguageModel.chatAsync(block: ChatRequestBuilder.() -> U
  * @see ChatRequest.Builder
  * @see ChatRequestBuilder
  */
-public fun ChatLanguageModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
+public fun ChatModel.chat(requestBuilder: ChatRequest.Builder): ChatResponse =
     this.chat(requestBuilder.build())

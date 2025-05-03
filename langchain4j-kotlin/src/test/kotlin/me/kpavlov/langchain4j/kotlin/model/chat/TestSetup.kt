@@ -1,13 +1,13 @@
 package me.kpavlov.langchain4j.kotlin.model.chat
 
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder
 import me.kpavlov.langchain4j.kotlin.TestEnvironment
 
 internal fun createOpenAiStreamingModel(
     configurer: OpenAiStreamingChatModelBuilder.() -> Unit = {},
-): StreamingChatLanguageModel {
+): StreamingChatModel {
     val modelBuilder =
         OpenAiStreamingChatModel
             .builder()

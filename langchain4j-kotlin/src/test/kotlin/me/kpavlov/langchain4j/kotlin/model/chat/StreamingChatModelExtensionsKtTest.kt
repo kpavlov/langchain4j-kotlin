@@ -6,14 +6,14 @@ import assertk.assertions.containsExactly
 import assertk.assertions.hasMessage
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.CompleteResponse
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.PartialResponse
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.CompleteResponse
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.PartialResponse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -24,9 +24,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExtendWith(MockitoExtension::class)
-internal class StreamingChatLanguageModelExtensionsKtTest {
+internal class StreamingChatModelExtensionsKtTest {
     @Mock
-    private lateinit var mockModel: StreamingChatLanguageModel
+    private lateinit var mockModel: StreamingChatModel
 
     @Test
     fun `chatFlow should handle partial and complete responses correctly`() =
