@@ -20,7 +20,6 @@ import dev.langchain4j.service.AiServiceContext
 import dev.langchain4j.service.AiServiceTokenStream
 import dev.langchain4j.service.AiServiceTokenStreamParameters
 import dev.langchain4j.service.AiServices
-import dev.langchain4j.service.DefaultAiServicesOpener
 import dev.langchain4j.service.IllegalConfigurationException
 import dev.langchain4j.service.Moderate
 import dev.langchain4j.service.Result
@@ -34,6 +33,7 @@ import dev.langchain4j.spi.services.TokenStreamAdapter
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
 import me.kpavlov.langchain4j.kotlin.service.ReflectionHelper.validateParameters
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.asString
+import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findMemoryId
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findTemplateVariables
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findUserMessageTemplateFromTheOnlyArgument
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findUserName
@@ -61,7 +61,6 @@ internal class ServiceInvocationHandler<T : Any>(
     private val tokenStreamAdapters: Collection<TokenStreamAdapter>,
 ) {
     private val executor: ExecutorService = Executors.newCachedThreadPool()
-    private val helper = DefaultAiServicesOpener
 
     @Throws(Exception::class)
     @Suppress(
@@ -88,6 +87,7 @@ internal class ServiceInvocationHandler<T : Any>(
                 "evictChatMemory" -> {
                     chatMemoryService.evictChatMemoryAsync(args[0]!!) != null
                 }
+
                 else -> throw UnsupportedOperationException(
                     "Unknown method on ChatMemoryAccess class: ${method.name}",
                 )
@@ -96,10 +96,8 @@ internal class ServiceInvocationHandler<T : Any>(
 
         validateParameters(method)
 
-        val memoryId =
-            helper
-                .findMemoryId(method, args)
-                .orElse(ChatMemoryService.DEFAULT)
+        val memoryId = findMemoryId(method, args)
+            .orElse(ChatMemoryService.DEFAULT)
         val chatMemory =
             if (context.hasChatMemory()) {
                 chatMemoryService.getOrCreateChatMemoryAsync(memoryId)

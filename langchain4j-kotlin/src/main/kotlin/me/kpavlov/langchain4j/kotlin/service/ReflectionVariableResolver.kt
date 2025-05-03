@@ -1,5 +1,6 @@
 package me.kpavlov.langchain4j.kotlin.service
 
+import dev.langchain4j.internal.Exceptions
 import dev.langchain4j.model.input.structured.StructuredPrompt
 import dev.langchain4j.model.input.structured.StructuredPromptProcessor
 import dev.langchain4j.service.IllegalConfigurationException
@@ -7,6 +8,7 @@ import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.UserMessage
 import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
+import me.kpavlov.langchain4j.kotlin.ChatMemoryId
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 import java.util.Optional
@@ -23,6 +25,7 @@ import java.util.Optional
  */
 @Suppress("detekt:all")
 internal object ReflectionVariableResolver {
+
     public fun findTemplateVariables(
         template: String,
         method: Method,
@@ -150,5 +153,25 @@ internal object ReflectionVariableResolver {
             }
         }
         return Optional.empty<String>()
+    }
+
+    fun findMemoryId(method: Method, args: Array<Any?>?): Optional<ChatMemoryId> {
+        if (args == null) {
+            return Optional.empty<ChatMemoryId>()
+        }
+        for (i in args.indices) {
+            val parameter = method.parameters[i]
+            if (parameter.isAnnotationPresent(MemoryId::class.java)) {
+                val memoryId = args[i]
+                if (memoryId == null) {
+                    throw Exceptions.illegalArgument(
+                        "The value of parameter '%s' annotated with @MemoryId in method '%s' must not be null",
+                        parameter.getName(), method.getName()
+                    )
+                }
+                return Optional.of(memoryId)
+            }
+        }
+        return Optional.empty()
     }
 }
