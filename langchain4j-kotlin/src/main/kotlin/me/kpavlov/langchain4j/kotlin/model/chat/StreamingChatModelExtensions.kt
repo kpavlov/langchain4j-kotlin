@@ -4,6 +4,7 @@ import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import dev.langchain4j.service.TokenStream
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -72,6 +73,10 @@ public sealed interface StreamingChatModelReply {
  * and manages the streaming process by handling partial responses, complete
  * responses, and errors through a LC4J's [dev.langchain4j.model.chat.response.StreamingChatResponseHandler].
  *
+ * @param bufferCapacity The capacity of the buffer used to store incoming tokens.
+ * Default to [Channel.UNLIMITED]
+ * @param onBufferOverflow The strategy used to handle buffer overflows when the buffer is full.
+ * Default to [BufferOverflow.SUSPEND]
  * @param block A lambda with receiver on [ChatRequestBuilder] used to configure
  * the [dev.langchain4j.model.chat.request.ChatRequest] by adding messages and/or setting parameters.
  *
@@ -79,7 +84,10 @@ public sealed interface StreamingChatModelReply {
  * types of replies during the chat interaction, including partial responses,
  * final responses, and errors.
  */
+@JvmOverloads
 public fun StreamingChatModel.chatFlow(
+    bufferCapacity: Int = Channel.UNLIMITED,
+    onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND,
     block: ChatRequestBuilder.() -> Unit,
 ): Flow<StreamingChatModelReply> =
     callbackFlow {
@@ -125,7 +133,7 @@ public fun StreamingChatModel.chatFlow(
             // cleanup
             logger.info("Flow is canceled")
         }
-    }
+    }.buffer(bufferCapacity, onBufferOverflow)
 
 public fun TokenStream.asFlow(): Flow<String> =
     flow {

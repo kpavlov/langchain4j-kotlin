@@ -1,14 +1,15 @@
 package me.kpavlov.langchain4j.kotlin.data.document
 
-import assertk.assertThat
-import assertk.assertions.contains
-import assertk.assertions.containsExactlyInAnyOrder
-import assertk.assertions.hasSize
-import assertk.assertions.isNotEmpty
-import assertk.assertions.isNotNull
 import dev.langchain4j.data.document.DocumentSource
 import dev.langchain4j.data.document.parser.TextDocumentParser
 import dev.langchain4j.data.document.source.FileSystemSource
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotBeEmpty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -38,16 +39,16 @@ internal class AsyncDocumentLoaderTest {
     fun `Should load documents asynchronously`() =
         runTest {
             val document = loadAsync(documentSource, parser)
-            assertThat(document.text()).contains("Captain Blood")
-            assertThat(document.metadata()).isNotNull()
+            document.text() shouldContain "Captain Blood"
+            document.metadata() shouldNotBe null
         }
 
     @Test
     fun `Should parse documents asynchronously`() =
         runTest {
             val document = parser.parseAsync(documentSource.inputStream())
-            assertThat(document.text()).contains("Captain Blood")
-            assertThat(document.metadata()).isNotNull()
+            document.text() shouldContain "Captain Blood"
+            document.metadata() shouldNotBe null
         }
 
     @Test
@@ -82,8 +83,8 @@ internal class AsyncDocumentLoaderTest {
                     .filterNotNull()
 
             documents.forEach {
-                assertThat(it.text()).isNotEmpty()
-                assertThat(it.metadata()).isNotNull()
+                it.text().shouldNotBeEmpty()
+                it.metadata() shouldNotBe null
             }
         }
 
@@ -96,15 +97,13 @@ internal class AsyncDocumentLoaderTest {
                     documentParser = parser,
                     directoryPaths = listOf(Path.of("./src/test/resources/data")),
                 )
-            assertThat(documents)
-                .hasSize(3)
+            documents shouldHaveSize 3
 
             val documentNames = documents.map { it.metadata().getString("file_name") }
-            assertThat(documentNames)
-                .containsExactlyInAnyOrder(
-                    "captain-blood.txt",
-                    "quantum-computing.txt",
-                    "blumblefang.txt",
-                )
+            documentNames shouldContainExactlyInAnyOrder listOf(
+                "captain-blood.txt",
+                "quantum-computing.txt",
+                "blumblefang.txt",
+            )
         }
 }
