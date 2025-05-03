@@ -142,30 +142,3 @@ public fun StreamingChatModel.chatFlow(
             logger.info("Flow is canceled")
         }
     }.buffer(bufferCapacity, onBufferOverflow)
-
-public fun TokenStream.asFlow(): Flow<String> =
-    flow {
-        callbackFlow {
-            onPartialResponse { trySend(it) }
-            onCompleteResponse { close() }
-            onError { close(it) }
-            start()
-            awaitClose()
-        }.buffer(Channel.UNLIMITED).collect(this)
-    }
-
-public fun TokenStream.asReplyFlow(): Flow<StreamingChatModelReply> =
-    flow {
-        callbackFlow<StreamingChatModelReply> {
-            onPartialResponse { token ->
-                trySend(StreamingChatModelReply.PartialResponse(token))
-            }
-            onCompleteResponse { response ->
-                trySend(StreamingChatModelReply.CompleteResponse(response))
-                close()
-            }
-            onError { throwable -> close(throwable) }
-            start()
-            awaitClose()
-        }.buffer(Channel.UNLIMITED).collect(this)
-    }
