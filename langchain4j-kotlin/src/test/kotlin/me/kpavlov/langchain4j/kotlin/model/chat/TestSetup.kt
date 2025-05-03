@@ -21,7 +21,7 @@ internal fun createOpenAiStreamingModel(
     } else {
         modelBuilder
             .apiKey("my-key")
-            .baseUrl("http://localhost:${TestEnvironment.mockOpenAi.port()}/v1")
+            .baseUrl(TestEnvironment.mockOpenAi.baseUrl())
     }
     configurer.invoke(modelBuilder)
 

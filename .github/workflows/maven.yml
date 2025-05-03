@@ -29,7 +29,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B verify site
+        run: mvn -B clean verify site
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
