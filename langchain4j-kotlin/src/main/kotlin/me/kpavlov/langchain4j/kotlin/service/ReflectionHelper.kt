@@ -1,5 +1,10 @@
 package me.kpavlov.langchain4j.kotlin.service
 
+import dev.langchain4j.service.IllegalConfigurationException
+import dev.langchain4j.service.MemoryId
+import dev.langchain4j.service.UserMessage
+import dev.langchain4j.service.UserName
+import dev.langchain4j.service.V
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -20,6 +25,33 @@ import kotlin.coroutines.resumeWithException
 @OptIn(DelicateCoroutinesApi::class)
 internal object ReflectionHelper {
     private val vtDispatcher = Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()
+
+    fun validateParameters(method: Method) {
+        val parameters = method.getParameters()
+        if (parameters == null || parameters.size < 2) {
+            return
+        }
+
+        for (parameter in parameters) {
+            if ("${parameter}".startsWith("kotlin.coroutines.Continuation")) {
+                // skip continuation parameter
+                continue
+            }
+            val v = parameter.getAnnotation<V>(V::class.java)
+            val userMessage =
+                parameter.getAnnotation<UserMessage>(UserMessage::class.java)
+            val memoryId = parameter.getAnnotation<MemoryId?>(MemoryId::class.java)
+            val userName = parameter.getAnnotation<UserName?>(UserName::class.java)
+            @Suppress("ComplexCondition")
+            if (v == null && userMessage == null && memoryId == null && userName == null) {
+                throw IllegalConfigurationException.illegalConfiguration(
+                    "Parameter '%s' of method '%s' should be annotated with @V or @UserMessage "
+                        + "or @UserName or @MemoryId",
+                    parameter.getName(), method.getName()
+                )
+            }
+        }
+    }
 
     @Throws(kotlin.IllegalStateException::class)
     private fun getReturnType(method: Method): Type {
