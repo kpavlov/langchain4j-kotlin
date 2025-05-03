@@ -6,7 +6,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import dev.langchain4j.data.message.SystemMessage.systemMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.response.ChatResponse
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -15,8 +15,8 @@ import kotlinx.coroutines.yield
 import me.kpavlov.langchain4j.kotlin.TestEnvironment
 import me.kpavlov.langchain4j.kotlin.TestEnvironment.mockOpenAi
 import me.kpavlov.langchain4j.kotlin.loadDocument
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.CompleteResponse
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.PartialResponse
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.CompleteResponse
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.PartialResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
 
-internal class StreamingChatLanguageModelIT {
+internal class StreamingChatModelIT {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val model: StreamingChatLanguageModel = createOpenAiStreamingModel()
+    private val model: StreamingChatModel = createOpenAiStreamingModel()
 
     @AfterEach
     fun afterEach() {
@@ -35,7 +35,7 @@ internal class StreamingChatLanguageModelIT {
     }
 
     @Test
-    fun `StreamingChatLanguageModel should generateFlow`() =
+    fun `StreamingChatModel should generateFlow`() =
         runTest {
             val document = loadDocument("notes/blumblefang.txt", logger)
 
@@ -74,7 +74,7 @@ internal class StreamingChatLanguageModelIT {
                         }
 
                         is CompleteResponse -> responseRef.set(it.response)
-                        is StreamingChatLanguageModelReply.Error -> fail("Error", it.cause)
+                        is StreamingChatModelReply.Error -> fail("Error", it.cause)
                         else -> fail("Unsupported event: $it")
                     }
                 }

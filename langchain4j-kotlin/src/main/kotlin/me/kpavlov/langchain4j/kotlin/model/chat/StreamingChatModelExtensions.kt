@@ -1,6 +1,6 @@
 package me.kpavlov.langchain4j.kotlin.model.chat
 
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import dev.langchain4j.service.TokenStream
@@ -14,13 +14,13 @@ import me.kpavlov.langchain4j.kotlin.model.chat.request.ChatRequestBuilder
 import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
 import org.slf4j.LoggerFactory
 
-private val logger = LoggerFactory.getLogger(StreamingChatLanguageModel::class.java)
+private val logger = LoggerFactory.getLogger(StreamingChatModel::class.java)
 
 /**
  * Represents different types of replies that can be received from an AI language model during streaming.
  * This sealed interface provides type-safe handling of both intermediate tokens and final completion responses.
  */
-public sealed interface StreamingChatLanguageModelReply {
+public sealed interface StreamingChatModelReply {
     /**
      * Represents a partial response received from an AI language model during a streaming interaction.
      *
@@ -33,7 +33,7 @@ public sealed interface StreamingChatLanguageModelReply {
      */
     public data class PartialResponse(
         val token: String,
-    ) : StreamingChatLanguageModelReply
+    ) : StreamingChatModelReply
 
     /**
      * Represents a final completion response received from the AI language model
@@ -47,7 +47,7 @@ public sealed interface StreamingChatLanguageModelReply {
      */
     public data class CompleteResponse(
         val response: ChatResponse,
-    ) : StreamingChatLanguageModelReply
+    ) : StreamingChatModelReply
 
     /**
      * Represents an error that occurred during the streaming process
@@ -60,11 +60,11 @@ public sealed interface StreamingChatLanguageModelReply {
      */
     public data class Error(
         val cause: Throwable,
-    ) : StreamingChatLanguageModelReply
+    ) : StreamingChatModelReply
 }
 
 /**
- * Converts a streaming chat language model into a Kotlin [Flow] of [StreamingChatLanguageModelReply]
+ * Converts a streaming chat language model into a Kotlin [Flow] of [StreamingChatModelReply]
  * events. This extension function provides a coroutine-friendly way to consume streaming responses
  * from the language model.
  *
@@ -75,13 +75,13 @@ public sealed interface StreamingChatLanguageModelReply {
  * @param block A lambda with receiver on [ChatRequestBuilder] used to configure
  * the [dev.langchain4j.model.chat.request.ChatRequest] by adding messages and/or setting parameters.
  *
- * @return A [Flow] of [StreamingChatLanguageModelReply], which emits different
+ * @return A [Flow] of [StreamingChatModelReply], which emits different
  * types of replies during the chat interaction, including partial responses,
  * final responses, and errors.
  */
-public fun StreamingChatLanguageModel.chatFlow(
+public fun StreamingChatModel.chatFlow(
     block: ChatRequestBuilder.() -> Unit,
-): Flow<StreamingChatLanguageModelReply> =
+): Flow<StreamingChatModelReply> =
     callbackFlow {
         val model = this@chatFlow
         val chatRequest = chatRequest(block)
@@ -93,7 +93,7 @@ public fun StreamingChatLanguageModel.chatFlow(
                         "Received partialResponse: {}",
                         token,
                     )
-                    trySend(StreamingChatLanguageModelReply.PartialResponse(token))
+                    trySend(StreamingChatModelReply.PartialResponse(token))
                 }
 
                 override fun onCompleteResponse(completeResponse: ChatResponse) {
@@ -102,7 +102,7 @@ public fun StreamingChatLanguageModel.chatFlow(
                         "Received completeResponse: {}",
                         completeResponse,
                     )
-                    trySend(StreamingChatLanguageModelReply.CompleteResponse(completeResponse))
+                    trySend(StreamingChatModelReply.CompleteResponse(completeResponse))
                     close()
                 }
 
@@ -112,7 +112,7 @@ public fun StreamingChatLanguageModel.chatFlow(
                         error.message,
                         error,
                     )
-                    trySend(StreamingChatLanguageModelReply.Error(error))
+                    trySend(StreamingChatModelReply.Error(error))
                     close(error)
                 }
             }
@@ -138,14 +138,14 @@ public fun TokenStream.asFlow(): Flow<String> =
         }.buffer(Channel.UNLIMITED).collect(this)
     }
 
-public fun TokenStream.asReplyFlow(): Flow<StreamingChatLanguageModelReply> =
+public fun TokenStream.asReplyFlow(): Flow<StreamingChatModelReply> =
     flow {
-        callbackFlow<StreamingChatLanguageModelReply> {
+        callbackFlow<StreamingChatModelReply> {
             onPartialResponse { token ->
-                trySend(StreamingChatLanguageModelReply.PartialResponse(token))
+                trySend(StreamingChatModelReply.PartialResponse(token))
             }
             onCompleteResponse { response ->
-                trySend(StreamingChatLanguageModelReply.CompleteResponse(response))
+                trySend(StreamingChatModelReply.CompleteResponse(response))
                 close()
             }
             onError { throwable -> close(throwable) }

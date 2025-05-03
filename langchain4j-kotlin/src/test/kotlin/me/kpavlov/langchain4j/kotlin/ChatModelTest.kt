@@ -6,7 +6,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isSameInstanceAs
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import kotlinx.coroutines.test.runTest
@@ -21,7 +21,7 @@ import org.mockito.kotlin.whenever
 @ExtendWith(MockitoExtension::class)
 internal class ChatModelTest {
     @Mock
-    lateinit var model: ChatLanguageModel
+    lateinit var model: ChatModel
 
     @Captor
     lateinit var chatRequestCaptor: org.mockito.ArgumentCaptor<ChatRequest>

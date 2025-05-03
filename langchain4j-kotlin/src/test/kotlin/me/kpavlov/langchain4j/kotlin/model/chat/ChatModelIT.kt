@@ -6,7 +6,7 @@ import assertk.assertions.isNotNull
 import dev.langchain4j.data.document.Document
 import dev.langchain4j.data.message.SystemMessage.systemMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ResponseFormat
 import dev.langchain4j.model.openai.OpenAiChatModel
 import kotlinx.coroutines.test.runTest
@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory
     named = "OPENAI_API_KEY",
     matches = ".+",
 )
-internal class ChatLanguageModelIT {
+internal class ChatModelIT {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val model: ChatLanguageModel =
+    private val model: ChatModel =
         OpenAiChatModel
             .builder()
             .apiKey(TestEnvironment.openaiApiKey)
@@ -44,7 +44,7 @@ internal class ChatLanguageModelIT {
         }
 
     @Test
-    fun `ChatLanguageModel should chatAsync`() =
+    fun `ChatModel should chatAsync`() =
         runTest {
             val document = loadDocument("notes/blumblefang.txt", logger)
 

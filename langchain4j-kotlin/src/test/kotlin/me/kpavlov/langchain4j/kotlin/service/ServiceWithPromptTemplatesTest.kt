@@ -5,7 +5,7 @@ import assertk.assertions.isEqualTo
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.data.message.SystemMessage
 import dev.langchain4j.data.message.UserMessage
-import dev.langchain4j.model.chat.ChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.service.AiServices
@@ -25,7 +25,7 @@ internal class ServiceWithPromptTemplatesTest {
                 .build()
 
         val model =
-            object : ChatLanguageModel {
+            object : ChatModel {
                 override fun chat(chatRequest: ChatRequest): ChatResponse {
                     chatRequest.messages() shouldHaveSize 2
                     val systemMessage =
@@ -50,7 +50,7 @@ internal class ServiceWithPromptTemplatesTest {
                     TemplateSystemMessageProvider(
                         "prompts/ServiceWithTemplatesTest/default-system-prompt.mustache",
                     ),
-                ).chatLanguageModel(model)
+                ).chatModel(model)
                 .build()
 
         val response = assistant.askQuestion(userName = "My friend", question = "How are you?")

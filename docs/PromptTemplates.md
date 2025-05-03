@@ -8,11 +8,13 @@ customization.
 Place your prompt templates in the classpath:
 
 System prompt template (path: `prompts/default-system-prompt.mustache`):
+
 ```mustache
 You are helpful assistant using chatMemoryID={{chatMemoryID}}
 ```
 
 User prompt template (path: `prompts/default-user-prompt.mustache`):
+
 ```mustache
 Hello, {{userName}}! {{message}}
 ```
@@ -37,7 +39,7 @@ val assistant: Assistant =
     .builder(Assistant::class.java)
     .systemMessageProvider(
       TemplateSystemMessageProvider("prompts/default-system-prompt.mustache")
-    ).chatLanguageModel(model)
+    ).chatModel(model)
     .build()
 
 // Use it
@@ -93,6 +95,7 @@ class RedisPromptTemplateSource(private val jedis: Jedis) : PromptTemplateSource
 ```
 
 Enable it in your properties:
+
 ```properties
 prompt.template.source=com.example.RedisPromptTemplateSource
 ```
@@ -111,6 +114,7 @@ interface TemplateRenderer {
 ```
 
 Example:
+
 ```kotlin
 class MyTemplateRenderer : TemplateRenderer {
   override fun render(template: TemplateContent, variables: Map<String, Any?>): String {
@@ -120,6 +124,7 @@ class MyTemplateRenderer : TemplateRenderer {
 ```
 
 Enable it:
+
 ```properties
 prompt.template.renderer=com.example.MyTemplateRenderer
 ```
@@ -130,3 +135,4 @@ Find complete examples:
 
 - [Unit test example](../langchain4j-kotlin/src/test/kotlin/me/kpavlov/langchain4j/kotlin/service/ServiceWithPromptTemplatesTest.kt)
 - [Using from Java](../samples/src/main/java/me/kpavlov/langchain4j/kotlin/samples/ServiceWithTemplateSourceJavaExample.java)
+

@@ -7,7 +7,7 @@ import assertk.assertions.index
 import assertk.assertions.isInstanceOf
 import assertk.assertions.startsWith
 import dev.langchain4j.data.message.AiMessage
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.request.ChatRequest
 import dev.langchain4j.model.chat.response.ChatResponse
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.CompleteResponse
-import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatLanguageModelReply.PartialResponse
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.CompleteResponse
+import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.PartialResponse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -32,7 +32,7 @@ import org.mockito.kotlin.whenever
 @ExtendWith(MockitoExtension::class)
 internal class ServiceWithFlowTest {
     @Mock
-    private lateinit var model: StreamingChatLanguageModel
+    private lateinit var model: StreamingChatModel
 
     @Test
     fun `Should use TokenStreamToStringFlowAdapter`() =
@@ -51,7 +51,7 @@ internal class ServiceWithFlowTest {
             val assistant =
                 AiServices
                     .builder(Assistant::class.java)
-                    .streamingChatLanguageModel(model)
+                    .streamingChatModel(model)
                     .build()
 
             val result =
@@ -79,7 +79,7 @@ internal class ServiceWithFlowTest {
             val assistant =
                 AiServices
                     .builder(Assistant::class.java)
-                    .streamingChatLanguageModel(model)
+                    .streamingChatModel(model)
                     .build()
 
             val response =
@@ -113,7 +113,7 @@ internal class ServiceWithFlowTest {
             val assistant =
                 AiServices
                     .builder(Assistant::class.java)
-                    .streamingChatLanguageModel(model)
+                    .streamingChatModel(model)
                     .build()
 
             val result =
@@ -144,20 +144,20 @@ internal class ServiceWithFlowTest {
             val assistant =
                 AiServices
                     .builder(Assistant::class.java)
-                    .streamingChatLanguageModel(model)
+                    .streamingChatModel(model)
                     .build()
 
             val response =
                 assistant
                     .askQuestion2(userName = "My friend", question = "How are you?")
-                    .catch { emit(StreamingChatLanguageModelReply.Error(it)) }
+                    .catch { emit(StreamingChatModelReply.Error(it)) }
                     .toList()
 
             assertThat(response).hasSize(3)
             assertThat(
                 response,
             ).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
-            assertThat(response).index(2).isInstanceOf(StreamingChatLanguageModelReply.Error::class)
+            assertThat(response).index(2).isInstanceOf(StreamingChatModelReply.Error::class)
         }
 
     @Suppress("unused")
@@ -176,6 +176,6 @@ internal class ServiceWithFlowTest {
         fun askQuestion2(
             @UserName userName: String,
             @V("message") question: String,
-        ): Flow<StreamingChatLanguageModelReply>
+        ): Flow<StreamingChatModelReply>
     }
 }
