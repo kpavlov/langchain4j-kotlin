@@ -20,7 +20,7 @@
         <!-- Dependencies -->
         <finchly.version>0.1.1</finchly.version>
         <kotlinx.version>1.8.1</kotlinx.version>
-        <langchain4j-kotlin.version>0.1.12-SNAPSHOT</langchain4j-kotlin.version>
+        <langchain4j-kotlin.version>0.1.11</langchain4j-kotlin.version>
         <langchain4j.version>1.0.0-beta4</langchain4j.version>
         <slf4j.version>2.0.17</slf4j.version>
     </properties>
@@ -90,6 +90,23 @@
             <artifactId>finchly</artifactId>
             <version>${finchly.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-test-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
+            <version>5.9.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

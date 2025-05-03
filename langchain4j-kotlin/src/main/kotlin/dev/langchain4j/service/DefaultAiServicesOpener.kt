@@ -28,25 +28,4 @@ internal object DefaultAiServicesOpener {
         @Suppress("UNCHECKED_CAST")
         return findMemoryId.invoke(null, method, args) as Optional<Any>
     }
-
-    @Suppress("TooGenericExceptionCaught")
-    internal fun validateParameters(method: Method) {
-        val validateParameters =
-            DefaultAiServices::class.java.getDeclaredMethod(
-                "validateParameters",
-                Method::class.java,
-            )
-        validateParameters.isAccessible = true
-        try {
-            validateParameters.invoke(null, method)
-        } catch (e: Exception) {
-            if (e.cause is dev.langchain4j.service.IllegalConfigurationException) {
-                val illegalConfigurationException =
-                    e.cause as dev.langchain4j.service.IllegalConfigurationException
-                illegalConfigurationException.printStackTrace()
-                return
-            }
-            throw e
-        }
-    }
 }

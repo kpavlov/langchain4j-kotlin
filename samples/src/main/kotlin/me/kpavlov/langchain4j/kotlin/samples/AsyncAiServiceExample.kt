@@ -1,23 +1,27 @@
 package me.kpavlov.langchain4j.kotlin.samples
 
 import dev.langchain4j.model.chat.ChatModel
-import dev.langchain4j.model.chat.mock.ChatModelMock
+import dev.langchain4j.model.openai.OpenAiChatModel
 import dev.langchain4j.service.UserMessage
-import kotlinx.coroutines.runBlocking
 import me.kpavlov.langchain4j.kotlin.service.AsyncAiServicesFactory
 import me.kpavlov.langchain4j.kotlin.service.createAiService
 
-// Use for demo purposes
-private val model: ChatModel = ChatModelMock("Hello")
+class AsyncAiServiceExample(
+    private val model: ChatModel = OpenAiChatModel
+        .builder()
+        .modelName("gpt-4o-mini")
+        .apiKey(testEnv.get("OPENAI_API_KEY", "demo"))
+        .temperature(0.0)
+        .build()
+) {
 
-fun interface AsyncAssistant {
-    suspend fun askQuestion(
-        @UserMessage question: String,
-    ): String
-}
+    fun interface AsyncAssistant {
+        suspend fun askQuestion(
+            @UserMessage question: String,
+        ): String
+    }
 
-fun main() =
-    runBlocking {
+    suspend fun callAiService(): String {
         val assistant = createAiService(
             serviceClass = AsyncAssistant::class.java,
             factory = AsyncAiServicesFactory()
@@ -27,6 +31,13 @@ fun main() =
 
         val response = assistant.askQuestion("How are you?")
         println("AI Answer: \"$response\"")
+        return response
     }
+}
+
+//fun main() =
+//    runBlocking {
+//        AsyncAiServiceExample().callAiService()
+//    }
 
 
