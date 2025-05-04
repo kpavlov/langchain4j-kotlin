@@ -6,7 +6,6 @@ import dev.langchain4j.service.UserMessage
 import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import me.kpavlov.langchain4j.kotlin.service.invoker.HybridVirtualThreadInvocationHandler
 import java.lang.reflect.Method
@@ -14,13 +13,10 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.concurrent.Executors
 import kotlin.coroutines.Continuation
 
 @OptIn(DelicateCoroutinesApi::class)
 internal object ReflectionHelper {
-    private val vtDispatcher = Executors.newVirtualThreadPerTaskExecutor().asCoroutineDispatcher()
-
     fun validateParameters(method: Method) {
         val parameters = method.getParameters()
         if (parameters == null || parameters.size < 2) {

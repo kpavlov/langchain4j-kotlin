@@ -10,7 +10,6 @@ import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Proxy
 import java.lang.reflect.Type
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import kotlin.coroutines.Continuation
 import kotlin.reflect.KClass
@@ -31,7 +30,7 @@ internal object KServices {
         return try {
             val isVirtualMethod = Thread::class.java.getMethod("isVirtual")
             isVirtualMethod.invoke(Thread.currentThread()) as Boolean
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // If the method doesn't exist or fails, assume it's not a virtual thread
             false
         }
@@ -65,20 +64,22 @@ internal object KServices {
         // Create a HybridVirtualThreadInvocationHandler that handles both suspend and blocking operations
         val handler =
             HybridVirtualThreadInvocationHandler(
-                // Handle suspend functions
+                // Handle suspends functions
                 executeSuspend = { method, args ->
+                    logger.debug("Executing suspend method: {}", method)
                     // Extract parameters from args
                     val params = extractParameters(method, args)
 
                     // Execute the method using the executor
-                    executor.execute<Any>(method, params)
+                    executor.execute(method, params)
                 },
                 // Handle blocking functions
                 executeSync = { method, args ->
+                    logger.debug("Executing sync method: {}", method)
                     // Handle Object methods
                     when {
                         method.name == "toString" -> {
-                            return@HybridVirtualThreadInvocationHandler "Dynamic proxy for $serviceClass"
+                            return@HybridVirtualThreadInvocationHandler "Proxy for $serviceClass"
                         }
 
                         method.declaringClass == Any::class.java -> {
@@ -101,7 +102,7 @@ internal object KServices {
                     ensureVirtualThread()
 
                     runBlocking {
-                        executor.execute<Any>(method, params)
+                        executor.execute(method, params)
                     }
                 },
             )
@@ -138,7 +139,7 @@ internal object KServices {
     /**
      * Gets the return type of a method, handling both regular and suspend methods.
      */
-    @Suppress("unused")
+    @Suppress("unused", "ReturnCount")
     private fun getReturnType(method: Method): Type {
         // For suspend functions, check if the last parameter is a Continuation
         val parameters = method.genericParameterTypes
@@ -152,19 +153,12 @@ internal object KServices {
             }
         }
 
-        // For regular functions or functions returning CompletionStage
+        // For regular functions or functions returning CompletionStage/CompletableFuture
         val returnType = method.genericReturnType
 
-        // If it's a CompletionStage, return its type parameter
+        // If it's a CompletionStage or CompletableFuture, return its type parameter
         if (returnType is ParameterizedType &&
             CompletionStage::class.java.isAssignableFrom(returnType.rawType as Class<*>)
-        ) {
-            return returnType.actualTypeArguments[0]
-        }
-
-        // If it's a CompletionStage, return its type parameter
-        if (returnType is ParameterizedType &&
-            CompletableFuture::class.java.isAssignableFrom(returnType.rawType as Class<*>)
         ) {
             return returnType.actualTypeArguments[0]
         }
