@@ -7,14 +7,14 @@ import me.kpavlov.langchain4j.kotlin.service.AsyncAiServicesFactory
 import me.kpavlov.langchain4j.kotlin.service.createAiService
 
 class AsyncAiServiceExample(
-    private val model: ChatModel = OpenAiChatModel
-        .builder()
-        .modelName("gpt-4o-mini")
-        .apiKey(testEnv.get("OPENAI_API_KEY", "demo"))
-        .temperature(0.0)
-        .build()
+    private val model: ChatModel =
+        OpenAiChatModel
+            .builder()
+            .modelName("gpt-4o-mini")
+            .apiKey(testEnv.get("OPENAI_API_KEY", "demo"))
+            .temperature(0.0)
+            .build(),
 ) {
-
     fun interface AsyncAssistant {
         suspend fun askQuestion(
             @UserMessage question: String,
@@ -22,12 +22,13 @@ class AsyncAiServiceExample(
     }
 
     suspend fun callAiService(): String {
-        val assistant = createAiService(
-            serviceClass = AsyncAssistant::class.java,
-            factory = AsyncAiServicesFactory()
-        ).chatModel(model)
-            .systemMessageProvider { "You are a helpful assistant" }
-            .build()
+        val assistant =
+            createAiService(
+                serviceClass = AsyncAssistant::class.java,
+                factory = AsyncAiServicesFactory(),
+            ).chatModel(model)
+                .systemMessageProvider { "You are a helpful assistant" }
+                .build()
 
         val response = assistant.askQuestion("How are you?")
         println("AI Answer: \"$response\"")
@@ -35,9 +36,7 @@ class AsyncAiServiceExample(
     }
 }
 
-//fun main() =
+// fun main() =
 //    runBlocking {
 //        AsyncAiServiceExample().callAiService()
 //    }
-
-
