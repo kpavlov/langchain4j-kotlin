@@ -55,7 +55,7 @@ import java.util.function.Supplier
 
 @ApiStatus.Internal
 @Suppress("TooManyFunctions", "detekt:all")
-internal class ServiceInvocationHandler<T : Any>(
+internal class AiServiceOrchestrator<T : Any>(
     private val context: AiServiceContext,
     private val serviceOutputParser: ServiceOutputParser,
     private val tokenStreamAdapters: Collection<TokenStreamAdapter>,
@@ -71,7 +71,7 @@ internal class ServiceInvocationHandler<T : Any>(
         "UseCheckOrError",
         "ComplexCondition",
     )
-    suspend fun invoke(
+    suspend fun execute(
         method: Method,
         args: Array<Any?>,
     ): Any? {

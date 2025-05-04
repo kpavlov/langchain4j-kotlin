@@ -71,10 +71,10 @@ public class AsyncAiServices<T : Any>(
             }
         }
 
-        val handler = ServiceInvocationHandler<T>(context, serviceOutputParser, tokenStreamAdapters)
+        val handler = AiServiceOrchestrator<T>(context, serviceOutputParser, tokenStreamAdapters)
         @Suppress("UNCHECKED_CAST", "unused")
         return ReflectionHelper.createSuspendProxy(context.aiServiceClass) { method, args ->
-            return@createSuspendProxy handler.invoke(method, args)
+            return@createSuspendProxy handler.execute(method, args)
         } as T
     }
 }
