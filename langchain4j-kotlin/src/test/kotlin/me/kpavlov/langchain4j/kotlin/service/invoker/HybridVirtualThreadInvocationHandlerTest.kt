@@ -21,24 +21,24 @@ import kotlin.coroutines.Continuation
 
 @ExtendWith(MockitoExtension::class)
 internal class HybridVirtualThreadInvocationHandlerTest {
-
     private lateinit var mockScope: TestScope
 
     @Mock
     private lateinit var mockExecuteSuspend: suspend (Method, Array<out Any>?) -> Any?
 
     @Mock
-    private lateinit var mockExecuteBlocking: (Method, Array<out Any>?) -> Any?
+    private lateinit var mockExecuteSync: (Method, Array<out Any>?) -> Any?
     private lateinit var handler: HybridVirtualThreadInvocationHandler
 
     @BeforeEach
     fun setUp() {
         mockScope = TestScope(StandardTestDispatcher())
-        handler = HybridVirtualThreadInvocationHandler(
-            scope = mockScope,
-            executeSuspend = mockExecuteSuspend,
-            executeBlocking = mockExecuteBlocking
-        )
+        handler =
+            HybridVirtualThreadInvocationHandler(
+                scope = mockScope,
+                executeSuspend = mockExecuteSuspend,
+                executeSync = mockExecuteSync,
+            )
     }
 
     @Test
@@ -49,12 +49,12 @@ internal class HybridVirtualThreadInvocationHandlerTest {
         val continuation = mock<Continuation<Any?>>()
         val args = arrayOf("arg1", continuation)
 
-        // Configure method to appear as a suspend function
+        // Configure a method to appear as a suspend function
         whenever(method.parameterTypes).thenReturn(
             arrayOf(
                 String::class.java,
-                Continuation::class.java
-            )
+                Continuation::class.java,
+            ),
         )
 
         // When
@@ -71,7 +71,7 @@ internal class HybridVirtualThreadInvocationHandlerTest {
         val method = mock<Method>()
         val args = arrayOf("arg1")
 
-        // Configure method to return CompletionStage
+        // Configure a method to return CompletionStage
         whenever(method.returnType).thenReturn(CompletionStage::class.java)
         whenever(method.isAnnotationPresent(Blocking::class.java)).thenReturn(false)
         whenever(method.parameterTypes).thenReturn(arrayOf(String::class.java))
@@ -96,15 +96,15 @@ internal class HybridVirtualThreadInvocationHandlerTest {
         whenever(method.isAnnotationPresent(Blocking::class.java)).thenReturn(true)
         whenever(method.parameterTypes).thenReturn(arrayOf(String::class.java))
 
-        // Configure mock to return expected result
-        whenever(mockExecuteBlocking.invoke(method, args)).thenReturn(expectedResult)
+        // Configure mock to return an expected result
+        whenever(mockExecuteSync.invoke(method, args)).thenReturn(expectedResult)
 
         // When
         val result = handler.invoke(proxy, method, args)
 
         // Then
         assertThat(result).isEqualTo(expectedResult)
-        verify(mockExecuteBlocking).invoke(method, args)
+        verify(mockExecuteSync).invoke(method, args)
     }
 
     @Test
@@ -121,13 +121,13 @@ internal class HybridVirtualThreadInvocationHandlerTest {
         whenever(method.parameterTypes).thenReturn(arrayOf(String::class.java))
 
         // Configure mock to return expected result
-        whenever(mockExecuteBlocking.invoke(method, args)).thenReturn(expectedResult)
+        whenever(mockExecuteSync.invoke(method, args)).thenReturn(expectedResult)
 
         // When
         val result = handler.invoke(proxy, method, args)
 
         // Then
         assertThat(result).isEqualTo(expectedResult)
-        verify(mockExecuteBlocking).invoke(method, args)
+        verify(mockExecuteSync).invoke(method, args)
     }
 }

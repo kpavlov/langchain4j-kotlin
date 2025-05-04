@@ -165,14 +165,15 @@ internal object ReflectionVariableResolver {
             val parameter = method.parameters[i]
             if (parameter.isAnnotationPresent(MemoryId::class.java)) {
                 val memoryId = args[i]
-                if (memoryId == null) {
+                if (memoryId is ChatMemoryId) {
+                    return Optional.of(memoryId)
+                } else {
                     throw Exceptions.illegalArgument(
                         "The value of parameter '%s' annotated with @MemoryId in method '%s' must not be null",
                         parameter.getName(),
                         method.getName(),
                     )
                 }
-                return Optional.of(memoryId)
             }
         }
         return Optional.empty()

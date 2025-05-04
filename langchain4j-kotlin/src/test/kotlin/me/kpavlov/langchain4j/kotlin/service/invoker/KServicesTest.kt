@@ -13,7 +13,6 @@ import java.util.concurrent.Executors
 
 internal class KServicesTest {
     internal interface TestService {
-
         suspend fun suspendMethod(param: String): String
 
         fun syncMethod(param: String): String

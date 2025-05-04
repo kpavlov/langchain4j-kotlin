@@ -50,7 +50,6 @@ internal object KServices {
         }
     }
 
-
     /**
      * Creates a dynamic proxy for the given service class.
      *
@@ -64,47 +63,48 @@ internal object KServices {
         val executor = AiServiceOrchestrator(serviceClass)
 
         // Create a HybridVirtualThreadInvocationHandler that handles both suspend and blocking operations
-        val handler = HybridVirtualThreadInvocationHandler(
-            // Handle suspend functions
-            executeSuspend = { method, args ->
-                // Extract parameters from args
-                val params = extractParameters(method, args)
+        val handler =
+            HybridVirtualThreadInvocationHandler(
+                // Handle suspend functions
+                executeSuspend = { method, args ->
+                    // Extract parameters from args
+                    val params = extractParameters(method, args)
 
-                // Execute the method using the executor
-                executor.execute<Any>(method, params)
-            },
-            // Handle blocking functions
-            executeBlocking = { method, args ->
-                // Handle Object methods
-                when {
-                    method.name == "toString" -> {
-                        return@HybridVirtualThreadInvocationHandler "Dynamic proxy for $serviceClass"
+                    // Execute the method using the executor
+                    executor.execute<Any>(method, params)
+                },
+                // Handle blocking functions
+                executeSync = { method, args ->
+                    // Handle Object methods
+                    when {
+                        method.name == "toString" -> {
+                            return@HybridVirtualThreadInvocationHandler "Dynamic proxy for $serviceClass"
+                        }
+
+                        method.declaringClass == Any::class.java -> {
+                            return@HybridVirtualThreadInvocationHandler method.invoke(this, args)
+                        }
                     }
 
-                    method.declaringClass == Any::class.java -> {
-                        return@HybridVirtualThreadInvocationHandler method.invoke(this, args)
+                    // Extract parameters from args
+                    val params = extractParameters(method, args)
+
+                    // For void methods, launch a coroutine and return null
+                    if (method.returnType == Void.TYPE) {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            executor.execute<Any>(method, params)
+                        }
+                        return@HybridVirtualThreadInvocationHandler null
                     }
-                }
 
-                // Extract parameters from args
-                val params = extractParameters(method, args)
+                    // For other methods, ensure we're running in a virtual thread and execute synchronously
+                    ensureVirtualThread()
 
-                // For void methods, launch a coroutine and return null
-                if (method.returnType == Void.TYPE) {
-                    GlobalScope.launch(Dispatchers.IO) {
+                    runBlocking {
                         executor.execute<Any>(method, params)
                     }
-                    return@HybridVirtualThreadInvocationHandler null
-                }
-
-                // For other methods, ensure we're running in a virtual thread and execute synchronously
-                ensureVirtualThread()
-
-                runBlocking {
-                    executor.execute<Any>(method, params)
-                }
-            }
-        )
+                },
+            )
 
         @Suppress("UNCHECKED_CAST")
         return Proxy.newProxyInstance(
@@ -113,7 +113,6 @@ internal object KServices {
             handler,
         ) as T
     }
-
 
     /**
      * Extracts parameters from method arguments.

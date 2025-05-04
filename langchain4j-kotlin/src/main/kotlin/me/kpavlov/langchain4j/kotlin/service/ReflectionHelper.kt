@@ -91,28 +91,24 @@ internal object ReflectionHelper {
     ): T {
         // Create a HybridVirtualThreadInvocationHandler that uses the provided handler
         // for both suspend and blocking operations
-        val invocationHandler = HybridVirtualThreadInvocationHandler(
-            executeSuspend = { method, args ->
-                handler(method, args as Array<Any?>)
-            },
-            executeBlocking = { method, args ->
-                // For blocking operations, we run the suspend handler in a blocking context
-                runBlocking {
+        val invocationHandler =
+            HybridVirtualThreadInvocationHandler(
+                executeSuspend = { method, args ->
                     handler(method, args as Array<Any?>)
-                }
-            }
-        )
+                },
+                executeSync = { method, args ->
+                    // For blocking operations, we run the suspend handler in a blocking context
+                    runBlocking {
+                        handler(method, args as Array<Any?>)
+                    }
+                },
+            )
 
         return Proxy.newProxyInstance(
             iface.classLoader,
             arrayOf(iface),
-            invocationHandler
+            invocationHandler,
         ) as T
-    }
-
-    @FunctionalInterface
-    interface MyApi {
-        suspend fun greet(name: String): String
     }
 
     internal fun dropContinuationArg(args: Array<Any?>): Array<Any?> =
@@ -120,18 +116,4 @@ internal object ReflectionHelper {
             .dropLastWhile {
                 it is Continuation<*>
             }.toTypedArray()
-}
-
-public fun main() {
-    val proxy =
-        ReflectionHelper.createSuspendProxy(
-            ReflectionHelper.MyApi::class.java,
-            { method, args ->
-                "${Thread.currentThread()}: Hello, $method(${args[0]} )"
-            }
-        )
-
-    runBlocking {
-        println(proxy.greet("world")) // Prints: Hello, world
-    }
 }

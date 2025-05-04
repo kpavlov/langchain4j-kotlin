@@ -16,23 +16,29 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.Continuation
 
 public class HybridVirtualThreadInvocationHandler(
-    private val virtualThreadExecutor: Executor = VirtualThreadUtils.createVirtualThreadExecutor {
-        Executors.newCachedThreadPool()
-    }!!,
-    private val scope: CoroutineScope = CoroutineScope(virtualThreadExecutor.asCoroutineDispatcher()),
+    private val virtualThreadExecutor: Executor =
+        VirtualThreadUtils.createVirtualThreadExecutor {
+            Executors.newCachedThreadPool()
+        }!!,
+    private val scope: CoroutineScope =
+        CoroutineScope(virtualThreadExecutor.asCoroutineDispatcher()),
     private val executeSuspend: suspend (method: Method, args: Array<out Any>?) -> Any?,
-    private val executeBlocking: (method: Method, args: Array<out Any>?) -> Any?
+    private val executeSync: (method: Method, args: Array<out Any>?) -> Any?,
 ) : InvocationHandler {
-
     // Create a dispatcher backed by virtual threads (requires Java 21+)
     private val virtualThreadDispatcher =
         virtualThreadExecutor.asCoroutineDispatcher()
 
-    override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any? {
+    override fun invoke(
+        proxy: Any,
+        method: Method,
+        args: Array<out Any>?,
+    ): Any? {
         // Check if the method is suspended (last parameter is Continuation)
-        val isSuspend = method.parameterTypes.lastOrNull()?.let {
-            Continuation::class.java.isAssignableFrom(it)
-        } ?: false
+        val isSuspend =
+            method.parameterTypes.lastOrNull()?.let {
+                Continuation::class.java.isAssignableFrom(it)
+            } ?: false
 
         // Check if method is annotated with @Blocking
         val isBlocking = method.isAnnotationPresent(Blocking::class.java)
@@ -48,13 +54,14 @@ public class HybridVirtualThreadInvocationHandler(
                     @Suppress("TooGenericExceptionCaught")
                     try {
                         // Execute the method, using virtual thread dispatcher if blocking
-                        val result = if (isBlocking) {
-                            withContext(virtualThreadDispatcher) {
+                        val result =
+                            if (isBlocking) {
+                                withContext(virtualThreadDispatcher) {
+                                    executeSuspend(method, actualArgs)
+                                }
+                            } else {
                                 executeSuspend(method, actualArgs)
                             }
-                        } else {
-                            executeSuspend(method, actualArgs)
-                        }
                         continuation?.resumeWith(Result.success(result))
                     } catch (e: Exception) {
                         continuation?.resumeWith(Result.failure(e))
@@ -80,16 +87,16 @@ public class HybridVirtualThreadInvocationHandler(
                 // For synchronous methods, run on virtual thread if blocking
                 if (isBlocking) {
                     // Run blocking operation on virtual thread and wait for result
-                    CompletableFuture.supplyAsync(
-                        { executeBlocking(method, args) },
-                        virtualThreadExecutor
-                    ).join()
+                    CompletableFuture
+                        .supplyAsync(
+                            { executeSync(method, args) },
+                            virtualThreadExecutor,
+                        ).join()
                 } else {
                     // For regular non-blocking synchronous methods
-                    executeBlocking(method, args)
+                    executeSync(method, args)
                 }
             }
         }
     }
-
 }
