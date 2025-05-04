@@ -1,50 +1,64 @@
 package me.kpavlov.langchain4j.kotlin.service.invoker
 
+import dev.langchain4j.internal.VirtualThreadUtils
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import io.kotest.matchers.shouldBe
-import io.kotest.assertions.throwables.shouldThrow
+import org.junit.jupiter.api.condition.EnabledForJreRange
+import org.junit.jupiter.api.condition.JRE
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executors
 
 internal class KServicesTest {
-
     internal interface TestService {
-        public suspend fun suspendMethod(param: String): String
-        public fun syncMethod(param: String): String
-        public fun completionStageMethod(param: String): CompletionStage<String>
-        public fun completableFutureMethod(param: String): CompletableFuture<String>
+
+        suspend fun suspendMethod(param: String): String
+
+        fun syncMethod(param: String): String
+
+        fun completionStageMethod(param: String): CompletionStage<String>
+
+        fun completableFutureMethod(param: String): CompletableFuture<String>
     }
 
     @Test
-    public fun `should handle suspend methods`(): Unit = runTest {
-        // Given
-        val service = KServices.create<TestService>(TestService::class)
+    fun `should handle suspend methods`(): Unit =
+        runTest {
+            // Given
+            val service = KServices.create<TestService>(TestService::class)
 
-        // When
-        val result = service.suspendMethod("test")
+            // When
+            val result = service.suspendMethod("test")
 
-        // Then
-        result shouldBe "{param=test}"
-    }
+            // Then
+            result shouldBe "{param=test}"
+        }
 
     @Test
-    public fun `should handle sync methods in virtual thread`(): Unit {
+    @EnabledForJreRange(min = JRE.JAVA_19, disabledReason = "Requires Java 19 or higher")
+    fun `should handle sync methods in virtual thread`() {
         // Given
         val service = KServices.create<TestService>(TestService::class)
 
         // When - Run in a virtual thread
-        val result = Executors.newVirtualThreadPerTaskExecutor().submit<String> {
-            service.syncMethod("test")
-        }.get()
+        val executor =
+            VirtualThreadUtils.createVirtualThreadExecutor {
+                Executors.newSingleThreadExecutor()
+            }!!
+        val result =
+            executor
+                .submit<String> {
+                    service.syncMethod("test")
+                }.get()
 
         // Then
         result shouldBe "{param=test}"
     }
 
     @Test
-    public fun `should fail sync methods in non-virtual thread`(): Unit {
+    fun `should fail sync methods in non-virtual thread`() {
         // Given
         val service = KServices.create<TestService>(TestService::class)
 
@@ -55,20 +69,22 @@ internal class KServicesTest {
     }
 
     @Test
-    public fun `should handle completion stage methods`(): Unit {
+    fun `should handle completion stage methods`() {
         // Given
         val service = KServices.create<TestService>(TestService::class)
 
         // When
-        val future = service.completionStageMethod("test")
-            .toCompletableFuture()
+        val future =
+            service
+                .completionStageMethod("test")
+                .toCompletableFuture()
 
         // Then
         future.join() shouldBe "{param=test}"
     }
 
     @Test
-    public fun `should handle CompletableFuture methods`(): Unit {
+    fun `should handle CompletableFuture methods`() {
         // Given
         val service = KServices.create<TestService>(TestService::class)
 

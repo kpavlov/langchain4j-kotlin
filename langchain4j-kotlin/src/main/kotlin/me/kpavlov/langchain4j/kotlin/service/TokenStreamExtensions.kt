@@ -1,10 +1,6 @@
 package me.kpavlov.langchain4j.kotlin.service
 
-import dev.langchain4j.model.chat.StreamingChatModel
-import dev.langchain4j.model.chat.response.ChatResponse
-import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import dev.langchain4j.service.TokenStream
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,9 +8,6 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply
-import me.kpavlov.langchain4j.kotlin.model.chat.request.ChatRequestBuilder
-import me.kpavlov.langchain4j.kotlin.model.chat.request.chatRequest
-import org.slf4j.LoggerFactory
 
 public fun TokenStream.asFlow(): Flow<String> =
     flow {
@@ -29,7 +22,7 @@ public fun TokenStream.asFlow(): Flow<String> =
 
 public fun TokenStream.asReplyFlow(): Flow<StreamingChatModelReply> =
     flow {
-        callbackFlow<StreamingChatModelReply> {
+        callbackFlow {
             onPartialResponse { token ->
                 trySend(StreamingChatModelReply.PartialResponse(token))
             }

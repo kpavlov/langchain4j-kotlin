@@ -96,8 +96,9 @@ internal class ServiceInvocationHandler<T : Any>(
 
         validateParameters(method)
 
-        val memoryId = findMemoryId(method, args)
-            .orElse(ChatMemoryService.DEFAULT)
+        val memoryId =
+            findMemoryId(method, args)
+                .orElse(ChatMemoryService.DEFAULT)
         val chatMemory =
             if (context.hasChatMemory()) {
                 chatMemoryService.getOrCreateChatMemoryAsync(memoryId)

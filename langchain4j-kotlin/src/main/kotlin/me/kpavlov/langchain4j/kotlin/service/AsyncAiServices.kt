@@ -48,6 +48,7 @@ public class AsyncAiServices<T : Any>(
                     // supported collection types
                     Result::class.java,
                     MutableList::class.java,
+                    List::class.java,
                     MutableSet::class.java,
                 )
             ) {

@@ -33,7 +33,7 @@ internal object ReflectionHelper {
         }
 
         for (parameter in parameters) {
-            if ("${parameter}".startsWith("kotlin.coroutines.Continuation")) {
+            if ("$parameter".startsWith("kotlin.coroutines.Continuation")) {
                 // skip continuation parameter
                 continue
             }
@@ -45,9 +45,10 @@ internal object ReflectionHelper {
             @Suppress("ComplexCondition")
             if (v == null && userMessage == null && memoryId == null && userName == null) {
                 throw IllegalConfigurationException.illegalConfiguration(
-                    "Parameter '%s' of method '%s' should be annotated with @V or @UserMessage "
-                        + "or @UserName or @MemoryId",
-                    parameter.getName(), method.getName()
+                    "Parameter '%s' of method '%s' should be annotated with @V or @UserMessage " +
+                        "or @UserName or @MemoryId",
+                    parameter.getName(),
+                    method.getName(),
                 )
             }
         }

@@ -25,7 +25,6 @@ import java.util.Optional
  */
 @Suppress("detekt:all")
 internal object ReflectionVariableResolver {
-
     public fun findTemplateVariables(
         template: String,
         method: Method,
@@ -155,7 +154,10 @@ internal object ReflectionVariableResolver {
         return Optional.empty<String>()
     }
 
-    fun findMemoryId(method: Method, args: Array<Any?>?): Optional<ChatMemoryId> {
+    fun findMemoryId(
+        method: Method,
+        args: Array<Any?>?,
+    ): Optional<ChatMemoryId> {
         if (args == null) {
             return Optional.empty<ChatMemoryId>()
         }
@@ -166,7 +168,8 @@ internal object ReflectionVariableResolver {
                 if (memoryId == null) {
                     throw Exceptions.illegalArgument(
                         "The value of parameter '%s' annotated with @MemoryId in method '%s' must not be null",
-                        parameter.getName(), method.getName()
+                        parameter.getName(),
+                        method.getName(),
                     )
                 }
                 return Optional.of(memoryId)
