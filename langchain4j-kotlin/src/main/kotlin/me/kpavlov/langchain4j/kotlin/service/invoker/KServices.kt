@@ -3,11 +3,9 @@ package me.kpavlov.langchain4j.kotlin.service.invoker
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Proxy
@@ -15,22 +13,7 @@ import java.lang.reflect.Type
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.kotlinFunction
-
-/**
- * Example interface for testing the proxy implementation.
- */
-internal interface Assistant {
-    public suspend fun ask(question: String): String
-
-    public fun askSync(question: String): String
-
-    public fun askCompletionStage(question: String): CompletionStage<String>
-}
 
 /**
  * Utility class for creating dynamic proxies for AI services.
@@ -67,6 +50,7 @@ internal object KServices {
         }
     }
 
+
     /**
      * Creates a dynamic proxy for the given service class.
      *
@@ -79,70 +63,48 @@ internal object KServices {
 
         val executor = AiServiceOrchestrator(serviceClass)
 
-        val handler =
-            InvocationHandler { proxy, method, args ->
+        // Create a HybridVirtualThreadInvocationHandler that handles both suspend and blocking operations
+        val handler = HybridVirtualThreadInvocationHandler(
+            // Handle suspend functions
+            executeSuspend = { method, args ->
+                // Extract parameters from args
+                val params = extractParameters(method, args)
+
+                // Execute the method using the executor
+                executor.execute<Any>(method, params)
+            },
+            // Handle blocking functions
+            executeBlocking = { method, args ->
                 // Handle Object methods
                 when {
                     method.name == "toString" -> {
-                        return@InvocationHandler "Dynamic proxy ${proxy}for $serviceClass"
+                        return@HybridVirtualThreadInvocationHandler "Dynamic proxy for $serviceClass"
                     }
 
                     method.declaringClass == Any::class.java -> {
-                        return@InvocationHandler method
-                            .invoke(
-                                this,
-                                args,
-                            )
+                        return@HybridVirtualThreadInvocationHandler method.invoke(this, args)
                     }
                 }
 
+                // Extract parameters from args
                 val params = extractParameters(method, args)
-//            val returnType = getReturnType(method)
 
-                // Handle different method types
-                when {
-                    method.kotlinFunction?.isSuspend == true -> {
-                        handleSuspendMethod<T, Any>(args, executor, method, params)
+                // For void methods, launch a coroutine and return null
+                if (method.returnType == Void.TYPE) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        executor.execute<Any>(method, params)
                     }
+                    return@HybridVirtualThreadInvocationHandler null
+                }
 
-                    method.returnType == Void.TYPE -> {
-                        GlobalScope.launch(Dispatchers.IO) {
-                            executor.execute<Any>(method, params)
-                        }
-                        null
-                    }
-                    // Check if the method returns a CompletionStage
-                    method.returnType.name.startsWith(
-                        "java.util.concurrent.CompletionStage",
-                    ) ||
-                        method.returnType.name.startsWith(
-                            "java.util.concurrent.CompletableFuture",
-                        ) ||
-                        method.genericReturnType.typeName.startsWith(
-                            "java.util.concurrent.CompletionStage",
-                        ) ||
-                        method.genericReturnType.typeName.startsWith(
-                            "java.util.concurrent.CompletableFuture",
-                        ) -> {
-                        GlobalScope
-                            .async(Dispatchers.IO) {
-                                executor.execute<Any>(method, params)
-                            }.asCompletableFuture()
-                    }
+                // For other methods, ensure we're running in a virtual thread and execute synchronously
+                ensureVirtualThread()
 
-                    else -> {
-                        // For synchronous methods, ensure we're running in a virtual thread
-                        ensureVirtualThread()
-
-                        // Execute the method
-                        GlobalScope
-                            .async(Dispatchers.IO) {
-                                executor.execute<Any>(method, params)
-                            }.asCompletableFuture()
-                            .join()
-                    }
+                runBlocking {
+                    executor.execute<Any>(method, params)
                 }
             }
+        )
 
         @Suppress("UNCHECKED_CAST")
         return Proxy.newProxyInstance(
@@ -152,36 +114,6 @@ internal object KServices {
         ) as T
     }
 
-    /**
-     * Handles a suspend method call.
-     *
-     * @param T The service class
-     * @param R The return type of the method
-     */
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun <T : Any, R : Any> handleSuspendMethod(
-        args: Array<out Any>?,
-        executor: AiServiceOrchestrator<T>,
-        method: Method,
-        params: Map<String, Any?>,
-    ): Any {
-        @Suppress("UNCHECKED_CAST")
-        val continuation =
-            args?.lastOrNull {
-                it is Continuation<*>
-            } as? Continuation<Any?>
-
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                val result = executor.execute<R>(method, params)
-                continuation?.resume(result)
-            } catch (e: Throwable) {
-                logger.error("Error invoking method ${method.name}", e)
-                continuation?.resumeWithException(e)
-            }
-        }
-        return COROUTINE_SUSPENDED
-    }
 
     /**
      * Extracts parameters from method arguments.
