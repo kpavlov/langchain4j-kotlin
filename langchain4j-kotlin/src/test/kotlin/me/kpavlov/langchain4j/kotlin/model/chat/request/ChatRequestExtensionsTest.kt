@@ -33,10 +33,11 @@ internal class ChatRequestExtensionsTest {
                 parameters = params
             }
 
-        result.messages() shouldContainExactly listOf(
-            systemMessage,
-            userMessage,
-        )
+        result.messages() shouldContainExactly
+            listOf(
+                systemMessage,
+                userMessage,
+            )
         result.parameters() shouldBe params
         result.parameters().temperature() shouldNotBe 0.1
     }

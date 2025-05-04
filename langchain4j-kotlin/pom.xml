@@ -17,6 +17,10 @@
             <artifactId>langchain4j-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+        </dependency>
+        <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
             <optional>true</optional>
@@ -58,6 +62,11 @@
         <dependency>
             <groupId>me.kpavlov.aimocks</groupId>
             <artifactId>ai-mocks-openai</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

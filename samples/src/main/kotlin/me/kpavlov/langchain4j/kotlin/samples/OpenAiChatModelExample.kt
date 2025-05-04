@@ -9,14 +9,14 @@ import kotlinx.coroutines.runBlocking
 import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
 
 class OpenAiChatModelExample(
-    private val model: ChatModel = OpenAiChatModel
-        .builder()
-        .modelName("gpt-4o-mini")
-        .apiKey(testEnv.get("OPENAI_API_KEY", "demo"))
-        .temperature(0.0)
-        .build()
+    private val model: ChatModel =
+        OpenAiChatModel
+            .builder()
+            .modelName("gpt-4o-mini")
+            .apiKey(testEnv.get("OPENAI_API_KEY", "demo"))
+            .temperature(0.0)
+            .build(),
 ) {
-
     suspend fun callChatAsync(): String {
         val response =
             model.chatAsync {
@@ -31,8 +31,6 @@ class OpenAiChatModelExample(
         println("AI Answer: \"$result\"")
         return result
     }
-
-
 }
 
 fun main() {
@@ -40,9 +38,8 @@ fun main() {
         OpenAiChatModelExample().callChatAsync()
     }
 }
-//fun main() {
+// fun main() {
 //    runBlocking {
 //        OpenAiChatModelExample().callChatAsync()
 //    }
-//}
-
+// }

@@ -5,8 +5,6 @@ import dev.langchain4j.data.document.parser.TextDocumentParser
 import dev.langchain4j.data.document.source.FileSystemSource
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
@@ -100,10 +98,11 @@ internal class AsyncDocumentLoaderTest {
             documents shouldHaveSize 3
 
             val documentNames = documents.map { it.metadata().getString("file_name") }
-            documentNames shouldContainExactlyInAnyOrder listOf(
-                "captain-blood.txt",
-                "quantum-computing.txt",
-                "blumblefang.txt",
-            )
+            documentNames shouldContainExactlyInAnyOrder
+                listOf(
+                    "captain-blood.txt",
+                    "quantum-computing.txt",
+                    "blumblefang.txt",
+                )
         }
 }
