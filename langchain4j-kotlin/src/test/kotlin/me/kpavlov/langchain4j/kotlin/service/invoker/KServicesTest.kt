@@ -2,9 +2,11 @@ package me.kpavlov.langchain4j.kotlin.service.invoker
 
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
+import io.kotest.matchers.shouldBe
+import io.kotest.assertions.throwables.shouldThrow
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.Executors
 
 internal class KServicesTest {
 
@@ -24,19 +26,32 @@ internal class KServicesTest {
         val result = service.suspendMethod("test")
 
         // Then
-        assertEquals("{param=test}", result)
+        result shouldBe "{param=test}"
     }
 
     @Test
-    public fun `should handle sync methods`(): Unit {
+    public fun `should handle sync methods in virtual thread`(): Unit {
         // Given
         val service = KServices.create<TestService>(TestService::class)
 
-        // When
-        val result = service.syncMethod("test")
+        // When - Run in a virtual thread
+        val result = Executors.newVirtualThreadPerTaskExecutor().submit<String> {
+            service.syncMethod("test")
+        }.get()
 
         // Then
-        assertEquals("{param=test}", result)
+        result shouldBe "{param=test}"
+    }
+
+    @Test
+    public fun `should fail sync methods in non-virtual thread`(): Unit {
+        // Given
+        val service = KServices.create<TestService>(TestService::class)
+
+        // When/Then - Should throw IllegalStateException when not in a virtual thread
+        shouldThrow<IllegalStateException> {
+            service.syncMethod("test")
+        }
     }
 
     @Test
@@ -49,7 +64,7 @@ internal class KServicesTest {
             .toCompletableFuture()
 
         // Then
-        assertEquals("{param=test}", future.join())
+        future.join() shouldBe "{param=test}"
     }
 
     @Test
@@ -61,6 +76,6 @@ internal class KServicesTest {
         val future = service.completableFutureMethod("test")
 
         // Then
-        assertEquals("{param=test}", future.join())
+        future.join() shouldBe "{param=test}"
     }
 }

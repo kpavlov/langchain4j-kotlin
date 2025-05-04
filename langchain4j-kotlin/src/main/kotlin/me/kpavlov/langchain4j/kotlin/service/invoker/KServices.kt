@@ -13,6 +13,7 @@ import java.lang.reflect.Proxy
 import java.lang.reflect.Type
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.ExecutionException
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.resume
@@ -49,6 +50,33 @@ internal class AiServiceOrchestrator<T>(
  * Utility class for creating dynamic proxies for AI services.
  */
 internal object KServices {
+    /**
+     * Checks if the current thread is a virtual thread.
+     *
+     * @return true if the current thread is a virtual thread, false otherwise
+     */
+    private fun isVirtualThread(): Boolean {
+        // Use reflection to check if Thread.currentThread().isVirtual() exists and call it
+        return try {
+            val isVirtualMethod = Thread::class.java.getMethod("isVirtual")
+            isVirtualMethod.invoke(Thread.currentThread()) as Boolean
+        } catch (e: Exception) {
+            // If the method doesn't exist or fails, assume it's not a virtual thread
+            false
+        }
+    }
+
+    /**
+     * Ensures that the current thread is a virtual thread.
+     *
+     * @throws IllegalStateException if the current thread is not a virtual thread
+     */
+    private fun ensureVirtualThread() {
+        if (!isVirtualThread()) {
+            throw IllegalStateException("Synchronous methods must be executed in a virtual thread. " +
+                "Use Executors.newVirtualThreadPerTaskExecutor() or similar to create virtual threads.")
+        }
+    }
     /**
      * Creates a dynamic proxy for the given service class.
      *
@@ -91,6 +119,10 @@ internal object KServices {
                     }.asCompletableFuture()
                 }
                 else -> {
+                    // For synchronous methods, ensure we're running in a virtual thread
+                    ensureVirtualThread()
+
+                    // Execute the method
                     GlobalScope.async(Dispatchers.IO) {
                         executor.execute<Any>(method, params)
                     }.asCompletableFuture().join()
