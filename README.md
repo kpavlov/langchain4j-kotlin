@@ -139,7 +139,8 @@ model.chatFlow {
 
 ### Async AI Services
 
-The library adds support for coroutine-based async AI services:
+The library adds support for coroutine-based async AI services through the `AsyncAiServices` class, which leverages
+Kotlin's coroutines for efficient asynchronous operations:
 
 ```kotlin
 // Define your service interface with suspending function
@@ -150,7 +151,7 @@ interface Assistant {
 
 // Create the service using AsyncAiServicesFactory
 val assistant = createAiService(
-  serviceClass = AsyncAssistant::class.java,
+  serviceClass = Assistant::class.java,
   factory = AsyncAiServicesFactory(),
 ).chatModel(model)
   .build()
@@ -160,8 +161,43 @@ runBlocking {
   val response = assistant.chat("John", "What is Kotlin?")
   println(response)
 }
-
 ```
+
+#### Advanced Usage Scenarios
+
+The `AsyncAiServices` implementation uses `HybridVirtualThreadInvocationHandler` under the hood,
+which supports multiple invocation patterns:
+
+1. **Suspend Functions**: Native Kotlin coroutines support
+2. **CompletionStage/CompletableFuture**: For Java-style async operations
+3. **Blocking Operations**: Automatically run on virtual threads (Java 21+)
+
+Example with different return types:
+
+```kotlin
+interface AdvancedAssistant {
+  // Suspend function
+  @UserMessage("Summarize: {{text}}")
+  suspend fun summarize(text: String): String
+
+  // CompletionStage return type for Java interoperability
+  @UserMessage("Analyze sentiment: {{text}}")
+  fun analyzeSentiment(text: String): CompletionStage<String>
+
+  // Blocking operation (runs on virtual thread)
+  @Blocking
+  @UserMessage("Process document: {{document}}")
+  fun processDocument(document: String): String
+}
+```
+
+#### Benefits
+
+- **Efficient Resource Usage**: Suspending functions don't block threads during I/O or waiting
+- **Java Interoperability**: Support for CompletionStage/CompletableFuture return types
+- **Virtual Thread Integration**: Automatic handling of blocking operations on virtual threads
+- **Simplified Error Handling**: Leverage Kotlin's structured concurrency for error propagation
+- **Reduced Boilerplate**: No need for manual callback handling or future chaining
 
 ### Kotlin Notebook
 
@@ -174,7 +210,7 @@ The [Kotlin Notebook](https://kotlinlang.org/docs/kotlin-notebook-overview.html)
 
 You can easily get started with LangChain4j-Kotlin notebooks:
 
-```kotlin notebook
+```kotlin
 %useLatestDescriptors
 %use coroutines
 
