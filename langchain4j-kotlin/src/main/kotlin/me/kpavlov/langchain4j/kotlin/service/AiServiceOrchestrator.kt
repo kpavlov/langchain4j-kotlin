@@ -31,6 +31,7 @@ import dev.langchain4j.service.output.ServiceOutputParser
 import dev.langchain4j.service.tool.ToolServiceContext
 import dev.langchain4j.spi.services.TokenStreamAdapter
 import me.kpavlov.langchain4j.kotlin.ChatMemoryId
+import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
 import me.kpavlov.langchain4j.kotlin.service.ReflectionHelper.validateParameters
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.asString
 import me.kpavlov.langchain4j.kotlin.service.ReflectionVariableResolver.findMemoryId
@@ -199,7 +200,7 @@ internal class AiServiceOrchestrator<T : Any>(
     }
 
     @Suppress("LongParameterList")
-    private fun handleNonStreamingCall(
+    private suspend fun handleNonStreamingCall(
         returnType: Type,
         messages: MutableList<ChatMessage?>,
         toolServiceContext: ToolServiceContext,
@@ -235,7 +236,7 @@ internal class AiServiceOrchestrator<T : Any>(
                 .parameters(parameters)
                 .build()
 
-        var chatResponse = context.chatModel.chat(chatRequest)
+        var chatResponse = context.chatModel.chatAsync(chatRequest)
 
         AiServices.verifyModerationIfNeeded(moderationFuture)
 
