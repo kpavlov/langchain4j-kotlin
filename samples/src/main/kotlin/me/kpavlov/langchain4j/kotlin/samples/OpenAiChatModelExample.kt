@@ -3,19 +3,12 @@ package me.kpavlov.langchain4j.kotlin.samples
 import dev.langchain4j.data.message.SystemMessage.systemMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.chat.ChatModel
-import dev.langchain4j.model.openai.OpenAiChatModel
 import dev.langchain4j.model.openai.OpenAiChatRequestParameters
 import kotlinx.coroutines.runBlocking
 import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
 
 class OpenAiChatModelExample(
-    private val model: ChatModel =
-        OpenAiChatModel
-            .builder()
-            .modelName("gpt-4o-mini")
-            .apiKey(testEnv.get("OPENAI_API_KEY", "demo"))
-            .temperature(0.0)
-            .build(),
+    private val model: ChatModel
 ) {
     suspend fun callChatAsync(): String {
         val response =
@@ -35,11 +28,6 @@ class OpenAiChatModelExample(
 
 fun main() {
     runBlocking {
-        OpenAiChatModelExample().callChatAsync()
+        OpenAiChatModelExample(model).callChatAsync()
     }
 }
-// fun main() {
-//    runBlocking {
-//        OpenAiChatModelExample().callChatAsync()
-//    }
-// }
