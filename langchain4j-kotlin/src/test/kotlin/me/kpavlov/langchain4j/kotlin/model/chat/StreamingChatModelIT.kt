@@ -1,18 +1,12 @@
 package me.kpavlov.langchain4j.kotlin.model.chat
 
-import assertk.assertThat
-import assertk.assertions.contains
-import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import dev.langchain4j.data.message.SystemMessage.systemMessage
 import dev.langchain4j.data.message.UserMessage.userMessage
 import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.chat.response.ChatResponse
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldContain
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
@@ -70,7 +64,7 @@ internal open class StreamingChatModelIT {
                 .chatFlow {
                     messages += systemMessage
                     messages += userMessage
-                }.buffer(capacity = Channel.UNLIMITED)
+                }
                 .collect {
                     when (it) {
                         is PartialResponse -> {
