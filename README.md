@@ -7,6 +7,7 @@
 [![codecov](https://codecov.io/gh/kpavlov/langchain4j-kotlin/graph/badge.svg?token=VYIJ92CYHD)](https://codecov.io/gh/kpavlov/langchain4j-kotlin)
 [![Maintainability](https://api.codeclimate.com/v1/badges/176ba2c4e657d3e7981a/maintainability)](https://codeclimate.com/github/kpavlov/langchain4j-kotlin/maintainability)
 [![Api Docs](https://img.shields.io/badge/api-docs-blue)](https://kpavlov.github.io/langchain4j-kotlin/api/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kpavlov/langchain4j-kotlin)
 
 Kotlin enhancements for [LangChain4j](https://github.com/langchain4j/langchain4j), providing coroutine support and Flow-based streaming capabilities for chat language models.
 
