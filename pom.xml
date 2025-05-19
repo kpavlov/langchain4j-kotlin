@@ -4,7 +4,7 @@
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
     <artifactId>root</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>LangChain4j-Kotlin :: Root</name>
     <description>Kotlin enhancements for LangChain4j</description>
@@ -36,7 +36,7 @@
     <scm>
         <connection>scm:git:git://github.com/kpavlov/langchain4j-kotlin.git</connection>
         <developerConnection>scm:git:ssh://github.com/kpavlov/langchain4j-kotlin.git</developerConnection>
-        <tag>v0.2.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/kpavlov/langchain4j-kotlin/tree/main</url>
     </scm>
 
