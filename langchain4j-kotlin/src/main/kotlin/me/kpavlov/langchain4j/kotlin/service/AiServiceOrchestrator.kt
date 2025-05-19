@@ -175,7 +175,7 @@ internal class AiServiceOrchestrator<T : Any>(
 
     private fun handleStreamingCall(
         returnType: Type,
-        messages: MutableList<ChatMessage?>,
+        messages: MutableList<ChatMessage>,
         toolServiceContext: ToolServiceContext,
         augmentationResult: AugmentationResult?,
         memoryId: Any,
@@ -202,10 +202,10 @@ internal class AiServiceOrchestrator<T : Any>(
     @Suppress("LongParameterList")
     private suspend fun handleNonStreamingCall(
         returnType: Type,
-        messages: MutableList<ChatMessage?>,
+        messages: MutableList<ChatMessage>,
         toolServiceContext: ToolServiceContext,
         augmentationResult: AugmentationResult?,
-        moderationFuture: Future<Moderation?>?,
+        moderationFuture: Future<Moderation>?,
         chatMemory: ChatMemory?,
         memoryId: ChatMemoryId,
         supportsJsonSchema: Boolean,
@@ -302,10 +302,10 @@ internal class AiServiceOrchestrator<T : Any>(
     private fun triggerModerationIfNeeded(
         method: Method,
         messages: MutableList<ChatMessage?>,
-    ): Future<Moderation?>? =
+    ): Future<Moderation>? =
         if (method.isAnnotationPresent(Moderate::class.java)) {
             executor.submit(
-                Callable<Moderation?> {
+                Callable {
                     val messagesToModerate = AiServices.removeToolMessages(messages)
                     context.moderationModel
                         .moderate(messagesToModerate)
@@ -322,11 +322,11 @@ internal class AiServiceOrchestrator<T : Any>(
         args: Array<Any?>,
     ): SystemMessage? =
         findSystemMessageTemplate(memoryId, method)
-            .map<SystemMessage> { systemMessageTemplate: String ->
+            .map { systemMessageTemplate: String ->
                 PromptTemplate
                     .from(systemMessageTemplate)
                     .apply(
-                        ReflectionVariableResolver.findTemplateVariables(
+                        findTemplateVariables(
                             systemMessageTemplate,
                             method,
                             args,
@@ -339,7 +339,7 @@ internal class AiServiceOrchestrator<T : Any>(
         method: Method,
     ): Optional<String> {
         val annotation =
-            method.getAnnotation<dev.langchain4j.service.SystemMessage>(
+            method.getAnnotation(
                 dev.langchain4j.service.SystemMessage::class.java,
             )
         if (annotation != null) {
@@ -364,9 +364,9 @@ internal class AiServiceOrchestrator<T : Any>(
         value: Array<String>,
         delimiter: String,
     ): String {
-        var messageTemplate: String =
+        val messageTemplate: String =
             if (!resource.trim { it <= ' ' }.isEmpty()) {
-                val resourceText = getResourceText(method.getDeclaringClass(), resource)
+                val resourceText = getResourceText(method.declaringClass, resource)
                 if (resourceText == null) {
                     throw IllegalConfigurationException.illegalConfiguration(
                         "@%sMessage's resource '%s' not found",
@@ -393,7 +393,7 @@ internal class AiServiceOrchestrator<T : Any>(
     ): String? {
         var inputStream = clazz.getResourceAsStream(resource)
         if (inputStream == null) {
-            inputStream = clazz.getResourceAsStream("/" + resource)
+            inputStream = clazz.getResourceAsStream("/$resource")
         }
         return getText(inputStream)
     }
@@ -418,9 +418,9 @@ internal class AiServiceOrchestrator<T : Any>(
 
         val prompt = PromptTemplate.from(template).apply(variables)
 
-        val maybeUserName = findUserName(method.getParameters(), args)
+        val maybeUserName = findUserName(method.parameters, args)
         return maybeUserName
-            .map<UserMessage> { userName: String? ->
+            .map { userName: String? ->
                 UserMessage.from(
                     userName,
                     prompt.text(),
@@ -436,48 +436,48 @@ internal class AiServiceOrchestrator<T : Any>(
             findUserMessageTemplateFromMethodAnnotation(method)
         val templateFromParameterAnnotation =
             findUserMessageTemplateFromAnnotatedParameter(
-                method.getParameters(),
+                method.parameters,
                 args,
             )
 
-        if (templateFromMethodAnnotation.isPresent() &&
-            templateFromParameterAnnotation.isPresent()
+        if (templateFromMethodAnnotation.isPresent &&
+            templateFromParameterAnnotation.isPresent
         ) {
             throw IllegalConfigurationException.illegalConfiguration(
                 "Error: The method '%s' has multiple @UserMessage annotations. Please use only one.",
-                method.getName(),
+                method.name,
             )
         }
 
-        if (templateFromMethodAnnotation.isPresent()) {
+        if (templateFromMethodAnnotation.isPresent) {
             return templateFromMethodAnnotation.get()
         }
-        if (templateFromParameterAnnotation.isPresent()) {
+        if (templateFromParameterAnnotation.isPresent) {
             return templateFromParameterAnnotation.get()
         }
 
         val templateFromTheOnlyArgument =
             findUserMessageTemplateFromTheOnlyArgument(
-                method.getParameters(),
+                method.parameters,
                 args,
             )
-        if (templateFromTheOnlyArgument.isPresent()) {
+        if (templateFromTheOnlyArgument.isPresent) {
             return templateFromTheOnlyArgument.get()
         }
 
         throw IllegalConfigurationException.illegalConfiguration(
             "Error: The method '%s' does not have a user message defined.",
-            method.getName(),
+            method.name,
         )
     }
 
     private fun findUserMessageTemplateFromMethodAnnotation(method: Method): Optional<String> =
         Optional
             .ofNullable<dev.langchain4j.service.UserMessage>(
-                method.getAnnotation<dev.langchain4j.service.UserMessage>(
+                method.getAnnotation(
                     dev.langchain4j.service.UserMessage::class.java,
                 ),
-            ).map<String> { userMessage ->
+            ).map { userMessage ->
                 getTemplate(
                     method,
                     "User",
