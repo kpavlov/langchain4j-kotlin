@@ -21,7 +21,7 @@
         <finchly.version>0.1.1</finchly.version>
         <kotlinx-coroutines.version>1.9.0</kotlinx-coroutines.version>
         <langchain4j-kotlin.version>0.2.0</langchain4j-kotlin.version>
-        <langchain4j.version>1.0.1</langchain4j.version>
+        <langchain4j.version>1.1.0</langchain4j.version>
         <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
