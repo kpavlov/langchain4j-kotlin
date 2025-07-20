@@ -14,7 +14,7 @@ build-samples:
 
 .PHONY: apidocs # always run
 apidocs:
-		mvn clean dokka:dokka -pl !reports && \
+		mvn clean dokka:dokka && \
 		mkdir -p target/docs && \
 		cp -R langchain4j-kotlin/target/dokka target/docs/api
 
