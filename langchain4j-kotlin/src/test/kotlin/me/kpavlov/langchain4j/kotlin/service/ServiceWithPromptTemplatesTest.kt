@@ -18,45 +18,46 @@ import org.junit.jupiter.api.Test
 
 internal class ServiceWithPromptTemplatesTest {
     @Test
-    fun `Should use System and User Prompt Templates`() = runTest {
-        val chatResponse =
-            ChatResponse
-                .builder()
-                .aiMessage(AiMessage("I'm fine, thanks"))
-                .build()
+    fun `Should use System and User Prompt Templates`() =
+        runTest {
+            val chatResponse =
+                ChatResponse
+                    .builder()
+                    .aiMessage(AiMessage("I'm fine, thanks"))
+                    .build()
 
-        val model =
-            object : ChatModel {
-                override fun chat(chatRequest: ChatRequest): ChatResponse {
-                    chatRequest.messages() shouldHaveSize 2
-                    val systemMessage =
-                        chatRequest.messages().first { it is SystemMessage } as SystemMessage
-                    val userMessage =
-                        chatRequest.messages().first {
-                            it is UserMessage
-                        } as UserMessage
+            val model =
+                object : ChatModel {
+                    override fun chat(chatRequest: ChatRequest): ChatResponse {
+                        chatRequest.messages() shouldHaveSize 2
+                        val systemMessage =
+                            chatRequest.messages().first { it is SystemMessage } as SystemMessage
+                        val userMessage =
+                            chatRequest.messages().first {
+                                it is UserMessage
+                            } as UserMessage
 
-                    systemMessage.text() shouldBe
-                        "You are helpful assistant using chatMemoryID=default"
-                    userMessage.singleText() shouldBe "Hello, My friend! How are you?"
+                        systemMessage.text() shouldBe
+                            "You are helpful assistant using chatMemoryID=default"
+                        userMessage.singleText() shouldBe "Hello, My friend! How are you?"
 
-                    return chatResponse
+                        return chatResponse
+                    }
                 }
-            }
 
-        val assistant =
-            AiServices
-                .builder(Assistant::class.java)
-                .systemMessageProvider(
-                    TemplateSystemMessageProvider(
-                        "prompts/ServiceWithTemplatesTest/default-system-prompt.mustache",
-                    ),
-                ).chatModel(model)
-                .build()
+            val assistant =
+                AiServices
+                    .builder(Assistant::class.java)
+                    .systemMessageProvider(
+                        TemplateSystemMessageProvider(
+                            "prompts/ServiceWithTemplatesTest/default-system-prompt.mustache",
+                        ),
+                    ).chatModel(model)
+                    .build()
 
-        val response = assistant.askQuestion(userName = "My friend", question = "How are you?")
-        assertThat(response).isEqualTo("I'm fine, thanks")
-    }
+            val response = assistant.askQuestion(userName = "My friend", question = "How are you?")
+            assertThat(response).isEqualTo("I'm fine, thanks")
+        }
 
     @Suppress("unused")
     private interface Assistant {

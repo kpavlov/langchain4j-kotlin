@@ -70,7 +70,6 @@ internal object ReflectionVariableResolver {
             Optional.empty()
         }
 
-
     fun findUserName(
         parameters: Array<Parameter>,
         args: Array<Any?>,
@@ -111,7 +110,10 @@ internal object ReflectionVariableResolver {
         return Optional.empty()
     }
 
-    private fun findMemoryIdParameter(method: Method, args: Array<Any?>): Pair<Parameter, Any?>? {
+    private fun findMemoryIdParameter(
+        method: Method,
+        args: Array<Any?>,
+    ): Pair<Parameter, Any?>? {
         for (i in args.indices) {
             val parameter = method.parameters[i]
             if (parameter.isAnnotationPresent(MemoryId::class.java)) {

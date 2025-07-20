@@ -16,7 +16,6 @@ import me.kpavlov.langchain4j.kotlin.loadDocument
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.CompleteResponse
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply.PartialResponse
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -64,8 +63,7 @@ internal open class StreamingChatModelIT {
                 .chatFlow {
                     messages += systemMessage
                     messages += userMessage
-                }
-                .collect {
+                }.collect {
                     when (it) {
                         is PartialResponse -> {
                             println("Token: '${it.token}'")
@@ -73,7 +71,6 @@ internal open class StreamingChatModelIT {
                         }
 
                         is CompleteResponse -> responseRef.set(it.response)
-                        is StreamingChatModelReply.Error -> fail("Error", it.cause)
                     }
                 }
 

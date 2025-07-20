@@ -47,19 +47,6 @@ public sealed interface StreamingChatModelReply {
     public data class CompleteResponse(
         val response: ChatResponse,
     ) : StreamingChatModelReply
-
-    /**
-     * Represents an error that occurred during the streaming process
-     * when generating a reply from the AI language model. This type
-     * of reply is used to indicate a failure in the operation and
-     * provides details about the cause of the error.
-     *
-     * @property cause The underlying exception or error that caused the failure.
-     * @see StreamingChatResponseHandler.onError
-     */
-    public data class Error(
-        val cause: Throwable,
-    ) : StreamingChatModelReply
 }
 
 /**
@@ -126,7 +113,6 @@ public fun StreamingChatModel.chatFlow(
                         error.message,
                         error,
                     )
-                    trySend(StreamingChatModelReply.Error(error))
                     close(error)
                 }
             }
