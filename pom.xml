@@ -45,10 +45,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
-        <kotlin.version>2.1.21</kotlin.version>
-        <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
+        <kotlin.version>2.2.0</kotlin.version>
+        <kotlin.compiler.apiVersion>2.2</kotlin.compiler.apiVersion>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
-        <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
+        <kotlin.compiler.languageVersion>2.2</kotlin.compiler.languageVersion>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -58,7 +58,7 @@
         <finchly.version>0.1.1</finchly.version>
         <junit.version>5.13.3</junit.version>
         <kotest.version>5.9.1</kotest.version>
-        <kotlinx-coroutines.version>1.9.0</kotlinx-coroutines.version>
+        <kotlinx-coroutines.version>1.10.2</kotlinx-coroutines.version>
         <langchain4j.version>1.1.0</langchain4j.version>
         <mockito-kotlin.version>6.0.0</mockito-kotlin.version>
         <mockito.version>5.18.0</mockito.version>

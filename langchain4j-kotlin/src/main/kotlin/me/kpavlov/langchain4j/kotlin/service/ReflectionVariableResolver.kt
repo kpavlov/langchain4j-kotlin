@@ -22,14 +22,14 @@ import java.util.Optional
  * @see https://github.com/langchain4j/langchain4j/pull/2951
  */
 internal object ReflectionVariableResolver {
-    public fun findTemplateVariables(
+    fun findTemplateVariables(
         template: String,
         method: Method,
         args: Array<Any?>?,
     ): MutableMap<String?, Any?> =
         InternalReflectionVariableResolver.findTemplateVariables(template, method, args)
 
-    public fun asString(arg: Any?): String =
+    fun asString(arg: Any?): String =
         if (arg == null) {
             "null"
         } else if (arg is Array<*>?) {

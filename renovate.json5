@@ -5,6 +5,9 @@
     "config:recommended",
     ":rebaseStalePrs"
   ],
+  labels: [
+    "dependencies"
+  ],
   "packageRules": [
     {
       "matchPackageNames": [
@@ -18,7 +21,7 @@
         "patch",
         "digest"
       ],
-      "automerge": true,
+      "automerge": true
     }
   ]
 }
