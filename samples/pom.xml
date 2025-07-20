@@ -13,13 +13,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
-        <kotlin.version>1.9.25</kotlin.version>
+        <kotlin.version>2.2.0</kotlin.version>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <!-- Dependencies -->
         <finchly.version>0.1.1</finchly.version>
-        <kotlinx-coroutines.version>1.9.0</kotlinx-coroutines.version>
+        <kotlinx-coroutines.version>1.10.2</kotlinx-coroutines.version>
         <langchain4j-kotlin.version>0.2.0</langchain4j-kotlin.version>
         <langchain4j.version>1.1.0</langchain4j.version>
         <slf4j.version>2.0.17</slf4j.version>
@@ -49,14 +49,17 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-                <version>${kotlinx-coroutines.version}</version>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-core</artifactId>
+                <classifier>tests</classifier>
+                <version>${langchain4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-coroutines-test-jvm</artifactId>
+                <artifactId>kotlinx-coroutines-bom</artifactId>
                 <version>${kotlinx-coroutines.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -74,7 +77,6 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-core</artifactId>
-            <version>1.1.0</version>
             <classifier>tests</classifier>
         </dependency>
         <dependency>

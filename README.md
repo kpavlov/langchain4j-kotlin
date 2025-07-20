@@ -38,7 +38,27 @@ See [api docs](https://kpavlov.github.io/langchain4j-kotlin/api/) for more detai
 
 Add the following dependencies to your `pom.xml`:
 
-```xml
+```xml pom.xml
+
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-bom</artifactId>
+      <version>2.2.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-bom</artifactId>
+      <version>1.1.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
 <dependencies>
     <!-- LangChain4j Kotlin Extensions -->
     <dependency>
@@ -51,12 +71,10 @@ Add the following dependencies to your `pom.xml`:
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>1.1.0</version>
     </dependency>
     <dependency>
-         <groupId>dev.langchain4j</groupId>
-         <artifactId>langchain4j-open-ai</artifactId>
-      <version>1.1.0</version>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
     </dependency>
 </dependencies>
 ```
