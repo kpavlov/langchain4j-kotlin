@@ -1,7 +1,6 @@
 package me.kpavlov.langchain4j.kotlin.adapters
 
 import assertk.assertThat
-import assertk.assertions.hasSize
 import assertk.assertions.startsWith
 import dev.langchain4j.data.message.AiMessage
 import dev.langchain4j.model.chat.StreamingChatModel
@@ -11,9 +10,14 @@ import dev.langchain4j.model.chat.response.StreamingChatResponseHandler
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.service.UserName
 import dev.langchain4j.service.V
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import me.kpavlov.langchain4j.kotlin.model.chat.StreamingChatModelReply
@@ -146,17 +150,26 @@ internal class ServiceWithFlowTest {
                     .streamingChatModel(model)
                     .build()
 
-            val response =
-                assistant
-                    .askQuestion2(userName = "My friend", question = "How are you?")
-                    .catch { emit(StreamingChatModelReply.Error(it)) }
-                    .toList()
+            val results = mutableListOf<String>()
 
-            assertThat(response).hasSize(3)
+            val exception =
+                shouldThrow<Exception> {
+                    assistant
+                        .askQuestion2(userName = "My friend", question = "How are you?")
+                        .onEach {
+                            it.shouldBeInstanceOf<StreamingChatModelReply.PartialResponse> {
+                                results.add(
+                                    it.token,
+                                )
+                            }
+                        }.toList()
+                }
+            exception.message shouldBe "Test error"
+
+            results shouldHaveSize 2
             assertThat(
-                response,
-            ).startsWith(PartialResponse(partialToken1), PartialResponse(partialToken2))
-            assertTrue(response[2] is StreamingChatModelReply.Error)
+                results,
+            ).startsWith(partialToken1, partialToken2)
         }
 
     @Suppress("unused")

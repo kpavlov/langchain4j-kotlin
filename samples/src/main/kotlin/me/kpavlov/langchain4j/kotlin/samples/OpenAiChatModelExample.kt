@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import me.kpavlov.langchain4j.kotlin.model.chat.chatAsync
 
 class OpenAiChatModelExample(
-    private val model: ChatModel
+    private val model: ChatModel,
 ) {
     suspend fun callChatAsync(): String {
         val response =

@@ -16,12 +16,9 @@ public suspend fun ChatMemoryService.getOrCreateChatMemoryAsync(
 public suspend fun ChatMemoryService.getChatMemoryAsync(
     memoryId: ChatMemoryId,
     context: CoroutineContext = Dispatchers.IO,
-): ChatMemory? =
-    withContext(context)
-    { this@getChatMemoryAsync.getChatMemory(memoryId) }
+): ChatMemory? = withContext(context) { this@getChatMemoryAsync.getChatMemory(memoryId) }
 
 public suspend fun ChatMemoryService.evictChatMemoryAsync(
     memoryId: ChatMemoryId,
     context: CoroutineContext = Dispatchers.IO,
-): ChatMemory? =
-    withContext(context) { this@evictChatMemoryAsync.evictChatMemory(memoryId) }
+): ChatMemory? = withContext(context) { this@evictChatMemoryAsync.evictChatMemory(memoryId) }

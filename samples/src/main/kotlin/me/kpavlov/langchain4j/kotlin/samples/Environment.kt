@@ -6,7 +6,9 @@ import me.kpavlov.finchly.BaseTestEnvironment
 
 val testEnv = BaseTestEnvironment()
 
-val model: ChatModel = OpenAiChatModel.builder()
-    .modelName("gpt-4o-nano")
-    .apiKey(testEnv["OPENAI_API_KEY"])
-    .build()
+val model: ChatModel =
+    OpenAiChatModel
+        .builder()
+        .modelName("gpt-4o-nano")
+        .apiKey(testEnv["OPENAI_API_KEY"])
+        .build()
