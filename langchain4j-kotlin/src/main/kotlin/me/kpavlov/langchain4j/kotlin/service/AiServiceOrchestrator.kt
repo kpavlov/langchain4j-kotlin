@@ -135,12 +135,12 @@ internal class AiServiceOrchestrator<T : Any>(
 
         val messages =
             if (chatMemory != null) {
-                systemMessage?.let { chatMemory::add }
+                systemMessage?.let { chatMemory.add(it) }
                 chatMemory.add(userMessage)
                 chatMemory.messages()
             } else {
                 mutableListOf<ChatMessage?>().apply {
-                    systemMessage.let(this::add)
+                    systemMessage?.let { add(it) }
                     add(userMessage)
                 }
             }
