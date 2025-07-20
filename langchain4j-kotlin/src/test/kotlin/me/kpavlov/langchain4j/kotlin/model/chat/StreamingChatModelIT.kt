@@ -74,7 +74,6 @@ internal open class StreamingChatModelIT {
 
                         is CompleteResponse -> responseRef.set(it.response)
                         is StreamingChatModelReply.Error -> fail("Error", it.cause)
-                        else -> fail("Unsupported event: $it")
                     }
                 }
 

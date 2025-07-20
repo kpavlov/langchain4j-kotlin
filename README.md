@@ -5,7 +5,9 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/644f664ad05a4a009b299bc24c8be4b8)](https://app.codacy.com/gh/kpavlov/langchain4j-kotlin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/644f664ad05a4a009b299bc24c8be4b8)](https://app.codacy.com/gh/kpavlov/langchain4j-kotlin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![codecov](https://codecov.io/gh/kpavlov/langchain4j-kotlin/graph/badge.svg?token=VYIJ92CYHD)](https://codecov.io/gh/kpavlov/langchain4j-kotlin)
-[![Maintainability](https://api.codeclimate.com/v1/badges/176ba2c4e657d3e7981a/maintainability)](https://codeclimate.com/github/kpavlov/langchain4j-kotlin/maintainability)
+
+[![Kotlin](https://img.shields.io/badge/langchain4j-1.1.0-green.svg)](https://docs.langchain4j.dev)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.2-blue.svg?logo=kotlin)](https://kotlinlang.org)
 [![Api Docs](https://img.shields.io/badge/api-docs-blue)](https://kpavlov.github.io/langchain4j-kotlin/api/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kpavlov/langchain4j-kotlin)
 
@@ -49,12 +51,12 @@ Add the following dependencies to your `pom.xml`:
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j</artifactId>
-      <version>1.0.0-beta1</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
          <groupId>dev.langchain4j</groupId>
          <artifactId>langchain4j-open-ai</artifactId>
-      <version>1.0.0-beta1</version>
+      <version>1.1.0</version>
     </dependency>
 </dependencies>
 ```
@@ -66,7 +68,7 @@ Add the following to your `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation("me.kpavlov.langchain4j.kotlin:langchain4j-kotlin:$LATEST_VERSION")
-  implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-beta1")
+  implementation("dev.langchain4j:langchain4j-open-ai:1.1.0")
 }
 ```
 
