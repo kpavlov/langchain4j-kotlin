@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.kpavlov.langchain4j.kotlin</groupId>
@@ -30,7 +31,6 @@
 
     <modules>
         <module>langchain4j-kotlin</module>
-        <module>reports</module>
     </modules>
 
     <scm>
@@ -41,7 +41,7 @@
     </scm>
 
     <properties>
-        <argLine />
+        <argLine/>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <java.version>17</java.version>
@@ -220,13 +220,30 @@
                     <groupId>com.github.ozsie</groupId>
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>1.23.8</version>
-                    <configuration />
+                    <configuration/>
                 </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlinx</groupId>
                     <artifactId>kover-maven-plugin</artifactId>
                     <version>0.9.1</version>
                     <extensions>true</extensions>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <filters>
+                            <includes>
+                                <classes>me.kpavlov.langchain4j.kotlin.*</classes>
+                            </includes>
+                        </filters>
+                        <rules>
+                            <rule>
+                                <bounds>
+                                    <bound>
+                                        <minValue>75</minValue>
+                                    </bound>
+                                </bounds>
+                            </rule>
+                        </rules>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -257,17 +274,17 @@
                         <!-- optional: limit format enforcement to just the files changed by this feature branch -->
                         <ratchetFrom>origin/main</ratchetFrom>
                         <java>
-                            <palantirJavaFormat />
+                            <palantirJavaFormat/>
                         </java>
                         <kotlin>
-                            <ktlint />
+                            <ktlint/>
                         </kotlin>
                         <markdown>
                             <includes>
                                 <!-- You have to set the target manually -->
                                 <include>**/*.md</include>
                             </includes>
-                            <flexmark />
+                            <flexmark/>
                         </markdown>
                         <pom>
                             <includes>
@@ -368,6 +385,20 @@
                             <goal>log</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>kover-xml</id>
+                        <goals>
+                            <goal>report-xml</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                    <execution>
+                        <id>kover-verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -416,6 +447,50 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <property>
+                    <name>!env.CI</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- https://kotlin.github.io/kotlinx-kover/maven-plugin/#goals -->
+                        <groupId>org.jetbrains.kotlinx</groupId>
+                        <artifactId>kover-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>kover-log</id>
+                                <goals>
+                                    <goal>log</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>kover-ic</id>
+                                <goals>
+                                    <goal>report-ic</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>kover-html</id>
+                                <goals>
+                                    <goal>report-html</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>kover-verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>release</id>
             <build>
