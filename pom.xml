@@ -55,7 +55,7 @@
         <ai-mocks.version>0.4.6</ai-mocks.version>
         <awaitility.version>4.2.2</awaitility.version>
         <finchly.version>0.1.1</finchly.version>
-        <junit.version>5.13.3</junit.version>
+        <junit.version>5.13.4</junit.version>
         <kotest.version>5.9.1</kotest.version>
         <kotlinx-coroutines.version>1.10.2</kotlinx-coroutines.version>
         <langchain4j.version>1.1.0</langchain4j.version>
