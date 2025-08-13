@@ -62,7 +62,7 @@
         <mockito-kotlin.version>6.0.0</mockito-kotlin.version>
         <mockito.version>5.18.0</mockito.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <netty.version>4.2.3.Final</netty.version>
+        <netty.version>4.2.4.Final</netty.version>
     </properties>
 
     <dependencyManagement>
